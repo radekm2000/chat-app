@@ -6,8 +6,6 @@ import { UsersService } from 'src/users/services/users.service';
 
 const userRepositoryMock = {
   findOne: jest.fn(),
-  create: jest.fn(),
-  save: jest.fn(),
 };
 
 describe('UsersService', () => {
