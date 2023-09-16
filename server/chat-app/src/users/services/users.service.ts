@@ -27,6 +27,20 @@ export class UsersService implements IUserService {
 
     const newUser = this.userRepository.create(userDetails);
 
-    return await this.userRepository.save(newUser);
+    return this.saveUser(newUser);
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await this.userRepository.find({});
+  }
+
+  async saveUser(user: User): Promise<User> {
+    return await this.userRepository.save(user);
+  }
+
+  async findUser(
+    findUserParams: Partial<{ username: string; id: number }>,
+  ): Promise<User> {
+    return await this.userRepository.findOneBy(findUserParams);
   }
 }

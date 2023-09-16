@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/utils/entities/user.entity';
@@ -27,7 +27,7 @@ describe('UsersService', () => {
     usersService = module.get<UsersService>(UsersService);
   });
 
-  it(' REGISTER method should throw a CONFLICT EXCEPTION if username exists ', async () => {
+  it(' createUser method should throw a CONFLICT EXCEPTION if username exists ', async () => {
     const userDetailsMock = {
       username: 'testuser',
       password: 'testuser123',
@@ -44,7 +44,7 @@ describe('UsersService', () => {
       );
     }
   });
-  it(' REGISTER method should return user if everything passed', async () => {
+  it(' createUser method should return user if everything passed', async () => {
     const userDetailsMock = {
       username: 'testuser123',
       password: 'testuser123',
@@ -56,6 +56,35 @@ describe('UsersService', () => {
       expect(user).toBeDefined();
       expect(user.id).toBeDefined();
       expect(user.username).toEqual(userDetailsMock.username);
+    } catch (error) {}
+  });
+
+  it(' findUser should return NULL if user doesnt exist', async () => {
+    const userDetailsMock = {
+      username: 'testuser123',
+      password: 'testuser123',
+    };
+
+    userRepositoryMock.findOne.mockResolvedValue(null);
+
+    try {
+      const user = await usersService.findUser(userDetailsMock);
+      expect(user).not.toBeDefined();
+    } catch (error) {}
+  });
+
+  it(' findUser should return user if exists', async () => {
+    const userDetailsMock = {
+      username: 'testuser123',
+      password: 'testuser123',
+    };
+
+    userRepositoryMock.findOne.mockResolvedValue(User);
+
+    try {
+      const user = await usersService.findUser(userDetailsMock);
+      expect(user).toBeDefined();
+      expect(user.id).toBeDefined();
     } catch (error) {}
   });
 });
