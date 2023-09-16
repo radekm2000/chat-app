@@ -3,6 +3,9 @@ import { UsersService } from 'src/users/services/users.service';
 import { LoginUserParams } from 'src/utils/types/types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
+import 'dotenv/config';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -10,7 +13,7 @@ export class AuthService {
     private jwtSerivce: JwtService,
   ) {}
 
-  async signIn(userDetails: LoginUserParams) {
+  async signIn(res: Response, userDetails: LoginUserParams) {
     console.log(userDetails);
     const user = await this.usersService.findUser(userDetails);
     if (!user) {
@@ -24,8 +27,12 @@ export class AuthService {
     }
 
     const payload = { sub: user.id, username: user.username };
-    return {
-      access_token: await this.jwtSerivce.signAsync(payload),
-    };
+
+    res.cookie('jwt', await this.jwtSerivce.signAsync(payload), {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+    });
+
+    return;
   }
 }
