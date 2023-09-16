@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   BeforeInsert,
 } from 'typeorm';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { Message } from './message.entity';
 
 @Entity({ name: 'users' })
@@ -18,6 +18,7 @@ export class User {
   username: string;
 
   @Column({ nullable: false })
+  
   password: string;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
