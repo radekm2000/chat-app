@@ -18,7 +18,6 @@ export class User {
   username: string;
 
   @Column({ nullable: false })
-  
   password: string;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

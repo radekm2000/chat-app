@@ -26,6 +26,7 @@ export class UsersService implements IUserService {
     }
 
     const newUser = this.userRepository.create(userDetails);
+
     return await this.userRepository.save(newUser);
   }
 }
