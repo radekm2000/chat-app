@@ -26,6 +26,7 @@ export const Websocket = () => {
       socket.off("connect");
       socket.off("onMessage");
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSubmit = () => {
