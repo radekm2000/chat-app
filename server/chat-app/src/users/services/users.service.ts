@@ -8,7 +8,7 @@ import { CreateUserDetails } from 'src/utils/types/types';
 @Injectable()
 export class UsersService implements IUserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
   async createUser(userDetails: CreateUserDetails): Promise<User> {
