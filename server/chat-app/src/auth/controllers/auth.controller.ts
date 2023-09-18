@@ -3,13 +3,14 @@ import {
   Controller,
   Get,
   Post,
+  Req,
   Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/services/users.service';
 import { CreateUserDto } from 'src/utils/dtos/CreateUserDto.dto';
-import { LoginUserParams } from 'src/utils/types/types';
+import { CustomRequest, LoginUserParams } from 'src/utils/types/types';
 import { AuthService } from '../services/auth.service';
 import { Response } from 'express';
 import { Public } from '../constants';
@@ -28,11 +29,15 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  @UsePipes(new ValidationPipe())
   async signIn(
     @Res({ passthrough: true }) res: Response,
     @Body() userDetails: LoginUserParams,
   ) {
     return this.authService.signIn(res, userDetails);
+  }
+
+  @Get('refresh')
+  async handleRefreshToken(@Req() req: CustomRequest) {
+    return this.authService.handleRefreshToken(req);
   }
 }
