@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import { User } from '../entities/user.entity';
+import { Message } from '../entities/message.entity';
 
 export type CreateUserDetails = {
   username: string;
@@ -19,3 +20,17 @@ export type LoginUserParams = {
 export interface CustomRequest extends Request {
   user: User;
 }
+
+export type CreateMessageParams = {
+  content: string;
+  author: User;
+};
+
+export type CreateMessageResponse = {
+  message: Message;
+};
+
+export type CreateConversationParams = {
+  username: string;
+  message: string;
+};

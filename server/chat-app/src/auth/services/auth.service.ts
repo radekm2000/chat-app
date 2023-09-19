@@ -44,29 +44,23 @@ export class AuthService {
 
   async handleRefreshToken(req: CustomRequest) {
     const cookies = req.cookies;
-    console.log(cookies.jwt);
     if (!cookies.jwt) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     const refreshToken = cookies.jwt;
-    console.log(`extracted refresh token ${refreshToken}`);
 
-    try {
-      const user = req.user;
-      const payload = await this.jwtSerivce.verifyAsync(refreshToken, {
-        secret: jwtConstants.refreshSecret,
-      });
-      if (user.username != payload.username) {
-        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-      }
-      const accessToken = await this.jwtSerivce.signAsync(
-        { username: payload.username },
-        { secret: jwtConstants.secret, expiresIn: '15m' },
-      );
-      return accessToken;
-    } catch (error) {
-      console.log(error);
+    const user = req.user;
+    const payload = await this.jwtSerivce.verifyAsync(refreshToken, {
+      secret: jwtConstants.refreshSecret,
+    });
+    if (user.username != payload.username) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
+    const accessToken = await this.jwtSerivce.signAsync(
+      { username: payload.username },
+      { secret: jwtConstants.secret, expiresIn: '15m' },
+    );
+    return accessToken;
   }
 }

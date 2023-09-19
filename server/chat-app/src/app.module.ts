@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'ormconfig';
+import { MessagesModule } from './messages/messages.module';
+import { ConversationsModule } from './conversations/conversations.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { config } from 'ormconfig';
     AuthModule,
     UsersModule,
     TypeOrmModule.forRoot(config),
+    MessagesModule,
+    ConversationsModule,
   ],
   controllers: [],
   providers: [],

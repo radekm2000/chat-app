@@ -21,6 +21,7 @@ export class AuthController {
     private readonly userService: UsersService,
     private readonly authService: AuthService,
   ) {}
+  @Public()
   @Post('register')
   @UsePipes(new ValidationPipe())
   async signUp(@Body() createUserDto: CreateUserDto) {

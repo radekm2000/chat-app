@@ -46,6 +46,7 @@ export class UsersService implements IUserService {
         username: findUserParams.username,
         id: findUserParams.id,
       },
+      relations: ['messages'],
     });
   }
 }

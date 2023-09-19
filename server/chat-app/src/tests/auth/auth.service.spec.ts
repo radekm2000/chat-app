@@ -2,10 +2,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from 'src/auth/services/auth.service';
 import { UsersService } from 'src/users/services/users.service';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/utils/entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { CustomRequest } from 'src/utils/types/types';
 
 describe('Auth Service LOGIN', () => {
   const usersServiceMock = {
@@ -71,5 +72,81 @@ describe('Auth Service LOGIN', () => {
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
     });
+  });
+});
+
+describe('Auth Service handleRefreshToken METHOD ', () => {
+  it('should  throw Unauthorized if cookies.jwt is not found', async () => {
+    const usersServiceMock = {
+      findUser: jest.fn().mockResolvedValue(null),
+    } as unknown as UsersService;
+
+    const jwtServiceMock = {
+      signAsync: jest.fn(),
+      verifyAsync: jest.fn(),
+    } as unknown as JwtService;
+    const authService = new AuthService(usersServiceMock, jwtServiceMock);
+    const reqMock = {
+      cookies: {
+        jwt: null,
+      },
+      user: {
+        username: 'user123',
+      },
+    };
+
+    await expect(async () => {
+      await authService.handleRefreshToken(reqMock as any);
+    }).rejects.toThrow('Unauthorized');
+  });
+  it('should  throw Unauthorized if payload doesnt match with user', async () => {
+    const usersServiceMock = {
+      findUser: jest.fn().mockResolvedValue(User),
+    } as unknown as UsersService;
+
+    const jwtServiceMock = {
+      signAsync: jest.fn(),
+      verifyAsync: jest.fn().mockResolvedValue({
+        username: 'different_user',
+      }),
+    } as unknown as JwtService;
+    const authService = new AuthService(usersServiceMock, jwtServiceMock);
+    const reqMock = {
+      cookies: {
+        jwt: 'refreshtoken',
+      },
+      user: {
+        username: 'user123',
+      },
+    };
+
+    await expect(
+      authService.handleRefreshToken(reqMock as any),
+    ).rejects.toThrow('Unauthorized');
+  });
+  it('should return access token by giving refreshtoken', async () => {
+    const usersServiceMock = {
+      findUser: jest.fn().mockResolvedValue(User),
+    } as unknown as UsersService;
+
+    const jwtServiceMock = {
+      signAsync: jest.fn().mockResolvedValue('accesstoken'),
+      verifyAsync: jest.fn().mockResolvedValue({
+        username: 'user123',
+      }),
+    } as unknown as JwtService;
+    const authService = new AuthService(usersServiceMock, jwtServiceMock);
+    const reqMock = {
+      cookies: {
+        jwt: 'refreshtoken',
+      },
+      user: {
+        username: 'user123',
+      },
+    };
+
+    const result = await authService.handleRefreshToken(reqMock as any);
+
+    expect(result).toEqual('accesstoken');
   });
 });
