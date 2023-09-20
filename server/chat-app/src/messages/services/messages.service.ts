@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { IMessageService } from '../interfaces/messages.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from 'src/utils/entities/message.entity';
@@ -24,6 +24,9 @@ export class MessagesService implements IMessageService {
       id: author.id,
       username: author.username,
     });
+    if (!messageAuthor) {
+      throw new HttpException('Invalid user', HttpStatus.UNAUTHORIZED);
+    }
     const message = this.messageRepository.create({
       content,
       author: messageAuthor,
