@@ -26,7 +26,7 @@ export class AuthService {
       throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
     }
 
-    const payload = { sub: user.id, username: user.username };
+    const payload = { id: user.id, username: user.username };
     const accessToken = await this.jwtSerivce.signAsync(payload, {
       expiresIn: '15m',
     });

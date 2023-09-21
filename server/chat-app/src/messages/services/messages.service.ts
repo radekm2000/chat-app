@@ -20,16 +20,9 @@ export class MessagesService implements IMessageService {
     params: CreateMessageParams,
   ): Promise<CreateMessageResponse> {
     const { content, author } = params;
-    const messageAuthor = await this.userService.findUser({
-      id: author.id,
-      username: author.username,
-    });
-    if (!messageAuthor) {
-      throw new HttpException('Invalid user', HttpStatus.UNAUTHORIZED);
-    }
     const message = this.messageRepository.create({
       content,
-      author: messageAuthor,
+      author: author,
     });
     console.log(message);
     const savedMessage = await this.messageRepository.save(message);

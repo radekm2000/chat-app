@@ -5,11 +5,11 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Req,
 } from '@nestjs/common';
 import { MessagesService } from '../services/messages.service';
 import { CreateMessageDto } from 'src/utils/dtos/CreateMessageDto.dto';
-import { CustomRequest } from 'src/utils/types/types';
+import { AuthUser } from 'src/decorators/user.decorator';
+import { User } from 'src/utils/entities/user.entity';
 
 @Controller('messages')
 export class MessagesController {
@@ -17,12 +17,10 @@ export class MessagesController {
 
   @Post()
   async createMessage(
-    @Req() req: CustomRequest,
+    @AuthUser() user: User,
     @Body() { content }: CreateMessageDto,
   ) {
-    const author = req.user;
-    const params = { author, content };
-    return await this.messageService.createMessage(params);
+    return await this.messageService.createMessage({ author: user, content });
   }
 
   @Get(':id')
