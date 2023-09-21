@@ -1,4 +1,3 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { MessagesService } from 'src/messages/services/messages.service';
 import { UsersService } from 'src/users/services/users.service';
 import { User } from 'src/utils/entities/user.entity';
