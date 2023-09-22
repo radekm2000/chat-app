@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { WebsocketContext } from "../contexts/WebsocketContext";
+import { useEffect, useState } from "react";
+import { useSocket } from "../hooks/useSocket";
 
 type MessagePayload = {
   msg: string;
@@ -7,7 +7,7 @@ type MessagePayload = {
 };
 export const Websocket = () => {
   const [value, setValue] = useState("");
-  const socket = useContext(WebsocketContext);
+  const socket = useSocket()
   const [messages, setMessages] = useState<MessagePayload[]>([]);
 
   useEffect(() => {
@@ -21,12 +21,16 @@ export const Websocket = () => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
+    socket.on("connect_error", (err) => {
+      console.log(err.message); // not authorized
+    });
+
     return () => {
       console.log("cleanup useEffect function");
       socket.off("connect");
       socket.off("onMessage");
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSubmit = () => {
@@ -37,9 +41,19 @@ export const Websocket = () => {
   return (
     <>
       <div>Websocket component</div>
-      <div>{messages.length === 0 ? <div>No messages</div> : <div>{messages.map((msg) => <div>
-        <p>{msg.content}</p>
-      </div>)}</div>}</div>
+      <div>
+        {messages.length === 0 ? (
+          <div>No messages</div>
+        ) : (
+          <div>
+            {messages.map((msg) => (
+              <div>
+                <p>{msg.content}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <input
         type="text"
         id="input"
