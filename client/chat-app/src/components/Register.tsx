@@ -7,7 +7,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useMutation } from "@tanstack/react-query";
 import { signUpUser } from "../api/axios";
 import toast from "react-hot-toast";
-import { RegisterInput } from "../types/types";
 const USERNAME_REGEX = /^.{5,}$/;
 const PWD_REGEX = /^.{8,}$/;
 
@@ -18,11 +17,9 @@ export const Register = () => {
   const [password, setPassword] = useState("");
   const [validPwd, setValidPwd] = useState(false);
 
-  const [errorMsg, setErrorMsg] = useState("");
   const [usernameErrorMsg, SetUsernameErrorMsg] = useState("");
 
   const [pwdErrorMsg, SetPwdErrorMsg] = useState("");
-  useEffect(() => {});
 
   useEffect(() => {
     const result = USERNAME_REGEX.test(username);
@@ -45,14 +42,18 @@ export const Register = () => {
       SetPwdErrorMsg("Password must contain at least 8 characters");
     }
   }, [password, validPwd]);
+  
   const mutation = useMutation({
     mutationFn: signUpUser,
     onSuccess: () => {
-      console.log("succes");
-      toast.success("succes");
+      toast.success("User created");
     },
     onError(error: Error) {
-      toast.error("fail");
+      if (error.message === "Request failed with status code 409") {
+        toast.error("Username already exists");
+      } else {
+        toast.error("Registration failed");
+      }
     },
   });
 
@@ -86,6 +87,7 @@ export const Register = () => {
           <Typography variant="h5">Sign up</Typography>
 
           <TextField
+            autoComplete="true"
             error={Boolean(username) && !validUsername}
             id="outlined-error-helper-text"
             helperText={!validUsername && username ? usernameErrorMsg : null}
@@ -99,6 +101,7 @@ export const Register = () => {
             label="Username"
           ></TextField>
           <TextField
+            autoComplete="true"
             error={Boolean(password) && !validPwd}
             id="outlined-error"
             helperText={!validPwd && password ? pwdErrorMsg : null}
@@ -121,7 +124,7 @@ export const Register = () => {
           </Button>
           <Link
             variant="body2"
-            href="#"
+            href="/login"
             style={{ paddingLeft: "150px", paddingTop: "20px" }}
           >
             Already have an account? Sign in

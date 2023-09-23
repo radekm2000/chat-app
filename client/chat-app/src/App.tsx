@@ -1,15 +1,18 @@
+import { Login } from "./components/Login";
 import { Register } from "./components/Register";
 import { Websocket } from "./components/Websocket";
-import { Button123 } from "./components/button";
-import {Toaster} from 'react-hot-toast'
-
+import { Toaster } from "react-hot-toast";
+import { Route } from "wouter";
+import { Succesfull } from "./components/succesfull";
 function App() {
   return (
     <div className="ChatApp">
+      <Route path="/"><Register/></Route>
+      <Route path="/login"><Login/></Route>
+      <Route path='/success'><Succesfull/></Route>
+      <Toaster position="top-center" />
       {/* <Websocket /> */}
-      <Register />
-      <Button123></Button123>
-      <Toaster position="top-right" />
+
     </div>
   );
 }
