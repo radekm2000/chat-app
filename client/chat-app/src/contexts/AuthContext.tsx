@@ -8,7 +8,7 @@ interface IAuth {
 
 export const AuthContext = createContext({
   auth: {},
-  setAuth: (auth: IAuth) => {}
+  setAuth: (_auth: IAuth) => {}
 })
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

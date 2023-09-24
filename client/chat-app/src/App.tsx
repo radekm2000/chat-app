@@ -1,18 +1,34 @@
-import { Login } from "./components/Login";
-import { Register } from "./components/Register";
+import { Login } from "./components/Pages/LoginPage";
+import "./style.css";
+
+import { Register } from "./components/Pages/RegisterPage";
 import { Websocket } from "./components/Websocket";
 import { Toaster } from "react-hot-toast";
 import { Route } from "wouter";
 import { Succesfull } from "./components/succesfull";
+import { ConversationPage } from "./components/Pages/ConversationPage";
 function App() {
   return (
     <div className="ChatApp">
-      <Route path="/"><Register/></Route>
-      <Route path="/login"><Login/></Route>
-      <Route path='/success'><Succesfull/></Route>
-      <Toaster position="top-center" />
+      <Route path="/">
+        <ConversationPage />
+      </Route>
+      <Route path="/register">
+        <Register />
+      </Route>
+      <Route path="/login">
+        <Login />
+      </Route>
+      <Route path="/success">
+        <Succesfull />
+      </Route>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: { background: "#363636", color: "#fff" },
+        }}
+      ></Toaster>
       {/* <Websocket /> */}
-
     </div>
   );
 }

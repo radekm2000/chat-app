@@ -1,6 +1,7 @@
 import { createContext, ReactNode } from "react";
 import { io, Socket } from "socket.io-client";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const socket = io({
   withCredentials: true,
   extraHeaders: { Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJyYWRlayIsImlhdCI6MTY5NTM4NjU4NywiZXhwIjoxNjk1Mzg3NDg3fQ.BpIPjh83GE9q89VBDEHsDl17LgXHzQpOq5_RF6WcngQ'}
