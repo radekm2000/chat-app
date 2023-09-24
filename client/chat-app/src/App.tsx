@@ -2,6 +2,7 @@ import { Login } from "./components/Pages/LoginPage";
 import "./style.css";
 
 import { Register } from "./components/Pages/RegisterPage";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Websocket } from "./components/Websocket";
 import { Toaster } from "react-hot-toast";
 import { Route } from "wouter";

@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import users from "../../users.json";
+import users from "../../../users.json";
 export const SidebarItem = () => {
   return (
     <Box

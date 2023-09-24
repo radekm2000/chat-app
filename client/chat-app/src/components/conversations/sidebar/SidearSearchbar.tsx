@@ -1,6 +1,4 @@
-import { Box, TextField, Typography, colors } from "@mui/material";
-import users from "../../users.json";
-import { ConversationSidebarItem } from "./ConversationSidebarItem";
+import {TextField} from "@mui/material";
 export const SidebarSearchBar = () => {
   return (
     <>
