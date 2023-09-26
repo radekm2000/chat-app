@@ -6,7 +6,7 @@ export const SidebarItem = () => {
     >
       {users.map((user) => (
         <>
-          <Box sx={{padding: '13px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #fff',}}>
+          <Box sx={{padding: '13px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #fff', ":hover": {backgroundColor: '#2f2d52'}}}>
             <Box
               sx={{
                 width: "48px",
@@ -16,7 +16,7 @@ export const SidebarItem = () => {
               }}
             ></Box>
             <Box>
-              <Typography sx={{ fontSize: "16px", fontWeight: "500", color: 'white' }}>
+              <Typography fontFamily={'Readex pro'} sx={{ fontSize: "23px", fontWeight: "500", color: 'white' }}>
                 {user.username}
               </Typography>
               <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
