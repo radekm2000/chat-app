@@ -12,7 +12,7 @@ export const ConversationPage = () => {
     <Box
       sx={{
         display: "flex",
-        backgroundColor: "#1F1F1F",
+        backgroundColor: "#151515",
         width: "100%",
         height: "100vh",
         margin: "-8px",
@@ -21,7 +21,7 @@ export const ConversationPage = () => {
       <Box
         sx={{
           width: SIDEBAR_WIDTH,
-          borderRight: "1px solid white",
+          borderRight: "1px solid #808080",
           height: "100vh",
           overflow: "scroll",
           "&::-webkit-scrollbar": { display: "none" },
@@ -29,7 +29,7 @@ export const ConversationPage = () => {
       >
         <ConversationSidebar />
       </Box>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, backgroundColor: '#1E1E1E'}}>
         {id ? <ConversationChannelPage id={id}/> : <ConversationPanel/>}
       </Box>
     </Box>

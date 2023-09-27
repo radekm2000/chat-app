@@ -4,7 +4,7 @@ export const SidebarSearchBar = () => {
     <>
       <TextField
         InputLabelProps={{
-          style: { color: "lightgrey", fontWeight: "normal", fontSize: '14px' },
+          style: { color: "lightgrey", fontWeight: "normal", fontSize: '12px' },
         }}
         id="filled-search"
         label="Search for conversation..."

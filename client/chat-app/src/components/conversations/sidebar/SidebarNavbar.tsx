@@ -9,12 +9,12 @@ export const SidebarNavbar = () => {
         top: 0,
         width: "400px",
         display: "flex",
-        padding: "12px",
+        marginLeft: '-30px',
+        padding: "24px 0px",
         alignItems: "center",
         justifyContent: "center",
         height: "50px",
-        borderBottom: "1px solid white",
-        backgroundColor: "#424242",
+        borderBottom: "1px solid #808080",
       }}
     >
       <SidebarSearchBar />

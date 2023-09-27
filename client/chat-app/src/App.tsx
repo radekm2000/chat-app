@@ -5,17 +5,15 @@ import { Register } from "./components/Pages/RegisterPage";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Websocket } from "./components/Websocket";
 import { Toaster } from "react-hot-toast";
-import { Route, Router, useRoute, useRouter } from "wouter";
+import { Route } from "wouter";
 import { Succesfull } from "./components/succesfull";
 import { ConversationPage } from "./components/Pages/ConversationPage";
-import { RouteParams } from "./interfaces/interface";
-import { ConversationChannelPage } from "./components/conversations/ConversationChannelPage";
 function App() {
 
   return (
     <div className="ChatApp">
       <Route path="/conversations/:id*">
-      <ConversationPage />
+      <ConversationPage/>
       </Route>
 
       <Route path="/register">
