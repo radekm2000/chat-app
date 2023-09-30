@@ -2,27 +2,31 @@
   {
     "username": "Anna",
     "lastMessage": "hello",
-    "id": 2
+    "id": 2,
+    "messages": ["Hi ana, how are you"]
   },
   {
     "username": "Jan",
     "lastMessage": "co tam mrodo",
-    "id": 1
+    "id": 1,
+    "messages": ["Hi ana, how are you", "im fine thenks you", "xpxpxp"]
   },
   {
     "username": "Katarzyna",
     "lastMessage": "co porabiasz",
-    "id": 3
+    "id": 3,
+    "messages": ["Hi ana, how are you", "im fine thenks you", "xpxpxp"]
   },
   {
     "username": "Piotr",
     "lastMessage": "u mnie git",
-    "id": 5
+    "id": 5,
+    "messages": ["Hi ana, how are you", "im fine thenks you", "xpxpxp"]
   },
   {
     "username": "martyna",
     "lastMessage": "hihi",
-    "id": 6
+    "id": 6,
+    "messages": ["Hi ana, how are you", "im fine thenks you", "xpxpxp"]
   }
-
 ]

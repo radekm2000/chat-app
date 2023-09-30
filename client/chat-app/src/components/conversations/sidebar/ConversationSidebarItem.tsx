@@ -6,7 +6,7 @@ export const SidebarItem = () => {
     >
       {users.map((user) => (
         <>
-          <Box sx={{padding: '13px 0px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #808080', ":hover": {backgroundColor: '#DDDDDD', opacity: '0.8', borderRadius: '2%'}}}>
+          <Box sx={{padding: '13px 0px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgb(40, 40,40)', ":hover": {backgroundColor: 'rgb(40, 40,40)', opacity: '0.8', borderRadius: '2%'}}}>
             <Box
               sx={{
                 width: "48px",

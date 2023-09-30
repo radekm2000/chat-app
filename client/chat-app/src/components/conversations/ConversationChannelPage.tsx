@@ -1,6 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import users from "../../users.json";
 import { ConversationNavbar } from "./ConversationNavbar";
+import { ConversationInputPanel } from "./ConversationInputPanel";
+import { ConversationChat } from "./CovnersationChat";
 export const ConversationChannelPage = ({ id }: { id: string }) => {
   const user = users.find((user) => user.id === parseInt(id));
   if (!user) {
@@ -16,15 +18,17 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
     );
   }
   return (
-    <Box sx={{padding: '0px 20px'}}>
+    <Box sx={{padding: '0px 20px', display: 'flex', flexDirection: 'column', height: '100vh'}}>
       <ConversationNavbar user={user} />
       <Typography
         fontFamily={"Readex Pro"}
         fontSize={"23px"}
         sx={{ color: "#fff" }}
       >
-        uzytkownik: {user.username}
+        user: {user.username}
       </Typography>
+      <ConversationChat user={user}/>
+      <ConversationInputPanel user={user}/>
     </Box>
   );
 };

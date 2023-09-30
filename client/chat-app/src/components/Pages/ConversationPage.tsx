@@ -3,6 +3,7 @@ import { ConversationSidebar } from "../conversations/ConversationSidebar";
 import { ConversationPanel } from "../conversations/ConversationPanel";
 import { useRoute } from "wouter";
 import { ConversationChannelPage } from "../conversations/ConversationChannelPage";
+import { NotificationsPanel } from "../../notifications/NotificationsPanel";
 const SIDEBAR_WIDTH = "400px";
 export const ConversationPage = () => {
   const [match, params] = useRoute("/conversations/:id");
@@ -21,7 +22,7 @@ export const ConversationPage = () => {
       <Box
         sx={{
           width: SIDEBAR_WIDTH,
-          borderRight: "1px solid #808080",
+          borderRight: '1px solid rgb(40, 40,40)',
           height: "100vh",
           overflow: "scroll",
           "&::-webkit-scrollbar": { display: "none" },
@@ -31,6 +32,9 @@ export const ConversationPage = () => {
       </Box>
       <Box sx={{ flexGrow: 1, backgroundColor: '#1E1E1E'}}>
         {id ? <ConversationChannelPage id={id}/> : <ConversationPanel/>}
+      </Box>
+      <Box sx={{borderLeft: '1px solid rgb(40, 40,40)', width: '300px', backgroundColor: '#1E1E1E'}}>
+        <NotificationsPanel/>
       </Box>
     </Box>
   );

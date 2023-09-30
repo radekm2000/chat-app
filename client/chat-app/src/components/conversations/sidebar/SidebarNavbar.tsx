@@ -14,7 +14,7 @@ export const SidebarNavbar = () => {
         alignItems: "center",
         justifyContent: "center",
         height: "50px",
-        borderBottom: "1px solid #808080",
+        borderBottom: '1px solid rgb(40, 40,40)',
       }}
     >
       <SidebarSearchBar />
