@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/utils/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { IUserService } from '../interfaces/user';
 import { CreateUserDetails } from 'src/utils/types/types';
 
@@ -31,7 +31,9 @@ export class UsersService implements IUserService {
   }
 
   async getAllUsers(): Promise<User[]> {
-    return await this.userRepository.find({});
+    return await this.userRepository.find({
+      select: ['id', 'username'],
+    });
   }
 
   async saveUser(user: User): Promise<User> {
@@ -48,5 +50,19 @@ export class UsersService implements IUserService {
       },
       relations: ['messages'],
     });
+  }
+
+  async searchUserByName(query: string) {
+    const users = await this.userRepository.find({
+      where: {
+        username: Like(`%${query}%`),
+      },
+      select: ['id', 'username'],
+    });
+    if (!users) {
+      return 'No user found';
+    }
+    console.log(users);
+    return users;
   }
 }

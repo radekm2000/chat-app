@@ -17,18 +17,18 @@ export class AuthService {
   async signIn(res: Response, userDetails: LoginUserParams) {
     const user = await this.usersService.findUser(userDetails);
     if (!user) {
-      throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
     const match = await bcrypt.compare(userDetails.password, user.password);
 
     if (!match) {
-      throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
     const payload = { id: user.id, username: user.username };
     const accessToken = await this.jwtSerivce.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: '10s',
     });
     const refreshToken = await this.jwtSerivce.signAsync(payload, {
       expiresIn: '24h',
@@ -43,24 +43,25 @@ export class AuthService {
   }
 
   async handleRefreshToken(req: CustomRequest) {
+    console.log(req.user);
+    console.log(req);
     const cookies = req.cookies;
+    console.log(`ciasteczko jwt`, cookies.jwt);
     if (!cookies.jwt) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     const refreshToken = cookies.jwt;
 
-    const user = req.user;
     const payload = await this.jwtSerivce.verifyAsync(refreshToken, {
       secret: jwtConstants.refreshSecret,
     });
-    if (user.username != payload.username) {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    }
+
     const accessToken = await this.jwtSerivce.signAsync(
       { username: payload.username },
       { secret: jwtConstants.secret, expiresIn: '15m' },
     );
+    console.log('nowo wydany acces  token : ', accessToken);
     return accessToken;
   }
 }

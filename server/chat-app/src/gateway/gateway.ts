@@ -23,6 +23,10 @@ export class MyGateway implements OnModuleInit {
   onModuleInit() {
     this.server.on('connection', (socket: Socket) => {
       console.log(`user with id ${socket.id} connected`);
+
+      socket.on('disconnect', () => {
+        console.log(`user with id ${socket.id} disconnected`);
+      });
     });
   }
 

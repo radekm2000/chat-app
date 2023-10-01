@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { FindUserParams } from 'src/utils/types/types';
 
@@ -9,6 +9,12 @@ export class UsersController {
   @Get()
   async getUsers() {
     return this.usersService.getAllUsers();
+  }
+
+  @Get('search')
+  async searchUser(@Query('query') query: string) {
+    console.log(query);
+    return await this.usersService.searchUserByName(query);
   }
 
   @Post('find')

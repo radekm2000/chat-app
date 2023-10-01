@@ -18,7 +18,7 @@ export type LoginUserParams = {
 };
 
 export interface CustomRequest extends Request {
-  user: User;
+  user?: User;
 }
 
 export type CreateMessageParams = {

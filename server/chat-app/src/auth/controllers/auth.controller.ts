@@ -37,6 +37,7 @@ export class AuthController {
     return this.authService.signIn(res, userDetails);
   }
 
+  @Public()
   @Get('refresh')
   async handleRefreshToken(@Req() req: CustomRequest) {
     return this.authService.handleRefreshToken(req);
