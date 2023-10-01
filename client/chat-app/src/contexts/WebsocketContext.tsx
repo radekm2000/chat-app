@@ -1,17 +1,16 @@
 import { createContext, ReactNode } from "react";
 import { io, Socket } from "socket.io-client";
-
+const accessToken = localStorage.getItem('token')
 // eslint-disable-next-line react-refresh/only-export-components
-export const socket = io({
+export const socket = io("http://localhost:3000",{
+  extraHeaders: {
+    Authorization: `Bearer ${accessToken}`
+  },
   withCredentials: true,
-  extraHeaders: { Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJyYWRlayIsImlhdCI6MTY5NTM4NjU4NywiZXhwIjoxNjk1Mzg3NDg3fQ.BpIPjh83GE9q89VBDEHsDl17LgXHzQpOq5_RF6WcngQ'}
-});
+  autoConnect: false
+})
 
 export const WebsocketContext = createContext<Socket>(socket);
 
 
-export const WebsocketProvider = ({children}: {children: ReactNode}) => {
-    return(
-        <WebsocketContext.Provider value={socket}>{children}</WebsocketContext.Provider>
-    )
-} 
+export const WebsocketProvider = WebsocketContext.Provider

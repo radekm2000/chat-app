@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { SidebarSearchBar } from "./SidearSearchbar";
+import { SidebarSearchBar } from "./SidebarSearchbar";
 
 export const SidebarNavbar = () => {
   return (

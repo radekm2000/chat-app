@@ -16,31 +16,36 @@ import { signInUser } from "../../api/axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
 import { Redirect } from "wouter";
+import { useSocket } from "../../hooks/useSocket";
 export const Login = () => {
   const { setAuth } = useAuth();
   const [username, setUsername] = useState("");
   const [success, setSuccess] = useState(false);
   const [password, setPassword] = useState("");
-
+  const socket = useSocket();
   const mutation = useMutation({
     mutationFn: signInUser,
     onSuccess: () => {
       toast.success("User signed in sucesfully", { position: "top-right" });
     },
     onSettled(data) {
-      setAuth({ accessToken: data });
+      setAuth!({ accessToken: data });
+      localStorage.setItem('token', data)
       setSuccess(true);
+      console.log(socket)
+      socket.timeout(2000).connect()
+      console.log(`socket connected: ${socket.connected} `)
     },
     onError: (error: any) => {
       if (Array.isArray((error as any).response.data.error)) {
         (error as any).response.data.error.forEach((el: any) =>
           toast.error(el.message, {
-            position: "top-right",
           })
         );
       } else {
         toast.error('Error occurred')
       }
+      toast.error('An Error occurred')
     },
   });
 
@@ -57,7 +62,7 @@ export const Login = () => {
   };
   return (
     <form onSubmit={handleSubmit}>
-      {success && <Redirect to="/success" />}
+      {success && <Redirect to="/conversations/" />}
       <Container maxWidth="xs">
         <Box
           sx={{

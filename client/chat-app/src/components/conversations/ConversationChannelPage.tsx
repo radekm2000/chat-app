@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import users from "../../users.json";
 import { ConversationNavbar } from "./ConversationNavbar";
 import { ConversationInputPanel } from "./ConversationInputPanel";
-import { ConversationChat } from "./CovnersationChat";
+import { ConversationChat } from "./ConversationChat";
 export const ConversationChannelPage = ({ id }: { id: string }) => {
   const user = users.find((user) => user.id === parseInt(id));
   if (!user) {

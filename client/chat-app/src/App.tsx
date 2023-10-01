@@ -8,31 +8,42 @@ import { Toaster } from "react-hot-toast";
 import { Route } from "wouter";
 import { Succesfull } from "./components/succesfull";
 import { ConversationPage } from "./components/Pages/ConversationPage";
-function App() {
+import { WebsocketContext, socket } from "./contexts/WebsocketContext";
+import { PropsWithChildren } from "react";
 
+function AppWithProviders({ children }: PropsWithChildren) {
   return (
-    <div className="ChatApp">
-      <Route path="/conversations/:id*">
-      <ConversationPage/>
-      </Route>
+    <WebsocketContext.Provider value={socket}>
+      {children}
+    </WebsocketContext.Provider>
+  );
+}
 
-      <Route path="/register">
-        <Register />
-      </Route>
-      <Route path="/login">
-        <Login />
-      </Route>
-      <Route path="/success">
-        <Succesfull />
-      </Route>
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          style: { background: "#363636", color: "#fff" },
-        }}
-      ></Toaster>
-      {/* <Websocket /> */}
-    </div>
+function App() {
+  return (
+    <AppWithProviders>
+      <div className="ChatApp">
+        <Route path="/conversations/:id*">
+          <ConversationPage />
+        </Route>
+
+        <Route path="/register">
+          <Register />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Route path="/success">
+          <Succesfull />
+        </Route>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: { background: "#363636", color: "#fff" },
+          }}
+        ></Toaster>
+      </div>
+    </AppWithProviders>
   );
 }
 
