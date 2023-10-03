@@ -35,7 +35,6 @@ export const SidebarItem = () => {
   const { data } = useQuery<UsersData>(["users/get"], async () => {
     try {
       const response = await axiosAuthorized.get("users");
-      console.log(response);
       return response.data;
     } catch (error) {
       return;
