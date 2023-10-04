@@ -17,3 +17,7 @@ export type User = {
 export type SearchBarResponse = {
     users: User[] | User | undefined
 }
+
+export type FindUserParams = {
+    id?: number
+}

@@ -32,8 +32,9 @@ export class MyGateway implements OnModuleInit {
 
   afterInit(client: Socket) {
     client.use(SocketAuthMiddleware() as any);
-    console.log('after init ');
+    console.log('after initt ');
   }
+
 
   @SubscribeMessage('newMessage')
   onNewMessage(@MessageBody() data: any): any {

@@ -10,4 +10,8 @@ export interface IConversationService {
 
   getConversations(userId: number): Promise<Conversation[]>;
   save(conversation: Conversation): void;
+  isCreated(
+    creatorId: number,
+    recipientId: number,
+  ): Promise<Conversation | null>;
 }

@@ -7,10 +7,12 @@ import { SearchBarResponse } from "../../../types/types";
 import { SidebarSearchbarResponseWindow } from "./SidebarSearchbarResponseWindow";
 import axios from "axios";
 import { useDebounce } from "../../../hooks/useDebounce";
+import { useUser } from "../../../hooks/useUser";
 export const SidebarSearchBar = () => {
   const [searchBarValue, setSearchBarValue] = useState("");
   const axiosAuthorized = useAxiosAuthorized();
   const debouncedSearchTerm = useDebounce(searchBarValue, 500);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["users/search", debouncedSearchTerm],
     queryFn: async () => {
@@ -24,9 +26,6 @@ export const SidebarSearchBar = () => {
       return [];
     },
   });
-
-  console.log(data);
-
   return (
     <>
       <Box

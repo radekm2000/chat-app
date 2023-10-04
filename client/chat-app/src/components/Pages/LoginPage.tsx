@@ -17,8 +17,10 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
 import { Redirect } from "wouter";
 import { useSocket } from "../../hooks/useSocket";
+import { useUser } from "../../hooks/useUser";
 export const Login = () => {
   const { setAuth } = useAuth();
+  const {meUser, setUser} = useUser()
   const [username, setUsername] = useState("");
   const [success, setSuccess] = useState(false);
   const [password, setPassword] = useState("");
@@ -53,6 +55,7 @@ export const Login = () => {
     e.preventDefault();
     const { mutate, isLoading, isError } = mutation;
     mutate({ username, password });
+    setUser(username)
     if (isLoading) {
       return <h1>is Loading...</h1>;
     }

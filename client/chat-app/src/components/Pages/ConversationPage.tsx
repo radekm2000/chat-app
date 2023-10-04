@@ -9,24 +9,41 @@ import { useEffect } from "react";
 import { useSocket } from "../../hooks/useSocket";
 const SIDEBAR_WIDTH = "400px";
 export const ConversationPage = () => {
-  const accessToken = localStorage.getItem('token')
-  const socket = useSocket()
+  const accessToken = localStorage.getItem("token");
+  const socket = useSocket();
+
+  socket.on('connect_error', (err) => {
+    if(err?.message === 'jwt malformed')
+    console.log('hehe')
+    setTimeout(() => {
+      const accessToken = localStorage.getItem('token')
+       socket.io.opts.extraHeaders = {
+        Authorization: `Bearer ${accessToken}`
+       }
+
+       socket.connect()
+    }, 1000)
+  })
+
   useEffect(() => {
-    socket.connect()
+    if (socket.connected === false) {
+      socket.connect();
+    }
+    socket.connect();
     return () => {
-      socket.disconnect()
-    }
-  }, [accessToken, socket])
-  const {auth} = useAuth();
-  console.log(auth)
+      socket.disconnect();
+    };
+  }, [accessToken, socket]);
+  const { auth } = useAuth();
+  console.log(auth);
   useEffect(() => {
-    if(auth?.accessToken) {
-      console.log(auth)
+    if (auth?.accessToken) {
+      console.log(auth);
     }
-  }, [auth])
+  }, [auth]);
   const [, params] = useRoute("/conversations/:id");
   const id = params ? params.id : null;
-  console.log(id)
+  console.log(id);
   return (
     <Box
       sx={{
@@ -40,7 +57,7 @@ export const ConversationPage = () => {
       <Box
         sx={{
           width: SIDEBAR_WIDTH,
-          borderRight: '1px solid rgb(40, 40,40)',
+          borderRight: "1px solid rgb(40, 40,40)",
           height: "100vh",
           overflow: "scroll",
           "&::-webkit-scrollbar": { display: "none" },
@@ -48,11 +65,17 @@ export const ConversationPage = () => {
       >
         <ConversationSidebar />
       </Box>
-      <Box sx={{ flexGrow: 1, backgroundColor: '#1E1E1E'}}>
-        {id ? <ConversationChannelPage id={id}/> : <ConversationPanel/>}
+      <Box sx={{ flexGrow: 1, backgroundColor: "#1E1E1E" }}>
+        {id ? <ConversationChannelPage id={id} /> : <ConversationPanel />}
       </Box>
-      <Box sx={{borderLeft: '1px solid rgb(40, 40,40)', width: '300px', backgroundColor: '#1E1E1E'}}>
-        <NotificationsPanel/>
+      <Box
+        sx={{
+          borderLeft: "1px solid rgb(40, 40,40)",
+          width: "300px",
+          backgroundColor: "#1E1E1E",
+        }}
+      >
+        <NotificationsPanel />
       </Box>
     </Box>
   );

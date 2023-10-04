@@ -38,6 +38,6 @@ export class Conversation {
   @JoinColumn({ name: 'last_message_sent' })
   lastMessageSent: Message;
 
-  @UpdateDateColumn({ name: 'last_message_created_at' })
+  @UpdateDateColumn({ name: 'updated_at' })
   lastMessageSentAt: Date;
 }

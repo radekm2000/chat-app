@@ -31,6 +31,6 @@ export type CreateMessageResponse = {
 };
 
 export type CreateConversationParams = {
-  username: string;
   message: string;
+  username: string;
 };

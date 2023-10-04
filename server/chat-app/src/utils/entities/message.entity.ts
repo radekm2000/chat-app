@@ -22,6 +22,8 @@ export class Message {
   @ManyToOne(() => User, (user) => user.messages)
   author: User;
 
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
+    createForeignKeyConstraints: false,
+  })
   conversation: Conversation;
 }
