@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { IConversationService } from '../interfaces/conversations.interface';
 import { Conversation } from 'src/utils/entities/conversation.entity';
 import { User } from 'src/utils/entities/user.entity';
-import { CreateConversationParams } from 'src/utils/types/types';
+import { AccessParams, CreateConversationParams } from 'src/utils/types/types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/services/users.service';
@@ -21,14 +21,16 @@ export class ConversationsService implements IConversationService {
     user: User,
     params: CreateConversationParams,
   ): Promise<Conversation> {
-    console.log(user);
-    console.log('wiadomosc');
-    console.log(params.message);
-    console.log('nazwa uzytkownika');
-    console.log(params.username);
     const recipient = await this.userService.findUser({
       username: params.username,
     });
+
+    if (user.id === recipient.id) {
+      throw new HttpException(
+        'Cannot create conversation with  yourself',
+        HttpStatus.CONFLICT,
+      );
+    }
     const newConversation = this.conversationRepository.create({
       creator: user,
       recipient,
@@ -58,8 +60,8 @@ export class ConversationsService implements IConversationService {
     return;
   }
 
-  save(conversation: Conversation): void {
-    return;
+  async save(conversation: Conversation): Promise<Conversation> {
+    return this.conversationRepository.save(conversation);
   }
 
   isCreated(creatorId: number, recipientId: number): Promise<Conversation> {
@@ -70,6 +72,26 @@ export class ConversationsService implements IConversationService {
           recipient: { id: recipientId },
         },
       ],
+    });
+  }
+
+  async hasAccess({ id, userId }: AccessParams) {
+    const conversation = await this.findById(id);
+    if (!conversation)
+      throw new HttpException(
+        `You dont have access to that conversation`,
+        HttpStatus.FORBIDDEN,
+      );
+
+    return (
+      conversation.creator.id === userId || conversation.recipient.id === userId
+    );
+  }
+
+  async findById(id: number) {
+    return this.conversationRepository.findOne({
+      where: { id },
+      relations: ['creator', 'recipient', 'lastMessageSent'],
     });
   }
 }

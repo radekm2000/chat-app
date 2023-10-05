@@ -21,3 +21,8 @@ export type SearchBarResponse = {
 export type FindUserParams = {
     id?: number
 }
+
+export type CreateConversationParams = {
+    username: string;
+    message?: string;
+}

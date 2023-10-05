@@ -20,6 +20,7 @@ type User = {
 type UsersData = User[];
 
 export const SidebarItem = () => {
+  // const socket = useSocket()
   const [location, setLocation] = useLocation();
   const { auth } = useAuth();
   const axiosAuthorized = useAxiosAuthorized();

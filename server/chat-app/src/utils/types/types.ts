@@ -34,3 +34,8 @@ export type CreateConversationParams = {
   message: string;
   username: string;
 };
+
+export type AccessParams = {
+  id: number;
+  userId: number;
+};

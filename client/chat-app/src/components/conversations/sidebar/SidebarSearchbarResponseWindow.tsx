@@ -1,27 +1,49 @@
 import { Box, Typography } from "@mui/material";
-import { FindUserParams, SearchBarResponse, User } from "../../../types/types";
 import { useLocation } from "wouter";
 import { useAuth } from "../../../hooks/useAuth";
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
-import { useQuery } from "@tanstack/react-query";
 import { useUser } from "../../../hooks/useUser";
+import { useMutation } from "@tanstack/react-query";
+import { createConversationApi } from "../../../api/axios";
+import toast from "react-hot-toast";
 
 export const SidebarSearchbarResponseWindow = ({ data, isLoading }) => {
-  const [location, setLocation] = useLocation();
-  const { auth } = useAuth();
+  const [, setLocation] = useLocation();
   const axiosAuthorized = useAxiosAuthorized();
   const { meUser } = useUser();
-  const createConversation = async (username: string) => {
-    try {
-      const response = await axiosAuthorized.post("conversations", {
-        username,
-        message: "First message",
-      });
-      return response.data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+
+  const mutation = useMutation({
+    mutationFn: createConversationApi,
+    mutationKey: ["conversations/create"],
+    onSuccess: () => {
+      toast.success("Conversation created", { position: "top-right" });
+    },
+    onError: (error: any) => {
+      if (error?.response?.status === 409) {
+        if (error?.response?.data?.message === "Conversation already exists") {
+          toast.error("Conversation already exists", { position: "top-right" });
+        } else if (
+          error?.response?.data?.message ==
+          "Cannot create conversation with  yourself"
+        ) {
+          toast.error(`Can't create conversation with yourself`, {
+            position: "top-right",
+          });
+        }
+      }
+    },
+  });
+  // const createConversation = async (username: string) => {
+  //   try {
+  //     const response = await axiosAuthorized.post("conversations", {
+  //       username,
+  //       message: "First message",
+  //     });
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const findRecipient = async (userId: string) => {
     const userIdToNum = parseInt(userId);
@@ -41,7 +63,9 @@ export const SidebarSearchbarResponseWindow = ({ data, isLoading }) => {
     }
     const username = recipient.username;
     setLocation(`/conversations/${userId}`);
-    createConversation(username);
+    const { mutate } = mutation;
+    // createConversation(username);
+    mutate({ username });
   };
   return (
     <Box

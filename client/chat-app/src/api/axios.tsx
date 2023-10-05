@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-useless-catch */
 import axios from "axios";
-import { LoginInput, RegisterInput } from "../types/types";
+import {
+  CreateConversationParams,
+  LoginInput,
+  RegisterInput,
+} from "../types/types";
 import { useAxiosAuthorized } from "../hooks/useAxiosAuthorized";
 import { useAuth } from "../hooks/useAuth";
 const BASE_URL = "http://localhost:3000/";
@@ -21,7 +25,7 @@ export const signUpUser = async ({ username, password }: RegisterInput) => {
 };
 
 export const signInUser = async ({ username, password }: LoginInput) => {
-  const response = await authApi.post("auth/login", { username, password });
+  const response = await authApi.post("auth/login", { username, password }, {});
   return response?.data;
 };
 
@@ -34,6 +38,20 @@ export const getAllUsers = async () => {
   }
 };
 
-
-
-
+export const createConversationApi = async ({
+  username,
+  message,
+}: CreateConversationParams) => {
+  const accessToken = localStorage.getItem('token')
+  try {
+    const response = await authApi.post("conversations", {
+      username,
+      message: "First Message",
+    }, {
+      headers: {Authorization: `Bearer ${accessToken}`}
+    });
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+};

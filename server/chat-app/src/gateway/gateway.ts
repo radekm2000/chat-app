@@ -22,6 +22,7 @@ export class MyGateway implements OnModuleInit {
 
   onModuleInit() {
     this.server.on('connection', (socket: Socket) => {
+      socket.use(SocketAuthMiddleware() as any);
       console.log(`user with id ${socket.id} connected`);
 
       socket.on('disconnect', () => {
@@ -31,7 +32,6 @@ export class MyGateway implements OnModuleInit {
   }
 
   afterInit(client: Socket) {
-    client.use(SocketAuthMiddleware() as any);
     console.log('after initt ');
   }
 
