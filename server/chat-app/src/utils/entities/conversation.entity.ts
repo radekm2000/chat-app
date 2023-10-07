@@ -31,13 +31,13 @@ export class Conversation {
   @JoinColumn()
   messages: Message[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: number;
 
   @OneToOne(() => Message)
-  @JoinColumn({ name: 'last_message_sent' })
+  @JoinColumn()
   lastMessageSent: Message;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   lastMessageSentAt: Date;
 }

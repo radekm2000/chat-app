@@ -38,20 +38,49 @@ export const getAllUsers = async () => {
   }
 };
 
+export const findUserById = async (userId: number) => {
+  const accessToken = localStorage.getItem("token");
+
+  try {
+    const response = await authApi.post("users/find", userId, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const createConversationApi = async ({
   username,
   message,
 }: CreateConversationParams) => {
-  const accessToken = localStorage.getItem('token')
+  const accessToken = localStorage.getItem("token");
   try {
-    const response = await authApi.post("conversations", {
-      username,
-      message: "First Message",
-    }, {
-      headers: {Authorization: `Bearer ${accessToken}`}
+    const response = await authApi.post(
+      "conversations",
+      {
+        username,
+        message: "First Message",
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserConversations = async () => {
+  const accessToken = localStorage.getItem("token");
+  try {
+    const response = await authApi.get("conversations", {
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
     return response.data;
   } catch (error) {
-    throw error
+    throw error;
   }
 };

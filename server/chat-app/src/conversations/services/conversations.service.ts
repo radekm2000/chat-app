@@ -52,15 +52,52 @@ export class ConversationsService implements IConversationService {
       conversation,
       author: user,
     });
+    const savedMessage = await this.messageRepository.save(newMessage);
+    conversation.lastMessageSent = savedMessage;
     await this.messageRepository.save(newMessage);
     return conversation;
   }
 
-  getConversations(userId: number): Promise<Conversation[]> {
-    return;
+  async getConversations(userId: number): Promise<Conversation[]> {
+    const conversations = await this.conversationRepository.find({
+      where: [
+        {
+          creator: { id: userId },
+        },
+      ],
+      relations: ['creator', 'recipient', 'messages', 'lastMessageSent'],
+    });
+    console.log('konwersacje');
+    console.log(conversations);
+    return conversations;
   }
 
-  async save(conversation: Conversation): Promise<Conversation> {
+  async getConversation(
+    creatorId: number,
+    recipientId: number,
+  ): Promise<Conversation> {
+    console.log('creator id powinno byc 1 : ');
+    console.log(creatorId);
+    console.log('recipient id');
+    console.log(recipientId);
+    const conversation = await this.conversationRepository.findOne({
+      where: [
+        {
+          creator: { id: creatorId },
+          recipient: { id: recipientId },
+        },
+      ],
+      relations: ['creator', 'recipient', 'messages', 'lastMessageSent'],
+    });
+    if (!conversation)
+      throw new HttpException(
+        'Conversation doesnt exist',
+        HttpStatus.BAD_REQUEST,
+      );
+    return conversation;
+  }
+
+  save(conversation: Conversation): Promise<Conversation> {
     return this.conversationRepository.save(conversation);
   }
 
@@ -91,7 +128,7 @@ export class ConversationsService implements IConversationService {
   async findById(id: number) {
     return this.conversationRepository.findOne({
       where: { id },
-      relations: ['creator', 'recipient', 'lastMessageSent'],
+      relations: ['lastMessageSent'],
     });
   }
 }

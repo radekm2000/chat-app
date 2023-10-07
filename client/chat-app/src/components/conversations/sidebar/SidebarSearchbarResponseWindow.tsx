@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createConversationApi } from "../../../api/axios";
 import toast from "react-hot-toast";
 
-export const SidebarSearchbarResponseWindow = ({ data, isLoading }) => {
+export const SidebarSearchbarResponseWindow = ({ data, isLoading }: {isLoading: boolean}) => {
   const [, setLocation] = useLocation();
   const axiosAuthorized = useAxiosAuthorized();
   const { meUser } = useUser();
@@ -62,7 +62,7 @@ export const SidebarSearchbarResponseWindow = ({ data, isLoading }) => {
       );
     }
     const username = recipient.username;
-    setLocation(`/conversations/${userId}`);
+    // setLocation(`/conversations/${userId}`);
     const { mutate } = mutation;
     // createConversation(username);
     mutate({ username });

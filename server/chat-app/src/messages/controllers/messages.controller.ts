@@ -18,9 +18,13 @@ export class MessagesController {
   @Post()
   async createMessage(
     @AuthUser() user: User,
-    @Body() { content }: CreateMessageDto,
+    @Body() { content, conversationId }: CreateMessageDto,
   ) {
-    return await this.messageService.createMessage({ author: user, content });
+    return await this.messageService.createMessage({
+      author: user,
+      content,
+      conversationId,
+    });
   }
 
   @Get(':id')

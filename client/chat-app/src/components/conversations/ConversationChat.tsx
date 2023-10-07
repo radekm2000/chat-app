@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Typography } from "@mui/material";
-import { UserProps } from "./ConversationNavbar";
 import { useState } from "react";
+import { UserType } from "./ConversationChannelPage";
 export type ConversationChatProps = {
-  user: Partial<UserProps>;
+  user: Partial<UserType>;
 };
 
 export const ConversationChat = ({ user }: ConversationChatProps) => {
