@@ -128,7 +128,7 @@ export class ConversationsService implements IConversationService {
   async findById(id: number) {
     return this.conversationRepository.findOne({
       where: { id },
-      relations: ['lastMessageSent'],
+      relations: ['lastMessageSent', 'messages'],
     });
   }
 }

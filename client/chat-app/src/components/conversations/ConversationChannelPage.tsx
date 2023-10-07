@@ -68,7 +68,8 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
         fontSize={"23px"}
         sx={{ color: "#fff" }}
       ></Typography>
-      <ConversationChat user={user} isUserDataLoading={isUserDataLoading} />
+      <ConversationChat user={user} isUserDataLoading={isUserDataLoading}
+      conversation={conversationData} isConversationDataLoading={isConversationDataLoading} />
       <ConversationInputPanel
         user={user}
         isUserDataLoading={isUserDataLoading} conversation={conversationData} isConversationDataLoading={isConversationDataLoading}

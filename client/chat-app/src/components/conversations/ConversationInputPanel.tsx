@@ -1,7 +1,7 @@
 import { Input } from "@mui/material";
 import { UserType } from "./ConversationNavbar";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 
 export type ConversationProps = {
@@ -23,6 +23,7 @@ export const ConversationInputPanel = ({
   isUserDataLoading,
   conversation,
 }: ConversationInputPanelProps) => {
+  const queryClient = useQueryClient();
   const axiosAuthorized = useAxiosAuthorized();
   const mutation = useMutation({
     mutationFn: async () => {
@@ -30,13 +31,18 @@ export const ConversationInputPanel = ({
         content: message,
         conversationId: conversation.id,
       });
-      return response.data
+      return response.data;
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries([
+        "conversations",
+        data?.updatedConversation?.lastMessageSentAt?.content
+      ]);
+
       setMessage("");
       console.log("wiadomosc wyslana");
-      console.log('odebrane dane:')
-      console.log(data)
+      console.log("odebrane dane:");
+      console.log(data);
     },
     onError: () => {
       console.log("error");

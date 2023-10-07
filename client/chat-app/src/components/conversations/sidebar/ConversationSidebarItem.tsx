@@ -46,6 +46,8 @@ export const SidebarItem = () => {
       lastMessageSent: lastMessageSent,
       id: recipient.id,
     };
+
+    
   });
   console.log(recipients);
 
@@ -94,7 +96,7 @@ export const SidebarItem = () => {
                 {recipient.username}
               </Typography>
               <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
-                {'abcd'}
+                {recipient?.lastMessageSent?.content}
               </Typography>
             </Box>
           </Box>

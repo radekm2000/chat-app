@@ -49,6 +49,7 @@ export class MessagesService implements IMessageService {
           id: userId,
         },
       },
+      relations: ['author', 'conversation'],
     });
   }
 }

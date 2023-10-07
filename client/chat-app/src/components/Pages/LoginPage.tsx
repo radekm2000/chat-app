@@ -27,10 +27,8 @@ export const Login = () => {
   const socket = useSocket();
   const mutation = useMutation({
     mutationFn: signInUser,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("User signed in sucesfully", { position: "top-right" });
-    },
-    onSettled(data) {
       setAuth!({ accessToken: data });
       localStorage.setItem('token', data)
       setSuccess(true);
@@ -38,19 +36,25 @@ export const Login = () => {
       socket.timeout(2000).connect()
       console.log(`socket connected: ${socket.connected} `)
     },
-    onError: (error: any) => {
-      if (Array.isArray((error as any).response.data.error)) {
-        (error as any).response.data.error.forEach((el: any) =>
-          toast.error(el.message, {
-          })
-        );
-      } else {
-        toast.error('Error occurred')
+    onSettled(data, error) {
+      if(error) {
+        setSuccess(false)
+        toast.error('Invalid credentials', {position: 'top-center'})
       }
-      toast.error('An Error occurred')
+      // setAuth!({ accessToken: data });
+      // localStorage.setItem('token', data)
+      // setSuccess(true);
+      // console.log(socket)
+      // socket.timeout(2000).connect()
+      // console.log(`socket connected: ${socket.connected} `)
+    },
+    onError: (error: any) => {
     },
   });
 
+  if(success) {
+    return <Redirect to="/conversations"/>
+  }
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const { mutate, isLoading, isError } = mutation;
@@ -65,7 +69,7 @@ export const Login = () => {
   };
   return (
     <form onSubmit={handleSubmit}>
-      {success && <Redirect to="/conversations/" />}
+      {/* {success && <Redirect to="/conversations/" />} */}
       <Container maxWidth="xs">
         <Box
           sx={{
@@ -113,7 +117,7 @@ export const Login = () => {
               </Link>
             </Grid>
             <Grid item>
-              <Link variant="body2" href="/">
+              <Link variant="body2" href="/register">
                 Don't have an account? Sign up
               </Link>
             </Grid>
