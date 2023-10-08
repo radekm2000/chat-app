@@ -6,6 +6,7 @@ import { ConversationChat } from "./ConversationChat";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { findUserById } from "../../api/axios";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
+import { useUser } from "../../hooks/useUser";
 
 export type UserType = {
   id: number;
@@ -16,6 +17,8 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
   const idToNum = parseInt(id);
   const axiosAuthorized = useAxiosAuthorized();
   console.log(idToNum);
+  const { meUser } = useUser();
+  console.log(meUser);
   const { data: userData, isLoading: isUserDataLoading } = useQuery({
     queryKey: ["users/find", idToNum],
     queryFn: async () => {
@@ -25,7 +28,9 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
       return response.data;
     },
   });
-
+  //userData: id, username, messages
+  //conversationData: createdAt, creator, recipient, lastMessageSent,
+  //lastMessageSentAt, id, messages
   const { data: conversationData, isLoading: isConversationDataLoading } =
     useQuery({
       queryKey: ["conversations/findConversation", idToNum],
@@ -38,6 +43,8 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
       },
     });
   console.log(conversationData);
+  console.log("user data");
+  console.log(userData);
 
   // const user: UserType = data;
   const user = users.find((user) => user.id === parseInt(id));
@@ -62,17 +69,26 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
         height: "100vh",
       }}
     >
-      <ConversationNavbar user={user} isUserDataLoading={isUserDataLoading} />
+      <ConversationNavbar
+        user={userData}
+        isUserDataLoading={isUserDataLoading}
+      />
       <Typography
         fontFamily={"Readex Pro"}
         fontSize={"23px"}
         sx={{ color: "#fff" }}
       ></Typography>
-      <ConversationChat user={user} isUserDataLoading={isUserDataLoading}
-      conversation={conversationData} isConversationDataLoading={isConversationDataLoading} />
+      <ConversationChat
+        user={userData}
+        conversation={conversationData}
+        isUserDataLoading={isUserDataLoading}
+        isConversationDataLoading={isConversationDataLoading}
+      />
       <ConversationInputPanel
-        user={user}
-        isUserDataLoading={isUserDataLoading} conversation={conversationData} isConversationDataLoading={isConversationDataLoading}
+        user={userData}
+        isUserDataLoading={isUserDataLoading}
+        conversation={conversationData}
+        isConversationDataLoading={isConversationDataLoading}
       />
     </Box>
   );

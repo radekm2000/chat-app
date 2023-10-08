@@ -30,16 +30,36 @@ export class MessagesService implements IMessageService {
     if (!conversation) {
       throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST);
     }
-    const message = this.messageRepository.create({
+    console.log('id konwersacji', conversationId);
+    console.log('znaleziona konwersacja');
+    console.log(conversation);
+    const newMessage = this.messageRepository.create({
       content,
-      author: author,
       conversation,
+      author,
     });
-    const savedMessage = await this.messageRepository.save(message);
+    const savedMessage = await this.messageRepository.save(newMessage);
+    console.log('saved message');
+    console.log(savedMessage);
     conversation.lastMessageSent = savedMessage;
     const updatedConversation =
       await this.conversationRepository.save(conversation);
     return { message: savedMessage, updatedConversation };
+  }
+
+  async getMessagesByConversationId(
+    conversationId: number,
+  ): Promise<Message[]> {
+    const messages = await this.messageRepository.find({
+      relations: ['author'],
+      where: {
+        conversation: {
+          id: conversationId,
+        },
+      },
+      order: { createdAt: 'DESC' },
+    });
+    return messages;
   }
 
   getMessages(userId: number): Promise<Message[]> {

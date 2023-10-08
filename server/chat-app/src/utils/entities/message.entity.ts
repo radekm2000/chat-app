@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -20,10 +21,12 @@ export class Message {
   createdAt: number;
 
   @ManyToOne(() => User, (user) => user.messages)
+  @JoinColumn()
   author: User;
 
   @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
     createForeignKeyConstraints: false,
   })
+  @JoinColumn()
   conversation: Conversation;
 }

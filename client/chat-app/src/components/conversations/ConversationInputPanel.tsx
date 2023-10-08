@@ -25,8 +25,11 @@ export const ConversationInputPanel = ({
 }: ConversationInputPanelProps) => {
   const queryClient = useQueryClient();
   const axiosAuthorized = useAxiosAuthorized();
+  console.log('conversation id: ')
+  console.log(conversation?.id)
   const mutation = useMutation({
     mutationFn: async () => {
+      console.log('wyslane conversation id: ', conversation.id)
       const response = await axiosAuthorized.post("messages", {
         content: message,
         conversationId: conversation.id,
@@ -48,7 +51,7 @@ export const ConversationInputPanel = ({
       console.log("error");
     },
   });
-  const { username } = user;
+  // const { username } = user;
   const [message, setMessage] = useState("");
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -69,7 +72,7 @@ export const ConversationInputPanel = ({
       onChange={(e) => setMessage(e.target.value)}
       onKeyDown={(e) => handleKeyDown(e)}
       inputProps={{ spellCheck: false }}
-      placeholder={`Message ${username}`}
+      placeholder={`Message ${user?.username}`}
       disableUnderline
       value={message}
       multiline

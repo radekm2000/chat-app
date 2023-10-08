@@ -10,6 +10,7 @@ import { MessagesService } from '../services/messages.service';
 import { CreateMessageDto } from 'src/utils/dtos/CreateMessageDto.dto';
 import { AuthUser } from 'src/decorators/user.decorator';
 import { User } from 'src/utils/entities/user.entity';
+import { GetConversationMessagesParam } from 'src/utils/types/types';
 
 @Controller('messages')
 export class MessagesController {
@@ -30,5 +31,12 @@ export class MessagesController {
   @Get(':id')
   async getMessages(@Param('id', ParseIntPipe) userId: number) {
     return await this.messageService.getMessages(userId);
+  }
+
+  @Post('/conversation')
+  async getConversationMessages(
+    @Body() { conversationId }: GetConversationMessagesParam,
+  ) {
+    return this.messageService.getMessagesByConversationId(conversationId);
   }
 }

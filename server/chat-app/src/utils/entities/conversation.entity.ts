@@ -28,7 +28,6 @@ export class Conversation {
   @OneToMany(() => Message, (message) => message.conversation, {
     cascade: ['insert', 'remove', 'update'],
   })
-  @JoinColumn()
   messages: Message[];
 
   @CreateDateColumn()

@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "../../../hooks/useAuth";
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
 import { useUser } from "../../../hooks/useUser";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { createConversationApi } from "../../../api/axios";
 import toast from "react-hot-toast";
 
@@ -11,11 +11,13 @@ export const SidebarSearchbarResponseWindow = ({ data, isLoading }: {isLoading: 
   const [, setLocation] = useLocation();
   const axiosAuthorized = useAxiosAuthorized();
   const { meUser } = useUser();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: createConversationApi,
     mutationKey: ["conversations/create"],
     onSuccess: () => {
+      queryClient.invalidateQueries(['conversations'])
       toast.success("Conversation created", { position: "top-right" });
     },
     onError: (error: any) => {

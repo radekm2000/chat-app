@@ -43,3 +43,6 @@ export type AccessParams = {
   userId: number;
 };
 
+export type GetConversationMessagesParam = {
+  conversationId: number;
+};

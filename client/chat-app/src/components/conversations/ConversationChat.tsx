@@ -2,33 +2,41 @@
 import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 import { UserType } from "./ConversationChannelPage";
+import { formatTimestamp } from "../../utils/formatTimestamp";
+import { ConversationProps } from "./ConversationInputPanel";
+import { useQuery } from "@tanstack/react-query";
+import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 export type ConversationChatProps = {
   user: Partial<UserType>;
+  isUserDataLoading: boolean
+  isConversationDataLoading: boolean
+  conversation: any;
 };
 
-export const ConversationChat = ({ user }: ConversationChatProps) => {
+export const ConversationChat = ({ user, isUserDataLoading, isConversationDataLoading, conversation }: ConversationChatProps) => {
   const [currentAuthor, setCurrentAuthor] = useState<string | null>(null);
-  function formatTimestamp(timestamp: number) {
-    const messageDate = new Date(timestamp);
-
-    const day = String(messageDate.getDate()).padStart(2, "0");
-    const month = String(messageDate.getMonth() + 1).padStart(2, "0");
-    const year = messageDate.getFullYear();
-
-    const hours = String(messageDate.getHours()).padStart(2, "0");
-    const minutes = String(messageDate.getMinutes()).padStart(2, "0");
-
-    return `${day}.${month}.${year} ${hours}:${minutes}`;
-  }
   const timestamp = Date.now();
+  const axiosAuthorized = useAxiosAuthorized()
   const formattedTime = formatTimestamp(timestamp);
-
-  const { username, messages } = user;
+  console.log(conversation);
+  const {data, isLoading} = useQuery({
+    queryKey: ['conversation/messages'],
+    queryFn: async() => {
+      const response = await axiosAuthorized.post('messages/conversation', {conversationId: conversation.id})
+      return response.data
+    },
+  })
+  if(isLoading) {
+    console.log('wiadomosci się ładują')
+  }
+  console.log(`pobrane wiadomosci z konwersacji o id: ${conversation?.id}`)
+  console.log(data)
+  // const { username, messages } = user;
   return (
     <>
-      {messages?.map((message) => (
+      {conversation?.messages?.map((message) => (
         <>
-          <Box
+          <Box key={message.id}
             sx={{
               padding: "13px",
               gap: "10px",
@@ -57,7 +65,7 @@ export const ConversationChat = ({ user }: ConversationChatProps) => {
                 }}
               >
                 <>
-                  {username}
+                  {user?.username}
                   <Typography
                     component="span"
                     sx={{
@@ -72,7 +80,7 @@ export const ConversationChat = ({ user }: ConversationChatProps) => {
                 </>
               </Typography>
               <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
-                {message}
+                {message.content}
               </Typography>
             </Box>
           </Box>

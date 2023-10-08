@@ -54,7 +54,6 @@ export class ConversationsService implements IConversationService {
     });
     const savedMessage = await this.messageRepository.save(newMessage);
     conversation.lastMessageSent = savedMessage;
-    await this.messageRepository.save(newMessage);
     return conversation;
   }
 
@@ -67,8 +66,6 @@ export class ConversationsService implements IConversationService {
       ],
       relations: ['creator', 'recipient', 'messages', 'lastMessageSent'],
     });
-    console.log('konwersacje');
-    console.log(conversations);
     return conversations;
   }
 
@@ -76,10 +73,6 @@ export class ConversationsService implements IConversationService {
     creatorId: number,
     recipientId: number,
   ): Promise<Conversation> {
-    console.log('creator id powinno byc 1 : ');
-    console.log(creatorId);
-    console.log('recipient id');
-    console.log(recipientId);
     const conversation = await this.conversationRepository.findOne({
       where: [
         {
@@ -126,9 +119,18 @@ export class ConversationsService implements IConversationService {
   }
 
   async findById(id: number) {
-    return this.conversationRepository.findOne({
+    const conversation = await this.conversationRepository.findOne({
       where: { id },
-      relations: ['lastMessageSent', 'messages'],
+      relations: ['creator', 'recipient', 'lastMessageSent'],
+    });
+    console.log('konwersacja bez wiadomosci');
+    console.log(conversation);
+    return conversation;
+  }
+
+  update({ conversationId, lastMessageSent }) {
+    return this.conversationRepository.update(conversationId, {
+      lastMessageSent,
     });
   }
 }

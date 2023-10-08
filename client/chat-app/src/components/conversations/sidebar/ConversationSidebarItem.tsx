@@ -40,16 +40,26 @@ export const SidebarItem = () => {
 
   console.log(data);
   const recipients = data?.map((conversation) => {
-    const { recipient, lastMessageSent } = conversation;
+    const { recipient, lastMessageSent, lastMessageSentAt } = conversation;
     return {
       username: recipient.username,
       lastMessageSent: lastMessageSent,
+      lastMessageSentAt,
       id: recipient.id,
     };
 
     
+  }) || [];
+  const sortedRecipients = [...recipients].sort((a, b) => {
+    const dateA = new Date(b.lastMessageSentAt).getTime();
+    const dateB = new Date(a.lastMessageSentAt).getTime();
+    const differenceInMilliseconds = dateA - dateB;
+    return differenceInMilliseconds
   });
+  console.log(sortedRecipients)
   console.log(recipients);
+  //sorted recipients is an array of objects that have properties :
+  // username, lastMessageSent,lastMessageSentAt, id
 
   // const { data } = useQuery<UsersData>(["users/get"], async () => {
   //   try {
@@ -61,8 +71,8 @@ export const SidebarItem = () => {
   // });
   return (
     <Box>
-      {recipients &&
-        recipients?.map((recipient) => (
+      {sortedRecipients &&
+        sortedRecipients?.map((recipient) => (
           <Box
             key={recipient.id}
             sx={{
@@ -96,7 +106,7 @@ export const SidebarItem = () => {
                 {recipient.username}
               </Typography>
               <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
-                {recipient?.lastMessageSent?.content}
+                {recipient?.lastMessageSent?.content || 'testowa wiadomosc'}
               </Typography>
             </Box>
           </Box>
