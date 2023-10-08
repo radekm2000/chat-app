@@ -42,6 +42,8 @@ export const ConversationInputPanel = ({
         data?.updatedConversation?.lastMessageSentAt?.content
       ]);
 
+      queryClient.invalidateQueries(['conversation/messages', conversation?.id])
+
       setMessage("");
       console.log("wiadomosc wyslana");
       console.log("odebrane dane:");

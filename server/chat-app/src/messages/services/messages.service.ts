@@ -30,6 +30,7 @@ export class MessagesService implements IMessageService {
     if (!conversation) {
       throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST);
     }
+
     console.log('id konwersacji', conversationId);
     console.log('znaleziona konwersacja');
     console.log(conversation);
@@ -38,13 +39,14 @@ export class MessagesService implements IMessageService {
       conversation,
       author,
     });
+
     const savedMessage = await this.messageRepository.save(newMessage);
     console.log('saved message');
     console.log(savedMessage);
     conversation.lastMessageSent = savedMessage;
     const updatedConversation =
       await this.conversationRepository.save(conversation);
-    return { message: savedMessage, updatedConversation };
+    return { message: newMessage, updatedConversation };
   }
 
   async getMessagesByConversationId(
@@ -57,7 +59,7 @@ export class MessagesService implements IMessageService {
           id: conversationId,
         },
       },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: 'ASC' },
     });
     return messages;
   }

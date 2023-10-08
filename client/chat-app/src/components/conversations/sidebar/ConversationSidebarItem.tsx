@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Typography } from "@mui/material";
 import users from "../../../users.json";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
 import { authApi, getAllUsers, getUserConversations } from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
@@ -25,6 +25,7 @@ export const SidebarItem = () => {
   const [location, setLocation] = useLocation();
   const { auth } = useAuth();
   const axiosAuthorized = useAxiosAuthorized();
+  const queryClient = useQueryClient();
   // const { data } = useQuery<UsersData>({
   //   queryKey: ["users"],
   //   queryFn: getAllUsers,

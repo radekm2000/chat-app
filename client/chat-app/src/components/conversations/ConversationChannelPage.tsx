@@ -78,12 +78,20 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
         fontSize={"23px"}
         sx={{ color: "#fff" }}
       ></Typography>
-      <ConversationChat
-        user={userData}
-        conversation={conversationData}
-        isUserDataLoading={isUserDataLoading}
-        isConversationDataLoading={isConversationDataLoading}
-      />
+      <Box
+        sx={{
+          height: "100vh",
+          overflow: "scroll",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
+        <ConversationChat
+          user={userData}
+          conversation={conversationData}
+          isUserDataLoading={isUserDataLoading}
+          isConversationDataLoading={isConversationDataLoading}
+        />
+      </Box>
       <ConversationInputPanel
         user={userData}
         isUserDataLoading={isUserDataLoading}
