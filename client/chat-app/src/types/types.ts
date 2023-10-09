@@ -27,3 +27,8 @@ export type CreateConversationParams = {
     message?: string;
 }
 
+export type OnlineUser = {
+    userId: number;
+    socketId: string;
+}
+

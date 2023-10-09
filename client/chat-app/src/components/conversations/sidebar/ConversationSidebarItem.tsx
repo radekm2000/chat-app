@@ -15,6 +15,7 @@ import useId from "@mui/material/utils/useId";
 import { useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
+import { OnlineUser, OnlineUsersType } from "../../../types/types";
 type User = {
   id: string;
   username: string;
@@ -23,7 +24,8 @@ type User = {
 type UsersData = User[];
 
 export const SidebarItem = () => {
-  // const socket = useSocket()
+  const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
+  const socket = useSocket();
   const [location, setLocation] = useLocation();
   const { auth } = useAuth();
   const { meUser } = useUser();
@@ -59,6 +61,9 @@ export const SidebarItem = () => {
     const dateB = new Date(a.lastMessageSentAt).getTime();
     const differenceInMilliseconds = dateA - dateB;
     return differenceInMilliseconds;
+  });
+  socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
+    setOnlineUsers(onlineUsers);
   });
   console.log(sortedRecipients);
   console.log(recipients);
@@ -100,8 +105,25 @@ export const SidebarItem = () => {
                 height: "48px",
                 backgroundColor: "blue",
                 borderRadius: "50%",
+                position: "relative",
               }}
-            ></Box>
+            >
+              {onlineUsers.some(
+                (onlineUser) => onlineUser?.userId === recipient?.id
+              ) ? (
+                <Box
+                  sx={{
+                    width: "12px",
+                    height: "12px",
+                    backgroundColor: "#0DE638",
+                    borderRadius: "50%",
+                    position: 'absolute',
+                    bottom: '2px',
+                    right: '3px'
+                  }}
+                ></Box>
+              ) : null}
+            </Box>
             <Box key={`${recipient.id}b`}>
               <Typography
                 fontFamily={"Readex pro"}
