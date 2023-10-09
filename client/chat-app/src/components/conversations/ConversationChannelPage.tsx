@@ -18,6 +18,7 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
   const axiosAuthorized = useAxiosAuthorized();
   console.log(idToNum);
   const { meUser } = useUser();
+
   console.log(meUser);
   const { data: userData, isLoading: isUserDataLoading } = useQuery({
     queryKey: ["users/find", idToNum],
@@ -47,19 +48,19 @@ export const ConversationChannelPage = ({ id }: { id: string }) => {
   console.log(userData);
 
   // const user: UserType = data;
-  const user = users.find((user) => user.id === parseInt(id));
-  if (!user) {
-    return (
-      <Typography
-        fontFamily={"Readex Pro"}
-        fontSize={"23px"}
-        color={"#fff"}
-        variant="h5"
-      >
-        Error 404 something went wrong, can't find such user
-      </Typography>
-    );
-  }
+  // const user = users.find((user) => user.id === parseInt(id));
+  // if (!user) {
+  //   return (
+  //     <Typography
+  //       fontFamily={"Readex Pro"}
+  //       fontSize={"23px"}
+  //       color={"#fff"}
+  //       variant="h5"
+  //     >
+  //       Error 404 something went wrong, can't find such user
+  //     </Typography>
+  //   );
+  // }
   return (
     <Box
       sx={{

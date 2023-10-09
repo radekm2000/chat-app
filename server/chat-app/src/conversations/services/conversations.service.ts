@@ -63,6 +63,9 @@ export class ConversationsService implements IConversationService {
         {
           creator: { id: userId },
         },
+        {
+          recipient: { id: userId },
+        },
       ],
       relations: ['creator', 'recipient', 'messages', 'lastMessageSent'],
     });
@@ -73,11 +76,23 @@ export class ConversationsService implements IConversationService {
     creatorId: number,
     recipientId: number,
   ): Promise<Conversation> {
+    return this.conversationRepository
+      .createQueryBuilder('conversation')
+      .leftJoinAndSelect('conversation.creator', 'creator')
+      .leftJoinAndSelect('conversation.recipient', 'recipient')
+      .where(
+        '(creator.id = :creatorId AND recipient.id = :recipientId) OR (creator.id = :recipientId AND recipient.id = :creatorId)',
+        { creatorId, recipientId },
+      )
+      .getOne();
     const conversation = await this.conversationRepository.findOne({
       where: [
         {
           creator: { id: creatorId },
           recipient: { id: recipientId },
+        },
+        {
+          creator: { id: recipientId },
         },
       ],
       relations: ['creator', 'recipient', 'messages', 'lastMessageSent'],

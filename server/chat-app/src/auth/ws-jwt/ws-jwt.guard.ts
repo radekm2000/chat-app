@@ -21,14 +21,13 @@ export class WsJwtGuard implements CanActivate {
 
   async validateToken(client: Socket) {
     const { authorization } = client.handshake.headers;
-    try {
-      const token: string = authorization.split(' ')[1];
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
-      });
-      return payload;
-    } catch (error) {
-      throw new Error('jwt malformed');
-    }
+    console.log('authorization hedader:');
+    console.log(authorization);
+    const token: string = authorization.split(' ')[1];
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: jwtConstants.secret,
+    });
+
+    return payload;
   }
 }

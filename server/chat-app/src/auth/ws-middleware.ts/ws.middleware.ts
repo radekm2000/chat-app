@@ -6,14 +6,22 @@ type SocketIoMiddleware = {
 };
 
 export const SocketAuthMiddleware = (): SocketIoMiddleware => {
-  return (client, next) => {
+  return async (client, next) => {
     const wsGuard = new WsJwtGuard(new JwtService());
     try {
-      wsGuard.validateToken(client);
+      const payload = await wsGuard.validateToken(client);
+
+      const user = {
+        userId: payload.id,
+        socketId: client.id,
+      };
+      client.user = user;
       next();
     } catch (error) {
-      const err = new Error('authorization failed');
-      next(err);
+      console.log('wiadomosc errora');
+      console.log(error?.message);
+      client.emit('error', 'jwt_malformed');
+      next(error);
     }
   };
 };

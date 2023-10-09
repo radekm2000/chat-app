@@ -7,23 +7,40 @@ import { NotificationsPanel } from "../../notifications/NotificationsPanel";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect } from "react";
 import { useSocket } from "../../hooks/useSocket";
+import { useQuery } from "@tanstack/react-query";
+import { getUserConversations } from "../../api/axios";
 const SIDEBAR_WIDTH = "400px";
 export const ConversationPage = () => {
   const accessToken = localStorage.getItem("token");
   const socket = useSocket();
 
-  socket.on('connect_error', (err) => {
-    if(err?.message === 'jwt malformed')
-    console.log('hehe')
-    setTimeout(() => {
-      const accessToken = localStorage.getItem('token')
-       socket.io.opts.extraHeaders = {
-        Authorization: `Bearer ${accessToken}`
-       }
+  const { data: conversations } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: getUserConversations,
+  });
 
-       socket.connect()
-    }, 1000)
-  })
+  useEffect(() => {
+    const handleUnload = () => {
+      localStorage.removeItem("token");
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  });
+
+  socket.on("connect_error", (err) => {
+    if (err?.message === "jwt malformed") console.log("hehe");
+    setTimeout(() => {
+      const accessToken = localStorage.getItem("token");
+      socket.io.opts.extraHeaders = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      socket.connect();
+    }, 1000);
+  });
 
   useEffect(() => {
     if (socket.connected === false) {

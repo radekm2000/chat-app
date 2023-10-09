@@ -46,3 +46,8 @@ export type AccessParams = {
 export type GetConversationMessagesParam = {
   conversationId: number;
 };
+
+export type WebsocketUserType = {
+  userId: number;
+  socketId: string;
+};

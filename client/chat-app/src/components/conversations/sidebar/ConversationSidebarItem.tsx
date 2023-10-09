@@ -13,6 +13,8 @@ import { useRefreshToken } from "../../../hooks/useRefreshToken";
 import { useSocket } from "../../../hooks/useSocket";
 import useId from "@mui/material/utils/useId";
 import { useState } from "react";
+import { useUser } from "../../../hooks/useUser";
+import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
 type User = {
   id: string;
   username: string;
@@ -24,6 +26,7 @@ export const SidebarItem = () => {
   // const socket = useSocket()
   const [location, setLocation] = useLocation();
   const { auth } = useAuth();
+  const { meUser } = useUser();
   const axiosAuthorized = useAxiosAuthorized();
   const queryClient = useQueryClient();
   // const { data } = useQuery<UsersData>({
@@ -40,24 +43,24 @@ export const SidebarItem = () => {
   });
 
   console.log(data);
-  const recipients = data?.map((conversation) => {
-    const { recipient, lastMessageSent, lastMessageSentAt } = conversation;
-    return {
-      username: recipient.username,
-      lastMessageSent: lastMessageSent,
-      lastMessageSentAt,
-      id: recipient.id,
-    };
-
-    
-  }) || [];
+  const recipients =
+    data?.map((conversation) => {
+      const recipient = getRecipientFromConversation(conversation, meUser);
+      const { lastMessageSent, lastMessageSentAt } = conversation;
+      return {
+        username: recipient.username,
+        lastMessageSent,
+        lastMessageSentAt,
+        id: recipient.id,
+      };
+    }) || [];
   const sortedRecipients = [...recipients].sort((a, b) => {
     const dateA = new Date(b.lastMessageSentAt).getTime();
     const dateB = new Date(a.lastMessageSentAt).getTime();
     const differenceInMilliseconds = dateA - dateB;
-    return differenceInMilliseconds
+    return differenceInMilliseconds;
   });
-  console.log(sortedRecipients)
+  console.log(sortedRecipients);
   console.log(recipients);
   //sorted recipients is an array of objects that have properties :
   // username, lastMessageSent,lastMessageSentAt, id
@@ -107,7 +110,7 @@ export const SidebarItem = () => {
                 {recipient.username}
               </Typography>
               <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
-                {recipient?.lastMessageSent?.content || 'testowa wiadomosc'}
+                {recipient?.lastMessageSent?.content || "testowa wiadomosc"}
               </Typography>
             </Box>
           </Box>

@@ -10,7 +10,7 @@ import {
 import { Button, Link } from "@mui/material";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { signInUser } from "../../api/axios";
 import toast from "react-hot-toast";
@@ -51,10 +51,14 @@ export const Login = () => {
     onError: (error: any) => {
     },
   });
+  useEffect(() => {
+  }, [meUser])
 
   if(success) {
     return <Redirect to="/conversations"/>
   }
+
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const { mutate, isLoading, isError } = mutation;
