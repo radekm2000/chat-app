@@ -1,10 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import users from "../../users.json";
 import { ConversationNavbar } from "./ConversationNavbar";
 import { ConversationInputPanel } from "./ConversationInputPanel";
 import { ConversationChat } from "./ConversationChat";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { findUserById } from "../../api/axios";
+import { useQuery } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 import { useUser } from "../../hooks/useUser";
 

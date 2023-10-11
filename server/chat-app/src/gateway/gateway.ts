@@ -43,6 +43,18 @@ export class MyGateway {
           (user) => user.userId !== socket.user.userId,
         );
         console.log(this.onlineUsers);
+        this.server.emit('getOnlineUsers', this.onlineUsers);
+      });
+
+      socket.on('sendMessage', ({ msg, recipientId }) => {
+        const user = this.onlineUsers.find(
+          (user) => user.userId === recipientId,
+        );
+        if (!user) {
+          return;
+        }
+
+        this.server.to(user.socketId).emit('getMessage', msg);
       });
     });
   }

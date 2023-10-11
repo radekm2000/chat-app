@@ -112,7 +112,7 @@ export const ConversationChat = ({
                   </Typography>
                 </>
               </Typography>
-              <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
+              <Typography sx={{ fontSize: "18px", color: "#A3A3A3" }}>
                 {message.content}
                 <div ref={divRef}></div>
               </Typography>

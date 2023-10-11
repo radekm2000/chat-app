@@ -12,7 +12,7 @@ import { ConversationChannelPage } from "../ConversationChannelPage";
 import { useRefreshToken } from "../../../hooks/useRefreshToken";
 import { useSocket } from "../../../hooks/useSocket";
 import useId from "@mui/material/utils/useId";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
 import { OnlineUser, OnlineUsersType } from "../../../types/types";
@@ -35,13 +35,28 @@ export const SidebarItem = () => {
   //   queryKey: ["users"],
   //   queryFn: getAllUsers,
   // });
+
+  useEffect(() => {
+    socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
+      setOnlineUsers(onlineUsers);
+    });
+    console.log(`online uzytkownicy`)
+    console.log(onlineUsers)
+
+    return () => {
+      socket.off('getOnlineUsers')
+    }
+  }, [onlineUsers, socket]);
   const handleUserChatClick = async (userId: string) => {
     setLocation(`/conversations/${userId}`);
   };
-
   const { data } = useQuery({
     queryKey: ["conversations"],
     queryFn: getUserConversations,
+  });
+
+  socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
+    setOnlineUsers(onlineUsers);
   });
 
   console.log(data);
@@ -61,9 +76,6 @@ export const SidebarItem = () => {
     const dateB = new Date(a.lastMessageSentAt).getTime();
     const differenceInMilliseconds = dateA - dateB;
     return differenceInMilliseconds;
-  });
-  socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
-    setOnlineUsers(onlineUsers);
   });
   console.log(sortedRecipients);
   console.log(recipients);
@@ -117,9 +129,9 @@ export const SidebarItem = () => {
                     height: "12px",
                     backgroundColor: "#0DE638",
                     borderRadius: "50%",
-                    position: 'absolute',
-                    bottom: '2px',
-                    right: '3px'
+                    position: "absolute",
+                    bottom: "2px",
+                    right: "3px",
                   }}
                 ></Box>
               ) : null}
@@ -132,7 +144,7 @@ export const SidebarItem = () => {
                 {recipient.username}
               </Typography>
               <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
-                {recipient?.lastMessageSent?.content || "testowa wiadomosc"}
+                {recipient?.lastMessageSent?.content.length > 20 ? recipient?.lastMessageSent?.content.slice(0,25) + '...' : recipient?.lastMessageSent?.content || "testowa wiadomosc"}
               </Typography>
             </Box>
           </Box>

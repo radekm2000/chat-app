@@ -1,8 +1,9 @@
 import { Input } from "@mui/material";
 import { UserType } from "./ConversationNavbar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
+import { useSocket } from "../../hooks/useSocket";
 
 export type ConversationProps = {
   createdAt: Date;
@@ -23,13 +24,24 @@ export const ConversationInputPanel = ({
   isUserDataLoading,
   conversation,
 }: ConversationInputPanelProps) => {
+  const socket = useSocket();
   const queryClient = useQueryClient();
   const axiosAuthorized = useAxiosAuthorized();
-  console.log('conversation id: ')
-  console.log(conversation?.id)
+
+  console.log("conversation id: ");
+  console.log(conversation?.id);
+  useEffect(() => {
+    socket.on("getMessage", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => {
+      socket.off("getMessage");
+    };
+  });
   const mutation = useMutation({
     mutationFn: async () => {
-      console.log('wyslane conversation id: ', conversation.id)
+      console.log("wyslane conversation id: ", conversation.id);
       const response = await axiosAuthorized.post("messages", {
         content: message,
         conversationId: conversation.id,
@@ -39,22 +51,33 @@ export const ConversationInputPanel = ({
     onSuccess: (data) => {
       queryClient.invalidateQueries([
         "conversations",
-        data?.updatedConversation?.lastMessageSentAt?.content
+        data?.updatedConversation?.lastMessageSentAt?.content,
       ]);
 
-      queryClient.invalidateQueries(['conversation/messages', conversation?.id])
-
+      queryClient.invalidateQueries([
+        "conversation/messages",
+        conversation?.id,
+      ]);
+      setMessage(data.message);
       setMessage("");
       console.log("wiadomosc wyslana");
       console.log("odebrane dane:");
+      setMessages((prev) => [...prev, data.message]);
       console.log(data);
+      socket.emit("sendMessage", {
+        content: data?.message?.content,
+        recipientId: data?.message?.recipient?.id,
+      });
     },
     onError: () => {
       console.log("error");
     },
   });
   // const { username } = user;
+  const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  console.log('wiadomosci z websocket')
+  console.log(messages)
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
