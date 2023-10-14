@@ -21,4 +21,10 @@ export class UsersController {
   async findUser(@Body() findUserParams: FindUserParams) {
     return this.usersService.findUser(findUserParams);
   }
+
+  @Post('findByNickname')
+  async findUserByNickname(@Body() findUserParams: FindUserParams) {
+    console.log(findUserParams.username);
+    return await this.usersService.findUserIdByNickname(findUserParams);
+  }
 }

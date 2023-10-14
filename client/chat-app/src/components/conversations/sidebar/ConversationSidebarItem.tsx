@@ -12,7 +12,7 @@ import { ConversationChannelPage } from "../ConversationChannelPage";
 import { useRefreshToken } from "../../../hooks/useRefreshToken";
 import { useSocket } from "../../../hooks/useSocket";
 import useId from "@mui/material/utils/useId";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
 import { OnlineUser, OnlineUsersType } from "../../../types/types";
@@ -29,8 +29,32 @@ export const SidebarItem = () => {
   const [location, setLocation] = useLocation();
   const { auth } = useAuth();
   const { meUser } = useUser();
+  const [authorTypingId, setAuthorTypingId] = useState(null);
   const axiosAuthorized = useAxiosAuthorized();
   const queryClient = useQueryClient();
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    console.log('is typing : ')
+    console.log(isTyping)
+  }, [isTyping])
+
+  useEffect(() => {
+    socket.on("typingMessage", ({ typingMsg, authorId, conversationId }) => {
+      setAuthorTypingId(authorId);
+      setIsTyping(true);
+    });
+
+    socket.on("noLongerTypingMessage", () => {
+      console.log("user is no longer typing mesage");
+      setIsTyping(false);
+    });
+
+    return () => {
+      socket.off("noLongerTypingMessage");
+      socket.off("typingMessage");
+    };
+  });
   // const { data } = useQuery<UsersData>({
   //   queryKey: ["users"],
   //   queryFn: getAllUsers,
@@ -40,12 +64,12 @@ export const SidebarItem = () => {
     socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
       setOnlineUsers(onlineUsers);
     });
-    console.log(`online uzytkownicy`)
-    console.log(onlineUsers)
+    console.log(`online uzytkownicy`);
+    console.log(onlineUsers);
 
     return () => {
-      socket.off('getOnlineUsers')
-    }
+      socket.off("getOnlineUsers");
+    };
   }, [onlineUsers, socket]);
   const handleUserChatClick = async (userId: string) => {
     setLocation(`/conversations/${userId}`);
@@ -143,8 +167,17 @@ export const SidebarItem = () => {
               >
                 {recipient.username}
               </Typography>
+              {/* <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
+                {recipient?.lastMessageSent?.content.length > 20
+                  ? recipient?.lastMessageSent?.content.slice(0, 25) + "..."
+                  : recipient?.lastMessageSent?.content || "testowa wiadomosc"}
+              </Typography> */}
               <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
-                {recipient?.lastMessageSent?.content.length > 20 ? recipient?.lastMessageSent?.content.slice(0,25) + '...' : recipient?.lastMessageSent?.content || "testowa wiadomosc"}
+                {isTyping && recipient.id === authorTypingId
+                  ? "is typing..."
+                  : recipient?.lastMessageSent?.content.length > 20
+                  ? recipient?.lastMessageSent?.content.slice(0, 25) + "..."
+                  : recipient?.lastMessageSent?.content || null}
               </Typography>
             </Box>
           </Box>

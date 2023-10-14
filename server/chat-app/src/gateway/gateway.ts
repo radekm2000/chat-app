@@ -47,14 +47,31 @@ export class MyGateway {
       });
 
       socket.on('sendMessage', ({ msg, recipientId }) => {
+        console.log('dane na sendMessage');
+        console.log(msg, recipientId);
         const user = this.onlineUsers.find(
           (user) => user.userId === recipientId,
         );
         if (!user) {
           return;
         }
+        console.log('wysylane do user soket id : ')
+        console.log(user.socketId);
 
         this.server.to(user.socketId).emit('getMessage', msg);
+      });
+
+      socket.on('typingMessage', ({ authorId, conversationId }) => {
+        const typingMsg = 'is typing...';
+        this.server.emit('typingMessage', {
+          typingMsg,
+          authorId,
+          conversationId,
+        });
+      });
+
+      socket.on('noLongerTypingMessage', () => {
+        this.server.emit('noLongerTypingMessage', () => {});
       });
     });
   }

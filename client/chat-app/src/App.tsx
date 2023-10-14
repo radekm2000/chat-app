@@ -12,9 +12,12 @@ import { WebsocketContext, socket } from "./contexts/WebsocketContext";
 import { PropsWithChildren } from "react";
 import { UserContext, UserProvider } from "./contexts/UserContext";
 import { useUser } from "./hooks/useUser";
+import { useChatMsg } from "./hooks/useChatMsg";
+import { ChatProvider } from "./contexts/ChatContext";
 
 function AppWithProviders({ children }: PropsWithChildren) {
   const { user, setUser } = useUser();
+  const { chatMessages, setChatMessages } = useChatMsg();
   return (
     <WebsocketContext.Provider value={socket}>
       {children}
@@ -26,27 +29,29 @@ function App() {
   return (
     <AppWithProviders>
       <UserProvider>
-        <div className="ChatApp">
-          <Route path="/conversations/:id*">
-            <ConversationPage />
-          </Route>
+        <ChatProvider>
+          <div className="ChatApp">
+            <Route path="/conversations/:id*">
+              <ConversationPage />
+            </Route>
 
-          <Route path="/register">
-            <Register />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/success">
-            <Succesfull />
-          </Route>
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              style: { background: "#363636", color: "#fff" },
-            }}
-          ></Toaster>
-        </div>
+            <Route path="/register">
+              <Register />
+            </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/success">
+              <Succesfull />
+            </Route>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                style: { background: "#363636", color: "#fff" },
+              }}
+            ></Toaster>
+          </div>
+        </ChatProvider>
       </UserProvider>
     </AppWithProviders>
   );

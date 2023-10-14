@@ -51,6 +51,23 @@ export const findUserById = async (userId: number) => {
   }
 };
 
+export const findUserByNickname = async (username: string) => {
+  const accessToken = localStorage.getItem("token");
+
+  try {
+    const response = await authApi.post(
+      "users/findByNickname",
+      { username: username },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const createConversationApi = async ({
   username,
   message,

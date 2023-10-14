@@ -52,6 +52,22 @@ export class UsersService implements IUserService {
     });
   }
 
+  async findUserIdByNickname(
+    findUserParams: Partial<{ username: string; id: number }>,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: findUserParams.username,
+      },
+    });
+    if (user) {
+      console.log('podayn nickname', findUserParams.username);
+      console.log('id usera', user.id);
+      return user.id;
+    }
+    return null;
+  }
+
   async searchUserByName(query: string) {
     const users = await this.userRepository.find({
       where: {
