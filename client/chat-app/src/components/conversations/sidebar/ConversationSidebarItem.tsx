@@ -15,7 +15,11 @@ import useId from "@mui/material/utils/useId";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
-import { OnlineUser, OnlineUsersType } from "../../../types/types";
+import {
+  Notification,
+  OnlineUser,
+  OnlineUsersType,
+} from "../../../types/types";
 import { useChatMsg } from "../../../hooks/useChatMsg";
 import { NotificationPanel } from "../../NotificationPanel";
 import { unreadNotificationsFunc } from "../../../utils/unreadNotifications";
@@ -40,8 +44,8 @@ export const SidebarItem = ({ userChatId }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   console.log("notifications: ", notifications);
   const markThisUserNotificationsAsRead = (
-    thisUserNotifications,
-    notifications
+    thisUserNotifications: Notification[],
+    notifications: Notification[]
   ) => {
     const mNotifications = notifications.map((el) => {
       let notification;
@@ -88,8 +92,13 @@ export const SidebarItem = ({ userChatId }) => {
 
   useEffect(() => {
     socket.on("typingMessage", ({ typingMsg, authorId, conversationId }) => {
-      setAuthorTypingId(authorId);
-      setIsTyping(true);
+      data.map((conversation) => {
+        if (conversation?.id === conversationId) {
+          setAuthorTypingId(authorId);
+          setIsTyping(true);
+        }
+        else return
+      });
     });
 
     socket.on("noLongerTypingMessage", () => {
