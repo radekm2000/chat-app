@@ -55,10 +55,15 @@ export class MyGateway {
         if (!user) {
           return;
         }
-        console.log('wysylane do user soket id : ')
+        console.log('wysylane do user soket id : ');
         console.log(user.socketId);
 
         this.server.to(user.socketId).emit('getMessage', msg);
+        this.server.to(user.socketId).emit('getNotification', {
+          senderId: msg?.author?.id,
+          isRead: false,
+          date: new Date(),
+        });
       });
 
       socket.on('typingMessage', ({ authorId, conversationId }) => {

@@ -4,7 +4,6 @@ import { User } from 'src/utils/entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { IUserService } from '../interfaces/user';
 import { CreateUserDetails } from 'src/utils/types/types';
-
 @Injectable()
 export class UsersService implements IUserService {
   constructor(

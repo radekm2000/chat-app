@@ -28,7 +28,8 @@ export const ConversationChat = ({
   const queryClient = useQueryClient();
   const divRef = useRef(null);
   const socket = useSocket();
-  const { chatMessages, setChatMessages } = useChatMsg();
+  const { chatMessages, setChatMessages, } =
+    useChatMsg();
   useEffect(() => {
     socket.on("getMessage", (msg) => {
       console.log("otrzymany event getMessage");
@@ -36,12 +37,15 @@ export const ConversationChat = ({
       console.log("otrzymana wiadomosc z socketa");
       console.log(msg);
       setChatMessages((prev) => [...prev, msg]);
+
+      
     });
 
     return () => {
       socket.off("getMessage");
     };
   });
+
 
   useEffect(() => {
     divRef?.current?.scrollIntoView({ behavior: "instant" });
@@ -64,7 +68,7 @@ export const ConversationChat = ({
     },
   });
   if (isLoading) {
-    return <div>isLoading...</div>;
+    return console.log("isLoading");
   }
 
   console.log(`pobrane wiadomosci z konwersacji o id: ${conversation?.id}`);

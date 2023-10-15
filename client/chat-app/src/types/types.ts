@@ -32,3 +32,8 @@ export type OnlineUser = {
     socketId: string;
 }
 
+export type Notification = {
+    isRead: boolean,
+    date: Date,
+    senderId: number
+}

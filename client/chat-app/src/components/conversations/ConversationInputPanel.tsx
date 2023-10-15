@@ -5,7 +5,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 import { useSocket } from "../../hooks/useSocket";
 import { useUser } from "../../hooks/useUser";
-import { findUserByNickname } from "../../api/axios";
 import { getRecipientFromConversation } from "../../utils/getRecipientFromConversation";
 import { useChatMsg } from "../../hooks/useChatMsg";
 export type ConversationProps = {

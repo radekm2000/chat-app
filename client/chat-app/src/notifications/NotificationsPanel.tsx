@@ -10,7 +10,7 @@ export const NotificationsPanel = () => {
         fontSize={"23px"}
         sx={{ color: "#fff" }}
       >
-        No notifications
+        Notifications panel
       </Typography>
     </Box>
   );

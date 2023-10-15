@@ -6,18 +6,25 @@ import { useUser } from "../../../hooks/useUser";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { createConversationApi } from "../../../api/axios";
 import toast from "react-hot-toast";
+import { useSocket } from "../../../hooks/useSocket";
 
-export const SidebarSearchbarResponseWindow = ({ data, isLoading }: {isLoading: boolean}) => {
+export const SidebarSearchbarResponseWindow = ({
+  data,
+  isLoading,
+}: {
+  isLoading: boolean;
+}) => {
   const [, setLocation] = useLocation();
   const axiosAuthorized = useAxiosAuthorized();
   const { meUser } = useUser();
   const queryClient = useQueryClient();
+  const socket = useSocket();
 
   const mutation = useMutation({
     mutationFn: createConversationApi,
     mutationKey: ["conversations/create"],
     onSuccess: () => {
-      queryClient.invalidateQueries(['conversations'])
+      queryClient.invalidateQueries(["conversations"]);
       toast.success("Conversation created", { position: "top-right" });
     },
     onError: (error: any) => {
@@ -114,7 +121,7 @@ export const SidebarSearchbarResponseWindow = ({ data, isLoading }: {isLoading: 
                 fontSize={"16px"}
                 color={"white"}
               >
-                {user.username == meUser ? "Ja" : user.username}
+                {user.username == meUser ? "Me" : user.username}
               </Typography>
             </Box>
           </Box>

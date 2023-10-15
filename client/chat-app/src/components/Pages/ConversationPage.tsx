@@ -80,10 +80,10 @@ export const ConversationPage = () => {
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        <ConversationSidebar />
+        <ConversationSidebar userChatId={id} />
       </Box>
       <Box sx={{ flexGrow: 1, backgroundColor: "#1E1E1E" }}>
-        {id ? <ConversationChannelPage id={id} /> : <ConversationPanel />}
+        {id ? <ConversationChannelPage userChatId={id} /> : <ConversationPanel />}
       </Box>
       <Box
         sx={{

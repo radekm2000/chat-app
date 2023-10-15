@@ -5,17 +5,30 @@ import { ConversationChat } from "./ConversationChat";
 import { useQuery } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 import { useUser } from "../../hooks/useUser";
+import { useSocket } from "../../hooks/useSocket";
+import { useChatMsg } from "../../hooks/useChatMsg";
 
 export type UserType = {
   id: number;
   username: string;
   messages: [];
 };
-export const ConversationChannelPage = ({ id }: { id: string }) => {
-  const idToNum = parseInt(id);
+export const ConversationChannelPage = ({
+  userChatId,
+}: {
+  userChatId: string;
+}) => {
+  const idToNum = parseInt(userChatId);
   const axiosAuthorized = useAxiosAuthorized();
   console.log(idToNum);
+  const socket = useSocket()
   const { meUser } = useUser();
+  const {notifications, setNotifications} = useChatMsg()
+
+  socket.on('getNotification', () => {
+    
+  })
+
 
   console.log(meUser);
   const { data: userData, isLoading: isUserDataLoading } = useQuery({
