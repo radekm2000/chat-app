@@ -28,8 +28,7 @@ export const ConversationChat = ({
   const queryClient = useQueryClient();
   const divRef = useRef(null);
   const socket = useSocket();
-  const { chatMessages, setChatMessages, } =
-    useChatMsg();
+  const { chatMessages, setChatMessages } = useChatMsg();
   useEffect(() => {
     socket.on("getMessage", (msg) => {
       console.log("otrzymany event getMessage");
@@ -37,15 +36,12 @@ export const ConversationChat = ({
       console.log("otrzymana wiadomosc z socketa");
       console.log(msg);
       setChatMessages((prev) => [...prev, msg]);
-
-      
     });
 
     return () => {
       socket.off("getMessage");
     };
   });
-
 
   useEffect(() => {
     divRef?.current?.scrollIntoView({ behavior: "instant" });
@@ -85,7 +81,7 @@ export const ConversationChat = ({
   //))
   return (
     <>
-      {chatMessages?.map((message) => (
+      {chatMessages?.map((message, index) => (
         <Box
           key={message.id}
           sx={{
@@ -95,46 +91,59 @@ export const ConversationChat = ({
             alignItems: "center",
           }}
         >
-          <Box
-            sx={{
-              width: "48px",
-              height: "48px",
-              backgroundColor: "white",
-              borderRadius: "50%",
-              display: "flex",
-            }}
-          ></Box>
-          <Box>
-            <Typography
-              component="span"
-              fontFamily={"Arial"}
-              sx={{
-                fontSize: "23px",
-                fontWeight: "500",
-                color: "white",
-                display: "flex",
-              }}
-            >
-              <>
-                {message?.author?.username === meUser ? meUser : user?.username}
+          {index === 0 ||
+          chatMessages[index - 1]?.author?.id !==
+            chatMessages[index]?.author?.id ? (
+            <>
+              <Box key={`${index}-avatar`}
+                sx={{
+                  width: "48px",
+                  height: "48px",
+                  backgroundColor: "white",
+                  borderRadius: "50%",
+                  display: "flex",
+                }}
+              ></Box>
+              <Box key={`${index}-username`}>
                 <Typography
                   component="span"
+                  fontFamily={"Arial"}
                   sx={{
-                    fontSize: "12px",
-                    color: "#A3A3A3",
-                    alignSelf: "center",
-                    marginLeft: "10px",
+                    fontSize: "23px",
+                    fontWeight: "500",
+                    color: "white",
+                    display: "flex",
                   }}
                 >
-                  {formatTimestamp(Date.parse(message.createdAt))}
+                  <>
+                    {message?.author?.username === meUser
+                      ? meUser
+                      : user?.username}
+                    <Typography
+                      component="span"
+                      sx={{
+                        fontSize: "12px",
+                        color: "#A3A3A3",
+                        alignSelf: "center",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      {formatTimestamp(Date.parse(message.createdAt))}
+                    </Typography>
+                  </>
                 </Typography>
-              </>
-            </Typography>
-            <Typography sx={{ fontSize: "18px", color: "#A3A3A3" }}>
+                <Typography key={`${index}-MsgContent`} sx={{ fontSize: "18px", color: "#A3A3A3" }}>
+                  {message.content}
+                  <div ref={divRef}></div>
+                </Typography>
+              </Box>
+            </>
+          ) : (
+            <Typography key={`${index}-plainMsgContent`} sx={{ fontSize: "18px", color: "#A3A3A3", marginLeft: '55px', marginTop: '-25px' }}>
               {message.content}
               <div ref={divRef}></div>
             </Typography>
-          </Box>
+          )}
         </Box>
       ))}
     </>
@@ -144,17 +153,15 @@ export const ConversationChat = ({
 //dodanie profilowego do osoby co pisze nowa wiadomosc
 // // {messages?.map((message, index) => (
 //     <>
-//     {index === 0 || messages[index - 1]?.author !== messages[index]?.author ? (
-//       // Jeśli to pierwsza wiadomość od autora lub zmiana autora, wyświetl zdjęcie
-//       <Box
-//         key={index + "_avatar"}
-//         sx={{
-//           width: "48px",
-//           height: "48px",
-//           backgroundColor: "white",
-//           borderRadius: "50%",
-//           display: "flex",
-//           // Tutaj możesz dodać styl do obrazka użytkownika
-//         }}
-//       ></Box>
-//     ) : null}
+// {index === 0 || messages[index - 1]?.author?.id !== messages[index]?.author?.id ? (
+//   <Box
+//     key={index + "_avatar"}
+//     sx={{
+//       width: "48px",
+//       height: "48px",
+//       backgroundColor: "white",
+//       borderRadius: "50%",
+//       display: "flex",
+//     }}
+//   ></Box>
+// ) : null}
