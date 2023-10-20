@@ -62,6 +62,8 @@ export const SidebarItem = ({ userChatId }) => {
     setNotifications(mNotifications);
   };
 
+
+
   useEffect(() => {
     socket.on("getNotification", (res) => {
       console.log(res);
@@ -96,8 +98,7 @@ export const SidebarItem = ({ userChatId }) => {
         if (conversation?.id === conversationId) {
           setAuthorTypingId(authorId);
           setIsTyping(true);
-        }
-        else return
+        } else return;
       });
     });
 

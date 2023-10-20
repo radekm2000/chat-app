@@ -51,6 +51,11 @@ export const findUserById = async (userId: number) => {
   }
 };
 
+export const uploadImage = async (imgFile) => {
+  const response = await authApi.post("users/upload", imgFile);
+  return response.data;
+};
+
 export const findUserByNickname = async (username: string) => {
   const accessToken = localStorage.getItem("token");
 

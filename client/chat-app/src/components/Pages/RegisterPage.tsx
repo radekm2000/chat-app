@@ -1,11 +1,11 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import TextField from "@mui/material/TextField";
-import { Button, Link } from "@mui/material";
-
+import { Button, IconButton, Input, InputLabel, Link } from "@mui/material";
+import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import { Avatar, Box, Container, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useMutation } from "@tanstack/react-query";
-import { signUpUser } from "../../api/axios";
+import { signUpUser, uploadImage } from "../../api/axios";
 import toast from "react-hot-toast";
 const USERNAME_REGEX = /^.{5,}$/;
 const PWD_REGEX = /^.{8,}$/;
@@ -16,7 +16,34 @@ export const Register = () => {
   console.log(username);
   const [password, setPassword] = useState("");
   const [validPwd, setValidPwd] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log(file);
+      console.log(selectedFile);
+      setSelectedFile(file);
+    }
+  };
+  const uploadSelectedFile = (e) => {
+    const formData = new FormData()
+    e.preventDefault();
+    if (selectedFile) {
+      formData.append('avatar', selectedFile)
+      const { mutate } = imageMutation;
+      mutate(formData);
+    }
+  };
 
+  const imageMutation = useMutation({
+    mutationFn: uploadImage,
+    onSuccess: () => {
+      toast.success("Image uploaded");
+    },
+    onError: () => {
+      toast.error("Image uploading failed");
+    },
+  });
   const [usernameErrorMsg, SetUsernameErrorMsg] = useState("");
 
   const [pwdErrorMsg, SetPwdErrorMsg] = useState("");
@@ -42,7 +69,7 @@ export const Register = () => {
       SetPwdErrorMsg("Password must contain at least 8 characters");
     }
   }, [password, validPwd]);
-  
+
   const mutation = useMutation({
     mutationFn: signUpUser,
     onSuccess: () => {
@@ -114,6 +141,30 @@ export const Register = () => {
             fullWidth
             label="Password"
           ></TextField>
+          <InputLabel
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingBottom: "10px",
+            }}
+            htmlFor="file"
+            className="file"
+          >
+            <Input
+              name="file"
+              id="file"
+              type="file"
+              style={{ display: "none" }}
+              onChange={handleFileInputChange}
+            />
+            <IconButton sx={{}} color="primary" component="span">
+              <AddPhotoAlternateOutlinedIcon />
+            </IconButton>
+            <Typography sx={{ paddingRight: "275px" }} variant="body2">
+              Add an avatar
+            </Typography>
+          </InputLabel>
           <Button
             onClick={handleSubmit}
             type="submit"
@@ -129,6 +180,7 @@ export const Register = () => {
           >
             Already have an account? Sign in
           </Link>
+          <Button onClick={(e) => uploadSelectedFile(e)}>Upload</Button>
         </Box>
       </Container>
     </form>
