@@ -1,17 +1,10 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Input, InputLabel, Typography } from "@mui/material";
+import NotificationsNavbar from "./NotificationsNavbar";
 
 export const NotificationsPanel = () => {
   return (
-    <Box
-      sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-    >
-      <Typography
-        fontFamily={"Readex Pro"}
-        fontSize={"23px"}
-        sx={{ color: "#fff" }}
-      >
-        Notifications panel
-      </Typography>
-    </Box>
+    <>
+      <NotificationsNavbar />
+    </>
   );
 };

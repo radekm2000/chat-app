@@ -7,6 +7,7 @@ import { authApi, getAllUsers, getUserConversations } from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
 import { Redirect, useLocation } from "wouter";
 import crypto from "crypto";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 import { ConversationChannelPage } from "../ConversationChannelPage";
 import { useRefreshToken } from "../../../hooks/useRefreshToken";
@@ -211,6 +212,7 @@ export const SidebarItem = ({ userChatId }) => {
                 }
               }}
             >
+              
               <Box
                 key={`${recipient.id}a`}
                 sx={{

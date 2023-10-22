@@ -1,4 +1,6 @@
 import { Box, Typography } from "@mui/material";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+
 type ConversationNavbarProps = {
   user: Partial<UserType>;
   isUserDataLoading: boolean;
@@ -20,10 +22,12 @@ export const ConversationNavbar = ({
         alignItems: "center",
       }}
     >
-      <Box
-        borderRadius={"50%"}
-        sx={{ width: "64px", height: "64px", backgroundColor: "white" }}
-      ></Box>
+        <AccountCircleRoundedIcon
+          sx={{
+            height: "64px",
+            width: "64px",
+            color: "white",
+          }}/>
       <Typography
         sx={{ paddingLeft: "25px" }}
         fontFamily={"Readex Pro"}

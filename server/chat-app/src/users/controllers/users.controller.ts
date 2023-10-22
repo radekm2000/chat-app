@@ -44,12 +44,23 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('avatar'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
-    const targetFolderPath = `C:\\Users\\radek\\OneDrive\\Pulpit\\chat-app\\server\\chat-app\\src\\uploads\\temp`;
-    if (!fs.existsSync(targetFolderPath)) {
-      fs.mkdirSync(targetFolderPath, { recursive: true });
+    const dirName = __dirname;
+    const modifiedPath = dirName.replace(/\\dist\\/, '\\');
+    console.log('modified path');
+    console.log(modifiedPath);
+    const modifiedPathToSaveAvatarTo = path.join(
+      modifiedPath,
+      '../../uploads/temp',
+    );
+
+    if (!fs.existsSync(modifiedPathToSaveAvatarTo)) {
+      fs.mkdirSync(modifiedPathToSaveAvatarTo, { recursive: true });
     }
 
-    const targetFilePath = path.join(targetFolderPath, file.originalname);
+    const targetFilePath = path.join(
+      modifiedPathToSaveAvatarTo,
+      `2026${file.originalname}`,
+    );
 
     try {
       fs.writeFile(targetFilePath, file.buffer, () => {});
