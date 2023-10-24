@@ -13,6 +13,7 @@ import { Public } from 'src/auth/constants';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
 import * as path from 'path';
+import { multerOptions } from 'src/upload/single-upload-disk';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -41,38 +42,38 @@ export class UsersController {
 
   @Public()
   @Post('upload')
-  @UseInterceptors(FileInterceptor('avatar'))
+  @UseInterceptors(FileInterceptor('avatar', multerOptions))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
-    const dirName = __dirname;
-    const modifiedPath = dirName.replace(/\\dist\\/, '\\');
-    console.log('modified path');
-    console.log(modifiedPath);
-    const modifiedPathToSaveAvatarTo = path.join(
-      modifiedPath,
-      '../../uploads/temp',
-    );
+    // const dirName = __dirname;
+    // const modifiedPath = dirName.replace(/\\dist\\/, '\\');
+    // console.log('modified path');
+    // console.log(modifiedPath);
+    // const modifiedPathToSaveAvatarTo = path.join(
+    //   modifiedPath,
+    //   '../../uploads/temp',
+    // );
 
-    if (!fs.existsSync(modifiedPathToSaveAvatarTo)) {
-      fs.mkdirSync(modifiedPathToSaveAvatarTo, { recursive: true });
-    }
+    // if (!fs.existsSync(modifiedPathToSaveAvatarTo)) {
+    //   fs.mkdirSync(modifiedPathToSaveAvatarTo, { recursive: true });
+    // }
 
-    const targetFilePath = path.join(
-      modifiedPathToSaveAvatarTo,
-      `2026${file.originalname}`,
-    );
+    // const targetFilePath = path.join(
+    //   modifiedPathToSaveAvatarTo,
+    //   `${Date.now()}${file.originalname}`,
+    // );
 
-    try {
-      fs.writeFile(targetFilePath, file.buffer, () => {});
-      console.log('Plik został zapisany w: ', targetFilePath);
-      return {
-        status: 'success',
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        status: 'error',
-      };
-    }
+    // try {
+    //   fs.writeFile(targetFilePath, file.buffer, () => {});
+    //   console.log('Plik został zapisany w: ', targetFilePath);
+    //   return {
+    //     status: 'success',
+    //   };
+    // } catch (error) {
+    //   console.error(error);
+    //   return {
+    //     status: 'error',
+    //   };
+    // }
   }
 }
