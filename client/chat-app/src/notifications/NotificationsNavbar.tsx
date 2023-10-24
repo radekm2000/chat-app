@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Icon,
+  IconButton,
   Input,
   InputLabel,
   Typography,
@@ -16,7 +17,7 @@ export const NotificationsNavbar = () => {
   const [isAvatarIconOpen, setIsAvatarIconOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [hasAvatar, setHasAvatar] = useState(false);
-  const fileInputRef = useRef(null);
+  console.log(isAvatarIconOpen);
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -24,15 +25,11 @@ export const NotificationsNavbar = () => {
       console.log(selectedFile);
       setSelectedFile(file);
     }
+    e.target.value = null;
   };
-  const handleSetAvatarClick = (e) => {
-    e.preventDefault();
-    console.log("avatar clicked");
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
+
   const uploadSelectedFile = (e) => {
+    console.log("clicked");
     const formData = new FormData();
     if (selectedFile) {
       formData.append("avatar", selectedFile);
@@ -40,6 +37,7 @@ export const NotificationsNavbar = () => {
       mutate(formData);
     }
     setSelectedFile(null);
+    setIsAvatarIconOpen(false);
   };
   const imageMutation = useMutation({
     mutationFn: uploadImage,
@@ -66,56 +64,59 @@ export const NotificationsNavbar = () => {
           alignItems: "center",
           cursor: "pointer",
         }}
-        onClick={() => setIsAvatarIconOpen(!isAvatarIconOpen)}
       >
-        <AccountCircleRoundedIcon
-          onClick={(e) => handleSetAvatarClick(e)}
-          sx={{
-            height: "64px",
-            width: "64px",
-            color: "white",
-          }}
-        />
-        {isAvatarIconOpen && (
-          <Box
+        <IconButton onClick={() => setIsAvatarIconOpen(!isAvatarIconOpen)}>
+          <AccountCircleRoundedIcon
             sx={{
-              display: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#808080",
-              padding: "8px 16px",
-              width: "fit-content",
-              marginLeft: "8px",
-              borderRadius: "6px",
+              height: "64px",
+              width: "64px",
+              color: "white",
             }}
-          >
-            <InputLabel
-              htmlFor="avatar"
-              sx={{
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: "lightgrey",
-                  opacity: "0.8",
+          />
+        </IconButton>
+        <Box
+          sx={{
+            display: "column",
+          }}
+        >
+          {isAvatarIconOpen && (
+            <>
+              <InputLabel
+                htmlFor="avatar"
+                className="avatar"
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "lightgrey",
+                    opacity: "0.8",
+                    borderRadius: "6px",
+                  },
+                  fontFamily: "Readex Pro",
+                  fontSize: "1rem",
+                  color: "white",
+                  fontWeight: "300",
+                  lineHeight: "1.5",
+                  justifyContent: "center",
+                  padding: "8px 16px",
+                  marginLeft: "8px",
                   borderRadius: "6px",
-                },
-                fontFamily: "Readex Pro",
-                fontSize: "1rem",
-                color: "white",
-                fontWeight: "300",
-                lineHeight: "1.5",
-              }}
-            >
-              Set an avatar
-            </InputLabel>
-            <Input
-              id="avatar"
-              name="file"
-              type="file"
-              style={{ display: "none" }}
-              onChange={handleFileInputChange}
-            />
-
+                  backgroundColor: "lightgrey",
+                }}
+              >
+                Set an avatar
+                <Input
+                  id="avatar"
+                  name="avatar"
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => handleFileInputChange(e)}
+                />
+              </InputLabel>
+            </>
+          )}
+          {selectedFile && (
             <Button
+              type="submit"
               variant="contained"
               sx={{
                 opacity: "0.9",
@@ -124,13 +125,15 @@ export const NotificationsNavbar = () => {
                 fontSize: "0.75rem",
                 color: "white",
                 fontWeight: "300",
+                marginLeft: "8px",
+                marginTop: "8px",
               }}
               onClick={uploadSelectedFile}
             >
               Upload
             </Button>
-          </Box>
-        )}
+          )}
+        </Box>
       </Box>
     </Box>
   );
