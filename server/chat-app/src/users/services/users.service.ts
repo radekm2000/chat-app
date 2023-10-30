@@ -80,4 +80,6 @@ export class UsersService implements IUserService {
     console.log(users);
     return users;
   }
+
+  async saveUserAvatar() {}
 }

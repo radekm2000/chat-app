@@ -2,21 +2,38 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+
 import { UsersService } from '../services/users.service';
 import { FindUserParams } from 'src/utils/types/types';
 import { Public } from 'src/auth/constants';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
+import * as sharp from 'sharp';
 import * as path from 'path';
 import { multerOptions } from 'src/upload/single-upload-disk';
+import { AuthUser } from 'src/decorators/user.decorator';
+import { User } from 'src/utils/entities/user.entity';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { s3 } from 'src/main';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Avatar } from 'src/utils/entities/avatar.entity';
+import { Repository } from 'typeorm';
+const bucketName = process.env.BUCKET_NAME;
+
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    @InjectRepository(Avatar) private avatarRepository: Repository<Avatar>,
+  ) {}
 
   @Get()
   async getUsers() {
@@ -40,40 +57,39 @@ export class UsersController {
     return await this.usersService.findUserIdByNickname(findUserParams);
   }
 
-  @Public()
   @Post('upload')
-  @UseInterceptors(FileInterceptor('avatar', multerOptions))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
-    // const dirName = __dirname;
-    // const modifiedPath = dirName.replace(/\\dist\\/, '\\');
-    // console.log('modified path');
-    // console.log(modifiedPath);
-    // const modifiedPathToSaveAvatarTo = path.join(
-    //   modifiedPath,
-    //   '../../uploads/temp',
-    // );
+  @UseInterceptors(FileInterceptor('avatar'))
+  async uploadFile(@AuthUser() user: User, @UploadedFile() file) {
+    const buffer = await sharp(file.buffer)
+      .resize({
+        height: 64,
+        width: 64,
+        fit: 'contain',
+      })
+      .toBuffer();
+    const imageName = `${uuid()}${file.originalname}`;
+    const params = {
+      Bucket: bucketName,
+      Key: imageName,
+      Body: buffer,
+      ContentType: file.mimetype,
+    };
 
-    // if (!fs.existsSync(modifiedPathToSaveAvatarTo)) {
-    //   fs.mkdirSync(modifiedPathToSaveAvatarTo, { recursive: true });
-    // }
+    const existingUser = await this.usersService.findUser({ id: user.id });
+    if (!existingUser) {
+      throw new HttpException(
+        'Cannot find user with that id',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const avatar = new Avatar();
+    avatar.imageName = imageName;
+    await this.avatarRepository.save(avatar);
 
-    // const targetFilePath = path.join(
-    //   modifiedPathToSaveAvatarTo,
-    //   `${Date.now()}${file.originalname}`,
-    // );
+    existingUser.avatar = avatar;
+    await this.usersService.saveUser(existingUser);
 
-    // try {
-    //   fs.writeFile(targetFilePath, file.buffer, () => {});
-    //   console.log('Plik został zapisany w: ', targetFilePath);
-    //   return {
-    //     status: 'success',
-    //   };
-    // } catch (error) {
-    //   console.error(error);
-    //   return {
-    //     status: 'error',
-    //   };
-    // }
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
   }
 }

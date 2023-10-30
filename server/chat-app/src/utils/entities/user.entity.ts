@@ -5,9 +5,11 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   BeforeInsert,
+  OneToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Message } from './message.entity';
+import { Avatar } from './avatar.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -24,6 +26,10 @@ export class User {
   @OneToMany((type) => Message, (message) => message.author)
   @JoinColumn()
   messages: Message[];
+
+  @OneToOne((type) => Avatar, (avatar) => avatar)
+  @JoinColumn()
+  avatar: Avatar;
 
   @BeforeInsert()
   async hashPassword() {
