@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'ormconfig';
 import { MessagesModule } from './messages/messages.module';
 import { ConversationsModule } from './conversations/conversations.module';
+import { AvatarsModule } from './avatars/avatars.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConversationsModule } from './conversations/conversations.module';
     TypeOrmModule.forRoot(config),
     MessagesModule,
     ConversationsModule,
+    AvatarsModule,
   ],
   controllers: [],
   providers: [],

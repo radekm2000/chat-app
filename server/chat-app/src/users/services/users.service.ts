@@ -47,11 +47,11 @@ export class UsersService implements IUserService {
         username: findUserParams.username,
         id: findUserParams.id,
       },
-      relations: ['messages'],
+      relations: ['messages', 'avatar'],
     });
   }
 
-  async findUserIdByNickname(
+  async  findUserIdByNickname(
     findUserParams: Partial<{ username: string; id: number }>,
   ) {
     const user = await this.userRepository.findOne({

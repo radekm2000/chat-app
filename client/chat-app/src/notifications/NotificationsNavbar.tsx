@@ -8,16 +8,21 @@ import {
   InputLabel,
   Typography,
 } from "@mui/material";
+import { Image } from "mui-image";
+
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import { useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { uploadImage } from "../api/axios";
+import { useAxiosAuthorized } from "../hooks/useAxiosAuthorized";
 export const NotificationsNavbar = () => {
   const [isAvatarIconOpen, setIsAvatarIconOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [hasAvatar, setHasAvatar] = useState(false);
   console.log(isAvatarIconOpen);
+  const axiosAuthorized = useAxiosAuthorized();
+
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -27,6 +32,20 @@ export const NotificationsNavbar = () => {
     }
     e.target.value = null;
   };
+
+  const { data: userImage, refetch } = useQuery({
+    queryKey: ["user/avatar"],
+    queryFn: async () => {
+      const response = await axiosAuthorized.get("avatars/avatar");
+      return response.data;
+    },
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (userImage) setHasAvatar(true);
+    console.log(userImage);
+  }, [hasAvatar, userImage]);
 
   const uploadSelectedFile = (e) => {
     console.log("clicked");
@@ -65,15 +84,20 @@ export const NotificationsNavbar = () => {
           cursor: "pointer",
         }}
       >
-        <IconButton onClick={() => setIsAvatarIconOpen(!isAvatarIconOpen)}>
-          <AccountCircleRoundedIcon
-            sx={{
-              height: "64px",
-              width: "64px",
-              color: "white",
-            }}
-          />
-        </IconButton>
+        {hasAvatar ? (
+          <Image src={userImage} width={64} height={64} alt="userAvatar" style={{borderRadius: '50%'}} />
+        ) : (
+          <IconButton onClick={() => setIsAvatarIconOpen(!isAvatarIconOpen)}>
+            <AccountCircleRoundedIcon
+              sx={{
+                height: "64px",
+                width: "64px",
+                color: "white",
+              }}
+            />
+          </IconButton>
+        )}
+
         <Box
           sx={{
             display: "column",

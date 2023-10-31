@@ -10,7 +10,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { UsersService } from '../services/users.service';
 import { FindUserParams } from 'src/utils/types/types';
 import { Public } from 'src/auth/constants';
@@ -38,6 +39,23 @@ export class UsersController {
   @Get()
   async getUsers() {
     return this.usersService.getAllUsers();
+  }
+
+  @Get('avatars')
+  async getUsersAvatars() {
+    const avatars = await this.avatarRepository.find({});
+
+    for (const avatar of avatars) {
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: avatar.imageName,
+      };
+      const command = new GetObjectCommand(getObjectParams);
+      const url = await getSignedUrl(s3, command, { expiresIn: 36000 });
+      avatar.imageUrl = url;
+    }
+
+    console.log(avatars);
   }
 
   @Get('search')

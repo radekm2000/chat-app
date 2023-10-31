@@ -27,7 +27,10 @@ export class User {
   @JoinColumn()
   messages: Message[];
 
-  @OneToOne((type) => Avatar, (avatar) => avatar)
+  @OneToOne((type) => Avatar, (avatar) => avatar, {
+    cascade: ['insert', 'remove', 'update'],
+    createForeignKeyConstraints: false,
+  })
   @JoinColumn()
   avatar: Avatar;
 
