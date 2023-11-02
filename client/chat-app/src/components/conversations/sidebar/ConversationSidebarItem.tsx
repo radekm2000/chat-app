@@ -1,19 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import users from "../../../users.json";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
-import { authApi, getAllUsers, getUserConversations } from "../../../api/axios";
+import { Image } from "mui-image";
+
+import {
+  authApi,
+  getAllUsers,
+  getAvatarById,
+  getUserConversations,
+} from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
 import { Redirect, useLocation } from "wouter";
 import crypto from "crypto";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-
 import { ConversationChannelPage } from "../ConversationChannelPage";
 import { useRefreshToken } from "../../../hooks/useRefreshToken";
 import { useSocket } from "../../../hooks/useSocket";
 import useId from "@mui/material/utils/useId";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
 import {
@@ -28,6 +34,18 @@ type User = {
   id: string;
   username: string;
 };
+type Recipient = {
+  username: string;
+  lastMessageSent: Message;
+  lastMessageSentAt: string; // Zakładam, że to jest typ daty, można dostosować
+  id: string;
+  avatar: string; // Zakładam, że avatar jest łańcuchem, można dostosować
+};
+type Message = {
+  id: string;
+  content: string;
+  createdAt: string; // Możesz dostosować ten typ, jeśli to jest data
+};
 
 type UsersData = User[];
 
@@ -40,7 +58,12 @@ export const SidebarItem = ({ userChatId }) => {
   const [authorTypingId, setAuthorTypingId] = useState(null);
   const axiosAuthorized = useAxiosAuthorized();
   const queryClient = useQueryClient();
+  const [ppl, setPpl] = useState<Array<Recipient>>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [updatedSortedRecipients, setUpdatedSortedRecipients] = useState<
+    Array<Recipient>
+  >([]);
+
   const { notifications, setNotifications } = useChatMsg();
   const [isChatOpen, setIsChatOpen] = useState(false);
   console.log("notifications: ", notifications);
@@ -62,8 +85,6 @@ export const SidebarItem = ({ userChatId }) => {
     });
     setNotifications(mNotifications);
   };
-
-
 
   useEffect(() => {
     socket.on("getNotification", (res) => {
@@ -117,7 +138,6 @@ export const SidebarItem = ({ userChatId }) => {
   //   queryKey: ["users"],
   //   queryFn: getAllUsers,
   // });
-
   useEffect(() => {
     socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
       setOnlineUsers(onlineUsers);
@@ -132,7 +152,7 @@ export const SidebarItem = ({ userChatId }) => {
   const handleUserChatClick = async (userId: string) => {
     setLocation(`/conversations/${userId}`);
   };
-  const { data } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: ["conversations"],
     queryFn: getUserConversations,
   });
@@ -142,17 +162,21 @@ export const SidebarItem = ({ userChatId }) => {
   });
 
   console.log(data);
-  const recipients =
-    data?.map((conversation) => {
-      const recipient = getRecipientFromConversation(conversation, meUser);
-      const { lastMessageSent, lastMessageSentAt } = conversation;
-      return {
-        username: recipient.username,
-        lastMessageSent,
-        lastMessageSentAt,
-        id: recipient.id,
-      };
-    }) || [];
+  const recipients = useMemo(() => {
+    return (
+      data?.map((conversation) => {
+        const recipient = getRecipientFromConversation(conversation, meUser);
+        const { lastMessageSent, lastMessageSentAt } = conversation;
+        return {
+          username: recipient.username,
+          lastMessageSent,
+          lastMessageSentAt,
+          id: recipient.id,
+        };
+      }) || []
+    );
+  }, [data, meUser]);
+
   const unreadNotifications = unreadNotificationsFunc(notifications);
   const thisUserNotifications = unreadNotifications?.filter((notification) => {
     return recipients.some(
@@ -161,29 +185,65 @@ export const SidebarItem = ({ userChatId }) => {
   });
 
   console.log("this user notifications: ", thisUserNotifications);
-  const sortedRecipients = [...recipients].sort((a, b) => {
+  let sortedRecipients = [...recipients].sort((a, b) => {
     const dateA = new Date(b.lastMessageSentAt).getTime();
     const dateB = new Date(a.lastMessageSentAt).getTime();
     const differenceInMilliseconds = dateA - dateB;
     return differenceInMilliseconds;
   });
-  console.log(sortedRecipients);
-  console.log(recipients);
-  //sorted recipients is an array of objects that have properties :
-  // username, lastMessageSent,lastMessageSentAt, id
+  useEffect(() => {
+    const addAvatarsToRecipients = async (recipients) => {
+      return Promise.all(
+        recipients.map(async (recipient) => {
+          const avatar = await getAvatarById(recipient?.id);
 
-  // const { data } = useQuery<UsersData>(["users/get"], async () => {
-  //   try {
-  //     const response = await axiosAuthorized.get("users");
-  //     return response.data;
-  //   } catch (error) {
-  //     return;
-  //   }
-  // });
+          return {
+            ...recipient,
+            avatar,
+          };
+        })
+      );
+    };
+    addAvatarsToRecipients(sortedRecipients)
+      .then((sortedRecipientsWithAvatars) => {
+        const updatedRecipients = sortedRecipients.map((recipient) => {
+          const matchingAvatarRecipient = sortedRecipientsWithAvatars.find(
+            (r) => r.id === recipient.id
+          );
+          if (matchingAvatarRecipient) {
+            return { ...recipient, avatar: matchingAvatarRecipient.avatar };
+          }
+          return recipient;
+        });
+        setPpl(updatedRecipients);
+        console.log("---------");
+        console.log(updatedRecipients); // it logs proper ppl with avatars
+        // but only after re rendering on the1st time its empty array
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  console.log(sortedRecipients);
+
+  const addAvatarsToRecipients = async (recipients) => {
+    return Promise.all(
+      recipients.map(async (recipient) => {
+        const avatar = await getAvatarById(recipient?.id);
+
+        return {
+          ...recipient,
+          avatar,
+        };
+      })
+    );
+  };
+
   return (
     <>
-      {sortedRecipients &&
-        sortedRecipients?.map((recipient) => {
+      {ppl &&
+        ppl?.map((recipient) => {
           const recipientNotifications = thisUserNotifications?.filter(
             (notification) => notification.senderId === recipient.id
           );
@@ -212,7 +272,6 @@ export const SidebarItem = ({ userChatId }) => {
                 }
               }}
             >
-              
               <Box
                 key={`${recipient.id}a`}
                 sx={{
@@ -223,21 +282,36 @@ export const SidebarItem = ({ userChatId }) => {
                   position: "relative",
                 }}
               >
-                {onlineUsers.some(
-                  (onlineUser) => onlineUser?.userId === recipient?.id
-                ) ? (
-                  <Box
-                    sx={{
-                      width: "12px",
-                      height: "12px",
-                      backgroundColor: "#0DE638",
-                      borderRadius: "50%",
-                      position: "absolute",
-                      bottom: "2px",
-                      right: "3px",
-                    }}
-                  ></Box>
-                ) : null}
+                <>
+                  <IconButton sx={{ position: "relative" }}>
+                    {recipient.avatar && (
+                      <Image
+                        src={recipient?.avatar || ""}
+                        alt="hehe"
+                        width={48}
+                        height={48}
+                        style={{ position: "relative", borderRadius: "50%" }}
+                      />
+                    )}
+                    {!recipient?.avatar && <AccountCircleRoundedIcon sx={{width: '48px', height: '48px'}} />}
+                  </IconButton>
+                  {console.log(recipient?.avatar)}
+                  {onlineUsers.some(
+                    (onlineUser) => onlineUser?.userId === recipient?.id
+                  ) ? (
+                    <Box
+                      sx={{
+                        width: "12px",
+                        height: "12px",
+                        backgroundColor: "#0DE638",
+                        borderRadius: "50%",
+                        position: "absolute",
+                        bottom: "2px",
+                        right: "3px",
+                      }}
+                    ></Box>
+                  ) : null}
+                </>
               </Box>
               <Box key={`${recipient.id}b`}>
                 <Typography

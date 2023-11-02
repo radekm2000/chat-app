@@ -107,3 +107,16 @@ export const getUserConversations = async () => {
   }
 };
 
+export const getAvatarById = async (userId: number) => {
+  const accessToken = localStorage.getItem("token");
+  try {
+    const response = await authApi.get(`avatars/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

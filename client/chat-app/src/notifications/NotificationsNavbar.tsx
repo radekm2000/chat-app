@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Image } from "mui-image";
 
-import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+  import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -85,7 +85,15 @@ export const NotificationsNavbar = () => {
         }}
       >
         {hasAvatar ? (
-          <Image src={userImage} width={64} height={64} alt="userAvatar" style={{borderRadius: '50%'}} />
+          <IconButton onClick={() => setIsAvatarIconOpen(!isAvatarIconOpen)}>
+            <Image
+              src={userImage}
+              width={64}
+              height={64}
+              alt="userAvatar"
+              style={{ borderRadius: "50%" }}
+            />
+          </IconButton>
         ) : (
           <IconButton onClick={() => setIsAvatarIconOpen(!isAvatarIconOpen)}>
             <AccountCircleRoundedIcon

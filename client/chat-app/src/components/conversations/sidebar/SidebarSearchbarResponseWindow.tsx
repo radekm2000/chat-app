@@ -91,6 +91,7 @@ export const SidebarSearchbarResponseWindow = ({
             onClick={() => handleUserWindowClick(user.id)}
             key={user.id}
             sx={{
+              cursor: 'pointer',
               display: "flex",
               alignItems: "center",
               gap: "10px",
