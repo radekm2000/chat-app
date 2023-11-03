@@ -242,8 +242,8 @@ export const SidebarItem = ({ userChatId }) => {
 
   return (
     <>
-      {ppl &&
-        ppl?.map((recipient) => {
+      {sortedRecipients &&
+        sortedRecipients?.map((recipient) => {
           const recipientNotifications = thisUserNotifications?.filter(
             (notification) => notification.senderId === recipient.id
           );
@@ -251,6 +251,7 @@ export const SidebarItem = ({ userChatId }) => {
             <Box
               key={recipient.id}
               sx={{
+                cursor: 'pointer',
                 padding: "13px 0px",
                 display: "flex",
                 alignItems: "center",

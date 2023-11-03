@@ -7,6 +7,8 @@ import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 import { useUser } from "../../hooks/useUser";
 import { useSocket } from "../../hooks/useSocket";
 import { useChatMsg } from "../../hooks/useChatMsg";
+import { useEffect, useState } from "react";
+import { getAvatarById } from "../../api/axios";
 
 export type UserType = {
   id: number;
@@ -21,14 +23,12 @@ export const ConversationChannelPage = ({
   const idToNum = parseInt(userChatId);
   const axiosAuthorized = useAxiosAuthorized();
   console.log(idToNum);
-  const socket = useSocket()
+  const socket = useSocket();
   const { meUser } = useUser();
-  const {notifications, setNotifications} = useChatMsg()
+  const [avatarImage, setAvatarImage] = useState("");
+  const { notifications, setNotifications } = useChatMsg();
 
-  socket.on('getNotification', () => {
-    
-  })
-
+  socket.on("getNotification", () => {});
 
   console.log(meUser);
   const { data: userData, isLoading: isUserDataLoading } = useQuery({
@@ -40,6 +40,22 @@ export const ConversationChannelPage = ({
       return response.data;
     },
   });
+
+  if (!isUserDataLoading) {
+    const userId = userData?.id;
+    if (userId) {
+      getAvatarById(userId)
+        .then((avatarData) => {
+          setAvatarImage(avatarData)
+        })
+        .catch((error) => {
+          console.error("Błąd podczas pobierania danych o avatarze:", error);
+        });
+    }
+  }
+
+  console.log('avatar image xddd -------------------------')
+  console.log(avatarImage)
   //userData: id, username, messages
   //conversationData: createdAt, creator, recipient, lastMessageSent,
   //lastMessageSentAt, id, messages
@@ -84,6 +100,7 @@ export const ConversationChannelPage = ({
       <ConversationNavbar
         user={userData}
         isUserDataLoading={isUserDataLoading}
+        userImage={avatarImage}
       />
       <Typography
         fontFamily={"Readex Pro"}
@@ -102,6 +119,8 @@ export const ConversationChannelPage = ({
           conversation={conversationData}
           isUserDataLoading={isUserDataLoading}
           isConversationDataLoading={isConversationDataLoading}
+          userImage={avatarImage}
+
         />
       </Box>
       <ConversationInputPanel
@@ -109,6 +128,7 @@ export const ConversationChannelPage = ({
         isUserDataLoading={isUserDataLoading}
         conversation={conversationData}
         isConversationDataLoading={isConversationDataLoading}
+
       />
     </Box>
   );

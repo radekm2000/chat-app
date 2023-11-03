@@ -1,9 +1,10 @@
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 type ConversationNavbarProps = {
   user: Partial<UserType>;
   isUserDataLoading: boolean;
+  userImage: string
 };
 export type UserType = {
   id: number;
@@ -12,7 +13,9 @@ export type UserType = {
 export const ConversationNavbar = ({
   user,
   isUserDataLoading,
+  userImage
 }: ConversationNavbarProps) => {
+
   return !isUserDataLoading ? (
     <Box
       sx={{
@@ -22,12 +25,20 @@ export const ConversationNavbar = ({
         alignItems: "center",
       }}
     >
+      {userImage ? (
+        <IconButton>
+          <Avatar src={userImage} alt="user Avatar" style={{height: '64px', width: '64px'}}/>
+        </IconButton>
+      ) : (
+        
         <AccountCircleRoundedIcon
           sx={{
             height: "64px",
             width: "64px",
             color: "white",
           }}/>
+      )}
+
       <Typography
         sx={{ paddingLeft: "25px" }}
         fontFamily={"Readex Pro"}
