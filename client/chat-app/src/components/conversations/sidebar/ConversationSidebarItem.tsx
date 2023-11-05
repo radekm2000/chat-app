@@ -192,6 +192,9 @@ export const SidebarItem = ({ userChatId }) => {
     return differenceInMilliseconds;
   });
   useEffect(() => {
+    if (sortedRecipients.length === 0) {
+      return;
+    }
     const addAvatarsToRecipients = async (recipients) => {
       return Promise.all(
         recipients.map(async (recipient) => {
@@ -223,7 +226,7 @@ export const SidebarItem = ({ userChatId }) => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [recipients]);
 
   console.log(sortedRecipients);
 
@@ -242,8 +245,8 @@ export const SidebarItem = ({ userChatId }) => {
 
   return (
     <>
-      {sortedRecipients &&
-        sortedRecipients?.map((recipient) => {
+      {ppl &&
+        ppl?.map((recipient) => {
           const recipientNotifications = thisUserNotifications?.filter(
             (notification) => notification.senderId === recipient.id
           );
@@ -251,7 +254,7 @@ export const SidebarItem = ({ userChatId }) => {
             <Box
               key={recipient.id}
               sx={{
-                cursor: 'pointer',
+                cursor: "pointer",
                 padding: "13px 0px",
                 display: "flex",
                 alignItems: "center",
@@ -278,41 +281,37 @@ export const SidebarItem = ({ userChatId }) => {
                 sx={{
                   width: "48px",
                   height: "48px",
-                  backgroundColor: "blue",
-                  borderRadius: "50%",
                   position: "relative",
                 }}
               >
-                <>
-                  <IconButton sx={{ position: "relative" }}>
-                    {recipient.avatar && (
-                      <Image
-                        src={recipient?.avatar || ""}
-                        alt="hehe"
-                        width={48}
-                        height={48}
-                        style={{ position: "relative", borderRadius: "50%" }}
-                      />
-                    )}
-                    {!recipient?.avatar && <AccountCircleRoundedIcon sx={{width: '48px', height: '48px'}} />}
-                  </IconButton>
-                  {console.log(recipient?.avatar)}
-                  {onlineUsers.some(
-                    (onlineUser) => onlineUser?.userId === recipient?.id
-                  ) ? (
-                    <Box
-                      sx={{
-                        width: "12px",
-                        height: "12px",
-                        backgroundColor: "#0DE638",
-                        borderRadius: "50%",
-                        position: "absolute",
-                        bottom: "2px",
-                        right: "3px",
-                      }}
-                    ></Box>
-                  ) : null}
-                </>
+                {recipient?.avatar ? (
+                  <Image
+                    src={recipient.avatar || ""}
+                    alt="userAvatar"
+                    width={48}
+                    height={48}
+                    style={{ borderRadius: "50%" }}
+                  />
+                ) : (
+                  <AccountCircleRoundedIcon
+                    sx={{ width: "48px", height: "48px", color: "white" }}
+                  />
+                )}
+                {onlineUsers.some(
+                  (onlineUser) => onlineUser?.userId === recipient?.id
+                ) ? (
+                  <Box
+                    sx={{
+                      width: "12px",
+                      height: "12px",
+                      backgroundColor: "#0DE638",
+                      borderRadius: "50%",
+                      position: "absolute",
+                      bottom: "2px",
+                      right: "3px",
+                    }}
+                  ></Box>
+                ) : null}
               </Box>
               <Box key={`${recipient.id}b`}>
                 <Typography

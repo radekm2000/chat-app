@@ -40,11 +40,11 @@ export const ConversationNavbar = ({
       )}
 
       <Typography
-        sx={{ paddingLeft: "25px" }}
+        sx={{ paddingLeft: "15px" }}
         fontFamily={"Readex Pro"}
         fontSize={"23px"}
         color={"#fff"}
-        variant="h5"
+        variant="h5" 
       >
         {user?.username}
       </Typography>
