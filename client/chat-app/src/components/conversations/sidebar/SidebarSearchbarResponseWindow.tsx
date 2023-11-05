@@ -1,12 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import { useLocation } from "wouter";
 import { useAuth } from "../../../hooks/useAuth";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
 import { useUser } from "../../../hooks/useUser";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { createConversationApi } from "../../../api/axios";
 import toast from "react-hot-toast";
 import { useSocket } from "../../../hooks/useSocket";
+import { useEffect, useState } from "react";
+import { addAvatarsToRecipients } from "../../../utils/addAvatarToRecipients";
+import Image from "mui-image";
 
 export const SidebarSearchbarResponseWindow = ({
   data,
@@ -19,7 +24,7 @@ export const SidebarSearchbarResponseWindow = ({
   const { meUser } = useUser();
   const queryClient = useQueryClient();
   const socket = useSocket();
-
+  const [users, setUsers] = useState([]);
   const mutation = useMutation({
     mutationFn: createConversationApi,
     mutationKey: ["conversations/create"],
@@ -76,6 +81,35 @@ export const SidebarSearchbarResponseWindow = ({
     // createConversation(username);
     mutate({ username });
   };
+
+  console.log("dane z searchbara ------s ");
+  console.log(data);
+
+  useEffect(() => {
+    if (data.length === 0) {
+      setUsers([]);
+    }
+
+    addAvatarsToRecipients(data)
+      .then((usersWithAvatars) => {
+        const updatedUsers = data.map((user) => {
+          const matchingAvatarUser = usersWithAvatars.find(
+            (u) => u?.id === user?.id
+          );
+
+          if (matchingAvatarUser) {
+            return { ...user, avatar: matchingAvatarUser.avatar };
+          }
+          return user;
+        });
+        setUsers(updatedUsers);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [data]);
+  console.log("users with avatars");
+  console.log(users);
   return (
     <Box
       sx={{
@@ -85,13 +119,13 @@ export const SidebarSearchbarResponseWindow = ({
       }}
     >
       {isLoading && <Typography>Loading...</Typography>}
-      {data &&
-        data.map((user) => (
+      {users &&
+        users.map((user) => (
           <Box
-            onClick={() => handleUserWindowClick(user.id)}
-            key={user.id}
+            onClick={() => handleUserWindowClick(user?.id)}
+            key={user?.id}
             sx={{
-              cursor: 'pointer',
+              cursor: "pointer",
               display: "flex",
               alignItems: "center",
               gap: "10px",
@@ -112,17 +146,30 @@ export const SidebarSearchbarResponseWindow = ({
               sx={{
                 width: "32px",
                 height: "32px",
-                backgroundColor: "blue",
-                borderRadius: "50%",
               }}
-            ></Box>
-            <Box key={user.id}>
+            >
+              {user?.avatar ? (
+                <Image
+                  src={user?.avatar || ""}
+                  alt="userSearchBarAvatar"
+                  width={32}
+                  height={32}
+                  style={{ borderRadius: "50%" }}
+                  duration={0}
+                />
+              ) : (
+                <AccountCircleRoundedIcon
+                  sx={{ width: "32px", height: "32px", color: "white" }}
+                />
+              )}
+            </Box>
+            <Box key={user?.id}>
               <Typography
                 fontFamily={"Readex Pro"}
                 fontSize={"16px"}
                 color={"white"}
               >
-                {user.username == meUser ? "Me" : user.username}
+                {user?.username == meUser ? "Me" : user?.username}
               </Typography>
             </Box>
           </Box>

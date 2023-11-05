@@ -291,6 +291,7 @@ export const SidebarItem = ({ userChatId }) => {
                     width={48}
                     height={48}
                     style={{ borderRadius: "50%" }}
+                    duration={0}
                   />
                 ) : (
                   <AccountCircleRoundedIcon

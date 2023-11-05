@@ -55,6 +55,7 @@ export const NotificationsNavbar = () => {
       const { mutate } = imageMutation;
       mutate(formData);
     }
+    setHasAvatar(false)
     setSelectedFile(null);
     setIsAvatarIconOpen(false);
   };
@@ -62,6 +63,7 @@ export const NotificationsNavbar = () => {
     mutationFn: uploadImage,
     onSuccess: () => {
       toast.success("Image uploaded");
+      refetch()
     },
     onError: () => {
       toast.error("Image uploading failed");
