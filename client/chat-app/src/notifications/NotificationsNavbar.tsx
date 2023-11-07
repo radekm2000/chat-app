@@ -1,17 +1,8 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Icon,
-  IconButton,
-  Input,
-  InputLabel,
-  Typography,
-} from "@mui/material";
+import { Box, Button, IconButton, Input, InputLabel } from "@mui/material";
 import { Image } from "mui-image";
 
-  import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import { useEffect, useRef, useState } from "react";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { uploadImage } from "../api/axios";
@@ -55,7 +46,7 @@ export const NotificationsNavbar = () => {
       const { mutate } = imageMutation;
       mutate(formData);
     }
-    setHasAvatar(false)
+    setHasAvatar(false);
     setSelectedFile(null);
     setIsAvatarIconOpen(false);
   };
@@ -63,7 +54,7 @@ export const NotificationsNavbar = () => {
     mutationFn: uploadImage,
     onSuccess: () => {
       toast.success("Image uploaded");
-      refetch()
+      refetch();
     },
     onError: () => {
       toast.error("Image uploading failed");

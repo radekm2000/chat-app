@@ -85,7 +85,6 @@ export const ConversationChat = ({
   if (isLoading) {
     return console.log("isLoading");
   }
-
   console.log(`pobrane wiadomosci z konwersacji o id: ${conversation?.id}`);
   console.log(data);
   console.log(meUser);
@@ -196,7 +195,7 @@ export const ConversationChat = ({
   return (
     <>
       {chatMessages?.map((message, index) => {
-        const isMyMessage = message?.author?.username === meUser // Zakładając, że masz zmienną meUser reprezentującą twojego użytkownika
+        const isMyMessage = message?.author?.username === meUser; // Zakładając, że masz zmienną meUser reprezentującą twojego użytkownika
 
         const imageToShow = isMyMessage ? meUserImage : userImage; // Wybieramy odpowiednią zmienną userImage
 
@@ -266,16 +265,19 @@ export const ConversationChat = ({
                     </>
                   </Typography>
                   <Typography
+                    component={"span"}
                     key={`${index}-MsgContent`}
                     sx={{ fontSize: "18px", color: "#A3A3A3" }}
                   >
                     {message.content}
-                    <div ref={divRef}></div>
+                    {/* <div ref={divRef}></div> */}
+                    <Typography ref={divRef}></Typography>
                   </Typography>
                 </Box>
               </>
             ) : (
               <Typography
+                component={"span"}
                 key={`${index}-plainMsgContent`}
                 sx={{
                   fontSize: "18px",
@@ -285,7 +287,8 @@ export const ConversationChat = ({
                 }}
               >
                 {message.content}
-                <div ref={divRef}></div>
+                {/* <div ref={divRef}></div> */}
+                <Typography ref={divRef}></Typography>
               </Typography>
             )}
           </Box>

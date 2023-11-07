@@ -1,11 +1,10 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import { Button, IconButton, Input, InputLabel, Link } from "@mui/material";
-import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
+import { Button, Input, InputLabel, Link } from "@mui/material";
 import { Avatar, Box, Container, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useMutation } from "@tanstack/react-query";
-import { signUpUser, uploadImage } from "../../api/axios";
+import { signUpUser } from "../../api/axios";
 import toast from "react-hot-toast";
 const USERNAME_REGEX = /^.{5,}$/;
 const PWD_REGEX = /^.{8,}$/;
@@ -25,25 +24,7 @@ export const Register = () => {
       setSelectedFile(file);
     }
   };
-  const uploadSelectedFile = (e) => {
-    const formData = new FormData()
-    e.preventDefault();
-    if (selectedFile) {
-      formData.append('avatar', selectedFile)
-      const { mutate } = imageMutation;
-      mutate(formData);
-    }
-  };
 
-  const imageMutation = useMutation({
-    mutationFn: uploadImage,
-    onSuccess: () => {
-      toast.success("Image uploaded");
-    },
-    onError: () => {
-      toast.error("Image uploading failed");
-    },
-  });
   const [usernameErrorMsg, SetUsernameErrorMsg] = useState("");
 
   const [pwdErrorMsg, SetPwdErrorMsg] = useState("");
@@ -158,12 +139,6 @@ export const Register = () => {
               style={{ display: "none" }}
               onChange={handleFileInputChange}
             />
-            <IconButton sx={{}} color="primary" component="span">
-              <AddPhotoAlternateOutlinedIcon />
-            </IconButton>
-            <Typography sx={{ paddingRight: "275px" }} variant="body2">
-              Add an avatar
-            </Typography>
           </InputLabel>
           <Button
             onClick={handleSubmit}
@@ -180,7 +155,6 @@ export const Register = () => {
           >
             Already have an account? Sign in
           </Link>
-          <Button onClick={(e) => uploadSelectedFile(e)}>Upload</Button>
         </Box>
       </Container>
     </form>
