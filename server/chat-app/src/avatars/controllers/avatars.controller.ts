@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { AvatarsService } from '../services/avatars.service';
 import { User } from 'src/utils/entities/user.entity';
 import { AuthUser } from 'src/decorators/user.decorator';
 import { UsersService } from 'src/users/services/users.service';
-import { FindUserAvatarDto } from 'src/utils/dtos/FindUserAvatarDto.dto';
 
 @Controller('avatars')
 export class AvatarsController {
@@ -26,9 +18,6 @@ export class AvatarsController {
 
   @Get('/avatar')
   async getAvatar(@AuthUser() user: User) {
-    console.log('pobrano avatar');
-    // const avatarId = user.avatar.id;
-    // console.log(avatarId);
     const existingUser = await this.usersService.findUser({ id: user.id });
 
     const avatarId = existingUser.avatar.id;
@@ -48,15 +37,10 @@ export class AvatarsController {
 
     const avatarId = existingUser?.avatar?.id;
     console.log(avatarId);
-    // console.log(existingUser.username);
-    //   const avatarId = existingUser.avatar.id;
     if (!avatarId) {
       return null;
     }
 
     return this.avatarsService.getAvatar(avatarId);
-    // } else {
-    //   return;
-    // }
   }
-} 
+}

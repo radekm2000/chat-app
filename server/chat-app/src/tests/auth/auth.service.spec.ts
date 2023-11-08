@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/utils/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { CustomRequest } from 'src/utils/types/types';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('Auth Service LOGIN', () => {
   const usersServiceMock = {
@@ -78,7 +79,7 @@ describe('Auth Service LOGIN', () => {
 describe('Auth Service handleRefreshToken METHOD ', () => {
   it('should  throw Unauthorized if cookies.jwt is not found', async () => {
     const usersServiceMock = {
-      findUser: jest.fn().mockResolvedValue(null),
+      findUser: jest.fn().mockResolvedValue(User),
     } as unknown as UsersService;
 
     const jwtServiceMock = {
@@ -95,9 +96,13 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
       },
     };
 
-    await expect(async () => {
+    try {
       await authService.handleRefreshToken(reqMock as any);
-    }).rejects.toThrow('Unauthorized');
+    } catch (error) {
+      expect(error).toBeInstanceOf(HttpException);
+      expect(error.message).toBe('Unauthorized');
+      expect(error.getStatus()).toBe(HttpStatus.UNAUTHORIZED);
+    }
   });
   it('should  throw Unauthorized if payload doesnt match with user', async () => {
     const usersServiceMock = {
@@ -120,9 +125,13 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
       },
     };
 
-    await expect(
-      authService.handleRefreshToken(reqMock as any),
-    ).rejects.toThrow('Unauthorized');
+    try {
+      await authService.handleRefreshToken(reqMock as any);
+    } catch (error) {
+      expect(error).toBeInstanceOf(HttpException);
+      expect(error.message).toBe('Unauthorized');
+      expect(error.getStatus()).toBe(HttpStatus.UNAUTHORIZED);
+    }
   });
   it('should return access token by giving refreshtoken', async () => {
     const usersServiceMock = {

@@ -31,9 +31,6 @@ export class MessagesService implements IMessageService {
       throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST);
     }
 
-    console.log('id konwersacji', conversationId);
-    console.log('znaleziona konwersacja');
-    console.log(conversation);
     const newMessage = this.messageRepository.create({
       content,
       conversation,
@@ -41,8 +38,6 @@ export class MessagesService implements IMessageService {
     });
 
     const savedMessage = await this.messageRepository.save(newMessage);
-    console.log('saved message');
-    console.log(savedMessage);
     conversation.lastMessageSent = savedMessage;
     const updatedConversation =
       await this.conversationRepository.save(conversation);

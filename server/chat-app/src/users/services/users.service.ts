@@ -12,16 +12,21 @@ export class UsersService implements IUserService {
 
   async createUser(userDetails: CreateUserDetails): Promise<User> {
     const existingUser = await this.userRepository.findOne({
-      where: {
-        username: userDetails.username,
-      },
+      where: [{ username: userDetails.username }, { email: userDetails.email }],
     });
 
     if (existingUser) {
-      throw new HttpException(
-        `User ${userDetails.username} already exists`,
-        HttpStatus.CONFLICT,
-      );
+      if (existingUser.username === userDetails.username) {
+        throw new HttpException(
+          `User ${userDetails.username} already exists`,
+          HttpStatus.CONFLICT,
+        );
+      } else if (existingUser.email === userDetails.email) {
+        throw new HttpException(
+          `An email has already been taken`,
+          HttpStatus.CONFLICT,
+        );
+      }
     }
 
     const newUser = this.userRepository.create(userDetails);
@@ -51,7 +56,7 @@ export class UsersService implements IUserService {
     });
   }
 
-  async  findUserIdByNickname(
+  async findUserIdByNickname(
     findUserParams: Partial<{ username: string; id: number }>,
   ) {
     const user = await this.userRepository.findOne({
@@ -80,6 +85,4 @@ export class UsersService implements IUserService {
     console.log(users);
     return users;
   }
-
-  async saveUserAvatar() {}
 }

@@ -6,6 +6,7 @@ import { Conversation } from '../entities/conversation.entity';
 export type CreateUserDetails = {
   username: string;
   password: string;
+  email: string;
 };
 
 export type FindUserParams = Partial<{

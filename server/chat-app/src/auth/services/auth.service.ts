@@ -43,15 +43,13 @@ export class AuthService {
   }
 
   async handleRefreshToken(req: CustomRequest) {
-    console.log(req.user);
-    console.log(req);
     const cookies = req.cookies;
-    console.log(`ciasteczko jwt`, cookies.jwt);
     if (!cookies.jwt) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     const refreshToken = cookies.jwt;
+    console.log(refreshToken);
 
     const payload = await this.jwtSerivce.verifyAsync(refreshToken, {
       secret: jwtConstants.refreshSecret,
@@ -61,7 +59,6 @@ export class AuthService {
       { username: payload.username },
       { secret: jwtConstants.secret, expiresIn: '15m' },
     );
-    console.log('nowo wydany acces  token : ', accessToken);
     return accessToken;
   }
 }

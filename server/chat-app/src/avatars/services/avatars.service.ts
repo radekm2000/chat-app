@@ -42,13 +42,6 @@ export class AvatarsService {
     const command = new GetObjectCommand(getObjectParams);
     const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
     avatar.imageUrl = url;
-    console.log(avatar.imageUrl);
     return avatar.imageUrl;
-  }
-
-  async getAvatarByUserId(userId: number) {
-    const avatar = await this.avatarsRepository.findOne({
-      where: {},
-    });
   }
 }

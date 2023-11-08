@@ -9,17 +9,16 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import 'dotenv/config';
+
 import { v4 as uuid } from 'uuid';
+import * as nodemailer from 'nodemailer';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { UsersService } from '../services/users.service';
 import { FindUserParams } from 'src/utils/types/types';
-import { Public } from 'src/auth/constants';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs';
 import * as sharp from 'sharp';
-import * as path from 'path';
-import { multerOptions } from 'src/upload/single-upload-disk';
 import { AuthUser } from 'src/decorators/user.decorator';
 import { User } from 'src/utils/entities/user.entity';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
@@ -27,6 +26,7 @@ import { s3 } from 'src/main';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Avatar } from 'src/utils/entities/avatar.entity';
 import { Repository } from 'typeorm';
+import { Public } from 'src/auth/constants';
 const bucketName = process.env.BUCKET_NAME;
 
 @Controller('users')
@@ -109,5 +109,36 @@ export class UsersController {
 
     const command = new PutObjectCommand(params);
     await s3.send(command);
+  }
+
+  @Public()
+  @Get('/sendmail')
+  async sendEmail() {
+    console.log(process.env.MY_EMAIL);
+    return new Promise((resolve, reject) => {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.MY_EMAIL,
+          pass: process.env.MY_EMAIL_PASSWORD,
+        },
+      });
+      const mail_configs = {
+        from: process.env.MY_EMAIL,
+        to: 'radekjestem123@gmail.com',
+        subject: 'password recovery',
+        html: 'ive sent you an email',
+      };
+
+      transporter.sendMail(mail_configs, (error, info) => {
+        if (error) {
+          console.log(error);
+          return reject({ message: 'an error occured' });
+        }
+        return resolve({
+          message: `Email sent succesfully to ${mail_configs.to} `,
+        });
+      });
+    });
   }
 }

@@ -85,24 +85,6 @@ export class ConversationsService implements IConversationService {
         { creatorId, recipientId },
       )
       .getOne();
-    const conversation = await this.conversationRepository.findOne({
-      where: [
-        {
-          creator: { id: creatorId },
-          recipient: { id: recipientId },
-        },
-        {
-          creator: { id: recipientId },
-        },
-      ],
-      relations: ['creator', 'recipient', 'messages', 'lastMessageSent'],
-    });
-    if (!conversation)
-      throw new HttpException(
-        'Conversation doesnt exist',
-        HttpStatus.BAD_REQUEST,
-      );
-    return conversation;
   }
 
   save(conversation: Conversation): Promise<Conversation> {
@@ -134,12 +116,11 @@ export class ConversationsService implements IConversationService {
   }
 
   async findById(id: number) {
+    console.log(id);
     const conversation = await this.conversationRepository.findOne({
       where: { id },
       relations: ['creator', 'recipient', 'lastMessageSent'],
     });
-    console.log('konwersacja bez wiadomosci');
-    console.log(conversation);
     return conversation;
   }
 
