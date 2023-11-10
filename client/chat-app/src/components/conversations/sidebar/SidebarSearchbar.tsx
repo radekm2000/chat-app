@@ -30,11 +30,9 @@ export const SidebarSearchBar = () => {
     <>
       <Box
         sx={{
-          position: "sticky",
-          top: 0,
+          position: 'sticky',
           width: "400px",
           display: "flex",
-          marginLeft: "-30px",
           padding: "24px 0px",
           alignItems: "center",
           justifyContent: "center",
@@ -69,7 +67,7 @@ export const SidebarSearchBar = () => {
           Search user...
         </TextField>
       </Box>
-      <Box>
+      <Box >
         {data && (
           <SidebarSearchbarResponseWindow data={data} isLoading={isLoading} />
         )}

@@ -6,8 +6,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useMutation } from "@tanstack/react-query";
 import { signUpUser } from "../../api/axios";
 import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 const USERNAME_REGEX = /^.{5,}$/;
 const PWD_REGEX = /^.{8,}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const Register = () => {
   const [username, setUsername] = useState("");
@@ -15,24 +17,30 @@ export const Register = () => {
   console.log(username);
   const [password, setPassword] = useState("");
   const [validPwd, setValidPwd] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      console.log(file);
-      console.log(selectedFile);
-      setSelectedFile(file);
-    }
-  };
+  const [email, setEmail] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
 
+  console.log("is mail valid");
+  console.log(validEmail);
+  const [emailErrorMsg, setEmailErrorMsg] = useState("");
   const [usernameErrorMsg, SetUsernameErrorMsg] = useState("");
-
   const [pwdErrorMsg, SetPwdErrorMsg] = useState("");
+
+  useEffect(() => {
+    const result = EMAIL_REGEX.test(email);
+    setValidEmail(result);
+  }, [email]);
 
   useEffect(() => {
     const result = USERNAME_REGEX.test(username);
     setValidUsername(result);
   }, [username]);
+
+  useEffect(() => {
+    if (!validEmail && email.length > 0) {
+      setEmailErrorMsg("Email must be in proper format.");
+    }
+  }, [email, validEmail]);
 
   useEffect(() => {
     const result = PWD_REGEX.test(password);
@@ -55,20 +63,19 @@ export const Register = () => {
     mutationFn: signUpUser,
     onSuccess: () => {
       toast.success("User created");
+      setEmail("");
+      setPassword("");
+      setUsername("");
     },
-    onError(error: Error) {
-      if (error.message === "Request failed with status code 409") {
-        toast.error("Username already exists");
-      } else {
-        toast.error("Registration failed");
-      }
+    onError(error: AxiosError) {
+      toast.error(error?.response?.data?.message);
     },
   });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const { isLoading, isError, mutate, error } = mutation;
-    mutate({ username, password });
+    mutate({ username, password, email });
     if (isLoading) {
       return <h1>isLoading...</h1>;
     } else if (isError) {
@@ -93,7 +100,20 @@ export const Register = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography variant="h5">Sign up</Typography>
-
+          <TextField
+            autoComplete="true"
+            error={Boolean(email) && !validEmail}
+            id="outlined-error"
+            helperText={!validEmail && email ? emailErrorMsg : null}
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            type="text"
+            sx={{ mt: 4 }}
+            required
+            fullWidth
+            label="Email"
+            name="email"
+          ></TextField>
           <TextField
             autoComplete="true"
             error={Boolean(username) && !validUsername}
@@ -102,7 +122,7 @@ export const Register = () => {
             onChange={(e) => setUsername(e.target.value)}
             value={username}
             type="text"
-            sx={{ mt: 5, mb: 1 }}
+            sx={{ mt: 3, mb: 1 }}
             name="username"
             required
             fullWidth
@@ -122,24 +142,7 @@ export const Register = () => {
             fullWidth
             label="Password"
           ></TextField>
-          <InputLabel
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingBottom: "10px",
-            }}
-            htmlFor="file"
-            className="file"
-          >
-            <Input
-              name="file"
-              id="file"
-              type="file"
-              style={{ display: "none" }}
-              onChange={handleFileInputChange}
-            />
-          </InputLabel>
+
           <Button
             onClick={handleSubmit}
             type="submit"

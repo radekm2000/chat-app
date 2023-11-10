@@ -114,7 +114,6 @@ export class UsersController {
   @Public()
   @Get('/sendmail')
   async sendEmail() {
-    console.log(process.env.MY_EMAIL);
     return new Promise((resolve, reject) => {
       const transporter = nodemailer.createTransport({
         service: 'gmail',

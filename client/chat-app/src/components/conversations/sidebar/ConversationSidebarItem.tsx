@@ -1,35 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, IconButton, Typography } from "@mui/material";
-import users from "../../../users.json";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
 import { Image } from "mui-image";
 
-import {
-  authApi,
-  getAllUsers,
-  getAvatarById,
-  getUserConversations,
-} from "../../../api/axios";
+import { getAvatarById, getUserConversations } from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
 import { Redirect, useLocation } from "wouter";
-import crypto from "crypto";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import { ConversationChannelPage } from "../ConversationChannelPage";
-import { useRefreshToken } from "../../../hooks/useRefreshToken";
 import { useSocket } from "../../../hooks/useSocket";
-import useId from "@mui/material/utils/useId";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
-import {
-  Notification,
-  OnlineUser,
-  OnlineUsersType,
-} from "../../../types/types";
+import { Notification, OnlineUser } from "../../../types/types";
 import { useChatMsg } from "../../../hooks/useChatMsg";
-import { NotificationPanel } from "../../NotificationPanel";
 import { unreadNotificationsFunc } from "../../../utils/unreadNotifications";
+import { formatTimestamp } from "../../../utils/formatTimestamp";
+import { formatTimestampToSidebar } from "../../../utils/formatTimestampToSidebar";
 type User = {
   id: string;
   username: string;
@@ -37,14 +24,14 @@ type User = {
 type Recipient = {
   username: string;
   lastMessageSent: Message;
-  lastMessageSentAt: string; // Zakładam, że to jest typ daty, można dostosować
+  lastMessageSentAt: string;
   id: string;
-  avatar: string; // Zakładam, że avatar jest łańcuchem, można dostosować
+  avatar: string;
 };
 type Message = {
   id: string;
   content: string;
-  createdAt: string; // Możesz dostosować ten typ, jeśli to jest data
+  createdAt: string;
 };
 
 type UsersData = User[];
@@ -115,7 +102,7 @@ export const SidebarItem = ({ userChatId }) => {
   }, [isTyping]);
 
   useEffect(() => {
-    socket.on("typingMessage", ({ typingMsg, authorId, conversationId }) => {
+    socket.on("typingMessage", ({ authorId, conversationId }) => {
       data.map((conversation) => {
         if (conversation?.id === conversationId) {
           setAuthorTypingId(authorId);
@@ -134,10 +121,6 @@ export const SidebarItem = ({ userChatId }) => {
       socket.off("typingMessage");
     };
   });
-  // const { data } = useQuery<UsersData>({
-  //   queryKey: ["users"],
-  //   queryFn: getAllUsers,
-  // });
   useEffect(() => {
     socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
       setOnlineUsers(onlineUsers);
@@ -219,16 +202,11 @@ export const SidebarItem = ({ userChatId }) => {
           return recipient;
         });
         setPpl(updatedRecipients);
-        console.log("---------");
-        console.log(updatedRecipients); // it logs proper ppl with avatars
-        // but only after re rendering on the1st time its empty array
       })
       .catch((error) => {
         console.error(error);
       });
   }, [recipients]);
-
-  console.log(sortedRecipients);
 
   const addAvatarsToRecipients = async (recipients) => {
     return Promise.all(
@@ -242,6 +220,7 @@ export const SidebarItem = ({ userChatId }) => {
       })
     );
   };
+  console.log(ppl);
 
   return (
     <>
@@ -348,17 +327,18 @@ export const SidebarItem = ({ userChatId }) => {
                   )}
                   {recipient.username}
                 </Typography>
-                {/* <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
-                {recipient?.lastMessageSent?.content.length > 20
-                  ? recipient?.lastMessageSent?.content.slice(0, 25) + "..."
-                  : recipient?.lastMessageSent?.content || "testowa wiadomosc"}
-              </Typography> */}
+
                 <Typography sx={{ fontSize: "14px", color: "#A3A3A3" }}>
                   {isTyping && recipient.id === authorTypingId
                     ? "is typing..."
                     : recipient?.lastMessageSent?.content.length > 20
                     ? recipient?.lastMessageSent?.content.slice(0, 25) + "..."
                     : recipient?.lastMessageSent?.content || null}
+                  <span style={{fontSize: '11px', paddingLeft: '5px'}}>
+                    {formatTimestampToSidebar(
+                      Date.parse(recipient?.lastMessageSentAt)
+                    )}
+                  </span>
                 </Typography>
               </Box>
             </Box>

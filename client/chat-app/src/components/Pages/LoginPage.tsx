@@ -116,8 +116,8 @@ export const Login = () => {
           </Button>
           <Grid container sx={{ mt: 2 }}>
             <Grid item xs>
-              <Link href="/" variant="body2">
-                Forgot password?{" "}
+              <Link href="/user-mail-verification" variant="body2">
+                Forgot password?
               </Link>
             </Grid>
             <Grid item>

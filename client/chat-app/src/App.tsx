@@ -14,6 +14,7 @@ import { UserContext, UserProvider } from "./contexts/UserContext";
 import { useUser } from "./hooks/useUser";
 import { useChatMsg } from "./hooks/useChatMsg";
 import { ChatProvider } from "./contexts/ChatContext";
+import { UserMailVerification } from "./components/Pages/UserMailVerification";
 
 function AppWithProviders({ children }: PropsWithChildren) {
   const { user, setUser } = useUser();
@@ -41,8 +42,8 @@ function App() {
             <Route path="/login">
               <Login />
             </Route>
-            <Route path="/success">
-              <Succesfull />
+            <Route path="/user-mail-verification">
+              <UserMailVerification />
             </Route>
             <Toaster
               position="top-center"

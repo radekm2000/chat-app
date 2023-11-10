@@ -10,8 +10,9 @@ import { useAxiosAuthorized } from "../hooks/useAxiosAuthorized";
 import { useAuth } from "../hooks/useAuth";
 const BASE_URL = "http://localhost:3000/";
 
-export default axios.create({
+export const axiosApi = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 export const authApi = axios.create({
@@ -19,8 +20,16 @@ export const authApi = axios.create({
   withCredentials: true,
 });
 
-export const signUpUser = async ({ username, password }: RegisterInput) => {
-  const response = await authApi.post("auth/register", { username, password });
+export const signUpUser = async ({
+  username,
+  password,
+  email,
+}: RegisterInput) => {
+  const response = await authApi.post("auth/register", {
+    username,
+    password,
+    email,
+  });
   return response.data;
 };
 
@@ -115,6 +124,15 @@ export const getAvatarById = async (userId: number) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const sendEmailAndFindUserToResetPassword = async (email: string) => {
+  try {
+    const response = await axiosApi.post("auth/verifyEmail", { email });
     return response.data;
   } catch (error) {
     throw error;

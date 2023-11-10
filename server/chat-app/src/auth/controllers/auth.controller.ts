@@ -14,6 +14,7 @@ import { CustomRequest, LoginUserParams } from 'src/utils/types/types';
 import { AuthService } from '../services/auth.service';
 import { Response } from 'express';
 import { Public } from '../constants';
+import { VerifyUserEmailDto } from 'src/utils/dtos/VerifyUserEmailDto.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -41,5 +42,25 @@ export class AuthController {
   @Get('refresh')
   async handleRefreshToken(@Req() req: CustomRequest) {
     return this.authService.handleRefreshToken(req);
+  }
+
+  @Public()
+  @Post('/verifyEmail')
+  @UsePipes(new ValidationPipe())
+  async sendResetPasswordEmail(@Body() verifyUserEmailDto: VerifyUserEmailDto) {
+    console.log(verifyUserEmailDto.email);
+    const user = await this.userService.findUser({
+      email: verifyUserEmailDto.email,
+    });
+
+    if (!user) {
+      return {
+        message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
+      };
+    }
+
+    return {
+      message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
+    };
   }
 }

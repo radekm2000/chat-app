@@ -45,12 +45,13 @@ export class UsersService implements IUserService {
   }
 
   async findUser(
-    findUserParams: Partial<{ username: string; id: number }>,
+    findUserParams: Partial<{ username: string; id: number; email: string }>,
   ): Promise<User> {
     return await this.userRepository.findOne({
       where: {
         username: findUserParams.username,
         id: findUserParams.id,
+        email: findUserParams.email,
       },
       relations: ['messages', 'avatar'],
     });
