@@ -8,6 +8,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+
 import { UsersService } from 'src/users/services/users.service';
 import { CreateUserDto } from 'src/utils/dtos/CreateUserDto.dto';
 import { CustomRequest, LoginUserParams } from 'src/utils/types/types';
@@ -15,12 +17,18 @@ import { AuthService } from '../services/auth.service';
 import { Response } from 'express';
 import { Public } from '../constants';
 import { VerifyUserEmailDto } from 'src/utils/dtos/VerifyUserEmailDto.dto';
+import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { giveUuid } from 'src/utils/uuid';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly userService: UsersService,
     private readonly authService: AuthService,
+    @InjectRepository(ResetPasswordToken)
+    private readonly resetPasswordTokenRepository: Repository<ResetPasswordToken>,
   ) {}
   @Public()
   @Post('register')
@@ -58,7 +66,19 @@ export class AuthController {
         message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
       };
     }
+    const uniqueResetToken = giveUuid();
+    const hash = await bcrypt.hash(uniqueResetToken, 10);
 
+    const newResetPasswordToken = new ResetPasswordToken();
+
+    newResetPasswordToken.token = hash;
+    newResetPasswordToken.user = user;
+    this.resetPasswordTokenRepository.save(newResetPasswordToken);
+
+    const mailMessage = await this.userService.sendEmail(
+      user,
+      uniqueResetToken,
+    );
     return {
       message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
     };

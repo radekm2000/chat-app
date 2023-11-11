@@ -9,10 +9,11 @@ import { jwtConstants } from './constants';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, ResetPasswordToken]),
     UsersModule,
     JwtModule.register({
       global: true,

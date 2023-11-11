@@ -2,6 +2,8 @@ import * as cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { S3Client } from '@aws-sdk/client-s3';
+import * as cron from 'node-cron';
+import { deleteTokenIfExpired } from './utils/deleteTokenIfExpired';
 
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
@@ -22,6 +24,13 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(cookieParser());
+  cron.schedule(
+    ' 2 * * * * *',
+    () => {
+      deleteTokenIfExpired();
+    },
+    { name: 'deletingTokenIfExpired' },
+  );
   await app.listen(3000);
 }
 bootstrap();

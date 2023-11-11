@@ -4,6 +4,7 @@ import { User } from 'src/utils/entities/user.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import 'dotenv/config';
 import { Avatar } from 'src/utils/entities/avatar.entity';
+import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
 
 export const config: PostgresConnectionOptions = {
   type: 'postgres',
@@ -12,6 +13,6 @@ export const config: PostgresConnectionOptions = {
   port: 5432,
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  entities: [User, Conversation, Message, Avatar],
+  entities: [User, Conversation, Message, Avatar, ResetPasswordToken],
   synchronize: true,
 };

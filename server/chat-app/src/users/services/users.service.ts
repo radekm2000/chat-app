@@ -4,6 +4,8 @@ import { User } from 'src/utils/entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { IUserService } from '../interfaces/user';
 import { CreateUserDetails } from 'src/utils/types/types';
+import * as nodemailer from 'nodemailer';
+
 @Injectable()
 export class UsersService implements IUserService {
   constructor(
@@ -85,5 +87,34 @@ export class UsersService implements IUserService {
     }
     console.log(users);
     return users;
+  }
+
+  async sendEmail(user: User, uniqueResetToken: string) {
+    return new Promise((resolve, reject) => {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.MY_EMAIL,
+          pass: process.env.MY_EMAIL_PASSWORD,
+        },
+      });
+      const htmlContent = `your uniqueresetToken = ${uniqueResetToken}`;
+      const mail_configs = {
+        from: process.env.MY_EMAIL,
+        to: user.email,
+        subject: 'Resetting password',
+        html: htmlContent,
+      };
+
+      transporter.sendMail(mail_configs, (error, info) => {
+        if (error) {
+          console.log(error);
+          return reject({ message: 'an error occured' });
+        }
+        return resolve({
+          message: `Email sent succesfully to ${mail_configs.to} `,
+        });
+      });
+    });
   }
 }
