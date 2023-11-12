@@ -8,6 +8,7 @@ import {
   Query,
   UploadedFile,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import 'dotenv/config';
 
@@ -27,6 +28,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Avatar } from 'src/utils/entities/avatar.entity';
 import { Repository } from 'typeorm';
 import { Public } from 'src/auth/constants';
+import { ZodValidationPipe } from 'src/tests/pipes/ZodValidationPipe';
+import {
+  ChangePasswordDto,
+  ChangePasswordDtoSchema,
+} from 'src/utils/dtos/zodSchemas';
 const bucketName = process.env.BUCKET_NAME;
 
 @Controller('users')
@@ -109,35 +115,5 @@ export class UsersController {
 
     const command = new PutObjectCommand(params);
     await s3.send(command);
-  }
-
-  @Public()
-  @Get('/sendmail')
-  async sendEmail() {
-    return new Promise((resolve, reject) => {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.MY_EMAIL,
-          pass: process.env.MY_EMAIL_PASSWORD,
-        },
-      });
-      const mail_configs = {
-        from: process.env.MY_EMAIL,
-        to: 'radekjestem123@gmail.com',
-        subject: 'password recovery',
-        html: 'ive sent you an email',
-      };
-
-      transporter.sendMail(mail_configs, (error, info) => {
-        if (error) {
-          console.log(error);
-          return reject({ message: 'an error occured' });
-        }
-        return resolve({
-          message: `Email sent succesfully to ${mail_configs.to} `,
-        });
-      });
-    });
   }
 }

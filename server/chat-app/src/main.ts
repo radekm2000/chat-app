@@ -24,13 +24,9 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(cookieParser());
-  cron.schedule(
-    ' 2 * * * * *',
-    () => {
-      deleteTokenIfExpired();
-    },
-    { name: 'deletingTokenIfExpired' },
-  );
+  cron.schedule(' 2 * * * * *', () => {
+    deleteTokenIfExpired();
+  });
   await app.listen(3000);
 }
 bootstrap();

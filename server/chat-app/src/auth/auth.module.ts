@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
+import { TokensService } from 'src/tokens/tokens.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity
   ],
   providers: [
     AuthService,
+    TokensService,
     UsersService,
     { provide: APP_GUARD, useClass: AuthGuard },
   ],

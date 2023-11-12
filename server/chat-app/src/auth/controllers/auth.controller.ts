@@ -21,6 +21,11 @@ import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { giveUuid } from 'src/utils/uuid';
+import { ZodValidationPipe } from 'src/tests/pipes/ZodValidationPipe';
+import {
+  ChangePasswordDto,
+  ChangePasswordDtoSchema,
+} from 'src/utils/dtos/zodSchemas';
 
 @Controller('auth')
 export class AuthController {
@@ -82,5 +87,12 @@ export class AuthController {
     return {
       message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
     };
+  }
+
+  @Public()
+  @UsePipes(new ZodValidationPipe(ChangePasswordDtoSchema))
+  @Post('/changePassword')
+  async changePasssword(@Body() dto: ChangePasswordDto) {
+    return await this.authService.changePassword(dto);
   }
 }

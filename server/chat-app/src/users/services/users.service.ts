@@ -2,14 +2,17 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/utils/entities/user.entity';
 import { Like, Repository } from 'typeorm';
-import { IUserService } from '../interfaces/user';
 import { CreateUserDetails } from 'src/utils/types/types';
 import * as nodemailer from 'nodemailer';
+import { ChangePasswordDto } from 'src/utils/dtos/zodSchemas';
+import { TokensService } from 'src/tokens/tokens.service';
+import * as bcrypt from 'bcrypt';
+import { MessagesService } from 'src/messages/services/messages.service';
 
 @Injectable()
-export class UsersService implements IUserService {
+export class UsersService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(User) private userRepository: Repository<User>, // private tokenService: TokensService,
   ) {}
 
   async createUser(userDetails: CreateUserDetails): Promise<User> {
@@ -98,7 +101,9 @@ export class UsersService implements IUserService {
           pass: process.env.MY_EMAIL_PASSWORD,
         },
       });
-      const htmlContent = `your uniqueresetToken = ${uniqueResetToken}`;
+
+      const htmlContent = `Reset your password at: <a href="http://localhost:5173/resetPassword/${uniqueResetToken}">Click here</a>`;
+
       const mail_configs = {
         from: process.env.MY_EMAIL,
         to: user.email,

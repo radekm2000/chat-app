@@ -6,10 +6,14 @@ import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import 'dotenv/config';
 import { jwtConstants } from '../constants';
+import { ChangePasswordDto } from 'src/utils/dtos/zodSchemas';
+import { TokensService } from 'src/tokens/tokens.service';
+import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private tokenService: TokensService,
     private usersService: UsersService,
     private jwtSerivce: JwtService,
   ) {}
@@ -60,5 +64,35 @@ export class AuthService {
       { secret: jwtConstants.secret, expiresIn: '15m' },
     );
     return accessToken;
+  }
+
+  async changePassword(dto: ChangePasswordDto) {
+    const passwordTokenInDb = await this.tokenService.getTokenByHashedToken(
+      dto.token,
+    );
+    if (!passwordTokenInDb) {
+      throw new HttpException(
+        'Invalid or expired password reset token',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const isValid = bcrypt.compare(dto.token, passwordTokenInDb.token);
+    if (!isValid) {
+      throw new HttpException(
+        'Invalid or expired password reset token',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const user = await this.usersService.findUser({
+      id: passwordTokenInDb.user.id,
+    });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    user.password = hashedPassword;
+    await this.usersService.saveUser(user);
+
+    return { message: 'Password changed sucesfully' };
   }
 }
