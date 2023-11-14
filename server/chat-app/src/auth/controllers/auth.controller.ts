@@ -5,6 +5,7 @@ import {
   Post,
   Req,
   Res,
+  UseFilters,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -26,6 +27,7 @@ import {
   ChangePasswordDto,
   ChangePasswordDtoSchema,
 } from 'src/utils/dtos/zodSchemas';
+import { ZodExceptionFilter } from 'src/utils/ZodExceptionFilter';
 
 @Controller('auth')
 export class AuthController {
@@ -90,6 +92,7 @@ export class AuthController {
   }
 
   @Public()
+  @UseFilters(new ZodExceptionFilter())
   @UsePipes(new ZodValidationPipe(ChangePasswordDtoSchema))
   @Post('/changePassword')
   async changePasssword(@Body() dto: ChangePasswordDto) {

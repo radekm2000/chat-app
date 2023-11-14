@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
 import { UsersService } from 'src/users/services/users.service';
 import { CustomRequest, LoginUserParams } from 'src/utils/types/types';
 import * as bcrypt from 'bcrypt';
@@ -68,7 +68,7 @@ export class AuthService {
 
   async changePassword(dto: ChangePasswordDto) {
     const passwordTokenInDb = await this.tokenService.getTokenByHashedToken(
-      dto.token,
+      dto.userId,
     );
     if (!passwordTokenInDb) {
       throw new HttpException(
@@ -76,6 +76,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
     const isValid = bcrypt.compare(dto.token, passwordTokenInDb.token);
     if (!isValid) {
       throw new HttpException(
@@ -85,14 +86,13 @@ export class AuthService {
     }
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const user = await this.usersService.findUser({
-      id: passwordTokenInDb.user.id,
+      id: dto.userId,
     });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     user.password = hashedPassword;
     await this.usersService.saveUser(user);
-
     return { message: 'Password changed sucesfully' };
   }
 }

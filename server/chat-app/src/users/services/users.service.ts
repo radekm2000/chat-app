@@ -102,7 +102,7 @@ export class UsersService {
         },
       });
 
-      const htmlContent = `Reset your password at: <a href="http://localhost:5173/resetPassword/${uniqueResetToken}">Click here</a>`;
+      const htmlContent = `Reset your password at: <a href="http://localhost:5173/resetPassword/${uniqueResetToken}/${user.id}">Click here</a>`;
 
       const mail_configs = {
         from: process.env.MY_EMAIL,

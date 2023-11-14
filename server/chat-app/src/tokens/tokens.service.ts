@@ -14,10 +14,12 @@ export class TokensService {
     return await this.tokenRepository.find({});
   }
 
-  async getTokenByHashedToken(token: string) {
+  async getTokenByHashedToken(userId: number) {
     const resetPasswordToken = await this.tokenRepository.findOne({
       where: {
-        token: token,
+        user: {
+          id: userId,
+        },
       },
     });
 

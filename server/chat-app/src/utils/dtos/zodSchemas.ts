@@ -5,6 +5,7 @@ export const ChangePasswordDtoSchema = z
     password: z.string().min(8),
     confirmPassword: z.string(),
     token: z.string(),
+    userId: z.number(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: `Passwords dont match`,

@@ -11,7 +11,7 @@ export class TokensController {
   }
 
   @Get('/user')
-  async getTokenByUserId(token: string) {
-    return await this.tokenService.getTokenByHashedToken(token);
+  async getTokenByUserId(userId: number) {
+    return await this.tokenService.getTokenByHashedToken(userId);
   }
 }
