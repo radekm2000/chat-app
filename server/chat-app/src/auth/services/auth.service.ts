@@ -9,6 +9,10 @@ import { jwtConstants } from '../constants';
 import { ChangePasswordDto } from 'src/utils/dtos/zodSchemas';
 import { TokensService } from 'src/tokens/tokens.service';
 import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
+import { VerifyUserEmailDto } from 'src/utils/dtos/VerifyUserEmailDto.dto';
+import { giveUuid } from 'src/utils/uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +20,8 @@ export class AuthService {
     private tokenService: TokensService,
     private usersService: UsersService,
     private jwtSerivce: JwtService,
+    @InjectRepository(ResetPasswordToken)
+    private readonly resetPasswordTokenRepository: Repository<ResetPasswordToken>,
   ) {}
 
   async signIn(res: Response, userDetails: LoginUserParams) {
@@ -94,5 +100,33 @@ export class AuthService {
     user.password = hashedPassword;
     await this.usersService.saveUser(user);
     return { message: 'Password changed sucesfully' };
+  }
+
+  async sendResetPasswordEmail(verifyUserEmailDto: VerifyUserEmailDto) {
+    const user = await this.usersService.findUser({
+      email: verifyUserEmailDto.email,
+    });
+
+    if (!user) {
+      return {
+        message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
+      };
+    }
+    const uniqueResetToken = giveUuid();
+    const hash = await bcrypt.hash(uniqueResetToken, 10);
+
+    const newResetPasswordToken = new ResetPasswordToken();
+
+    newResetPasswordToken.token = hash;
+    newResetPasswordToken.user = user;
+    this.resetPasswordTokenRepository.save(newResetPasswordToken);
+
+    const mailMessage = await this.usersService.sendEmail(
+      user,
+      uniqueResetToken,
+    );
+    return {
+      message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
+    };
   }
 }

@@ -8,6 +8,9 @@ import { User } from 'src/utils/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { CustomRequest } from 'src/utils/types/types';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { TokensService } from 'src/tokens/tokens.service';
+import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
+import { VerifyUserEmailDto } from 'src/utils/dtos/VerifyUserEmailDto.dto';
 
 describe('Auth Service LOGIN', () => {
   const usersServiceMock = {
@@ -17,7 +20,14 @@ describe('Auth Service LOGIN', () => {
   const jwtServiceMock = {
     signAsync: jest.fn(),
   } as unknown as JwtService;
-  const authService = new AuthService(usersServiceMock, jwtServiceMock);
+  const tokenRepositoryMock = {} as any;
+  const tokenServiceMock = {} as any;
+  const authService = new AuthService(
+    tokenServiceMock,
+    usersServiceMock,
+    jwtServiceMock,
+    tokenRepositoryMock,
+  );
 
   it('should throw an error if user is not found in LOGIN ', async () => {
     const userDetails = {
@@ -42,7 +52,16 @@ describe('Auth Service LOGIN', () => {
       .mockResolvedValueOnce('accesstoken') // Mock the access token
       .mockResolvedValueOnce('refreshtoken'),
   } as unknown as JwtService;
-  const authService = new AuthService(usersServiceMock, jwtServiceMock);
+  const tokenServiceMock = {} as unknown as TokensService;
+  const tokenRepositoryMock = {
+    save: jest.fn(),
+  } as any;
+  const authService = new AuthService(
+    tokenServiceMock,
+    usersServiceMock,
+    jwtServiceMock,
+    tokenRepositoryMock,
+  );
 
   it('should throw an error if users password is INVALID ', async () => {
     const userDetails = {
@@ -86,7 +105,14 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
       signAsync: jest.fn(),
       verifyAsync: jest.fn(),
     } as unknown as JwtService;
-    const authService = new AuthService(usersServiceMock, jwtServiceMock);
+    const tokenServiceMock = {} as unknown as TokensService;
+    const tokenRepositoryMock = {} as any;
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
     const reqMock = {
       cookies: {
         jwt: null,
@@ -115,7 +141,14 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
         username: 'different_user',
       }),
     } as unknown as JwtService;
-    const authService = new AuthService(usersServiceMock, jwtServiceMock);
+    const tokenServiceMock = {} as unknown as TokensService;
+    const tokenRepositoryMock = {} as any;
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
     const reqMock = {
       cookies: {
         jwt: 'refreshtoken',
@@ -137,6 +170,7 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
     const usersServiceMock = {
       findUser: jest.fn().mockResolvedValue(User),
     } as unknown as UsersService;
+    const tokenServiceMock = {} as unknown as TokensService;
 
     const jwtServiceMock = {
       signAsync: jest.fn().mockResolvedValue('accesstoken'),
@@ -144,7 +178,14 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
         username: 'user123',
       }),
     } as unknown as JwtService;
-    const authService = new AuthService(usersServiceMock, jwtServiceMock);
+    const tokenRepositoryMock = {} as any;
+
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
     const reqMock = {
       cookies: {
         jwt: 'refreshtoken',
@@ -157,5 +198,71 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
     const result = await authService.handleRefreshToken(reqMock as any);
 
     expect(result).toEqual('accesstoken');
+  });
+});
+
+describe(`Auth controller verifyEmail`, () => {
+  it('should return message if user is not found ', async () => {
+    const tokenServiceMock = {} as unknown as TokensService;
+    const jwtServiceMock = {} as any;
+    const tokenRepositoryMock = {
+      save: jest.fn(),
+    } as any;
+    const usersServiceMock = {
+      findUser: jest.fn().mockResolvedValue(null),
+    } as any;
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
+    const verifyUserEmailDto: VerifyUserEmailDto = {
+      email: 'lalala123',
+    };
+    const result = await authService.sendResetPasswordEmail(verifyUserEmailDto);
+
+    expect(result).toHaveProperty('message');
+    expect(result.message).toEqual(
+      `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
+    );
+  });
+
+  it('should return message if account is found with given mail', async () => {
+    const uniqueResetTokenMock = '1235';
+    const tokenServiceMock = {} as unknown as TokensService;
+    const jwtServiceMock = {} as any;
+    const tokenRepositoryMock = {
+      save: jest.fn(),
+    } as any;
+    const verifyUserEmailDto: VerifyUserEmailDto = {
+      email: 'lalala123',
+    };
+    const userMock = {
+      username: 'ikspispi',
+      password: 'pasword123',
+      email: verifyUserEmailDto.email,
+    } as any;
+    const usersServiceMock = {
+      sendEmail: jest.fn(),
+      findUser: jest.fn().mockResolvedValue(userMock),
+    } as any;
+    jest.spyOn(bcrypt, 'hash').mockImplementation(() => hash);
+    const hash = 'hashedToken';
+    const resetPasswordTokenMock = new ResetPasswordToken();
+    resetPasswordTokenMock.token = hash;
+    resetPasswordTokenMock.user = userMock;
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
+
+    const result = await authService.sendResetPasswordEmail(verifyUserEmailDto);
+    expect(result).toHaveProperty('message');
+    expect(result.message).toEqual(
+      `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
+    );
   });
 });

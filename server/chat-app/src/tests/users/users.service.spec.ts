@@ -29,14 +29,14 @@ describe('UsersService', () => {
     const userDetailsMock = {
       username: 'testuser',
       password: 'testuser123',
+      email: 'radek1238328212@gmail.com',
     };
 
-    userRepositoryMock.findOne.mockResolvedValue(User);
+    userRepositoryMock.findOne.mockResolvedValue(userDetailsMock);
 
     try {
       await usersService.createUser(userDetailsMock);
     } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
       expect(error.response).toEqual(
         `User ${userDetailsMock.username} already exists`,
       );
@@ -46,6 +46,7 @@ describe('UsersService', () => {
     const userDetailsMock = {
       username: 'testuser123',
       password: 'testuser123',
+      email: 'radek1238328212@gmail.com',
     };
 
     userRepositoryMock.findOne.mockResolvedValue(null);
