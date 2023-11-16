@@ -73,12 +73,12 @@ export class AuthService {
   }
 
   async changePassword(dto: ChangePasswordDto) {
-    const passwordTokenInDb = await this.tokenService.getTokenByHashedToken(
+    const passwordTokenInDb = await this.tokenService.getTokenByUserId(
       dto.userId,
     );
     if (!passwordTokenInDb) {
       throw new HttpException(
-        'Invalid or expired password reset token',
+        'Invalid or expired reset password token',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -86,7 +86,7 @@ export class AuthService {
     const isValid = bcrypt.compare(dto.token, passwordTokenInDb.token);
     if (!isValid) {
       throw new HttpException(
-        'Invalid or expired password reset token',
+        'Invalid or expired reset password token',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -99,7 +99,7 @@ export class AuthService {
     }
     user.password = hashedPassword;
     await this.usersService.saveUser(user);
-    return { message: 'Password changed sucesfully' };
+    return { message: 'Password changed successfully' };
   }
 
   async sendResetPasswordEmail(verifyUserEmailDto: VerifyUserEmailDto) {
@@ -121,10 +121,7 @@ export class AuthService {
     newResetPasswordToken.user = user;
     this.resetPasswordTokenRepository.save(newResetPasswordToken);
 
-    const mailMessage = await this.usersService.sendEmail(
-      user,
-      uniqueResetToken,
-    );
+    await this.usersService.sendEmail(user, uniqueResetToken);
     return {
       message: `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
     };

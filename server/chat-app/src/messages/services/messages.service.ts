@@ -56,6 +56,12 @@ export class MessagesService implements IMessageService {
         },
       },
       order: { createdAt: 'ASC' },
+      select: {
+        author: {
+          username: true,
+          id: true,
+        },
+      },
     });
     return messages;
   }

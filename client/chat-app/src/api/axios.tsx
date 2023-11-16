@@ -2,12 +2,11 @@
 /* eslint-disable no-useless-catch */
 import axios from "axios";
 import {
+  ChangePasswordCredentials,
   CreateConversationParams,
   LoginInput,
   RegisterInput,
 } from "../types/types";
-import { useAxiosAuthorized } from "../hooks/useAxiosAuthorized";
-import { useAuth } from "../hooks/useAuth";
 const BASE_URL = "http://localhost:3000/";
 
 export const axiosApi = axios.create({
@@ -135,6 +134,26 @@ export const sendEmailAndFindUserToResetPassword = async (email: string) => {
     const response = await axiosApi.post("auth/verifyEmail", { email });
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const changePasswordCredentials = async ({
+  password,
+  confirmPassword,
+  token,
+  userId,
+}: ChangePasswordCredentials) => {
+  try {
+    const response = await axiosApi.post("auth/changePassword", {
+      password,
+      confirmPassword,
+      token,
+      userId,
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };

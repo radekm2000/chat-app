@@ -12,44 +12,20 @@ import { useSocket } from "../../../hooks/useSocket";
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "../../../hooks/useUser";
 import { getRecipientFromConversation } from "../../../utils/getRecipientFromConversation";
-import { Notification, OnlineUser } from "../../../types/types";
+import { Notification, OnlineUser, Recipient } from "../../../types/types";
 import { useChatMsg } from "../../../hooks/useChatMsg";
 import { unreadNotificationsFunc } from "../../../utils/unreadNotifications";
 import { formatTimestamp } from "../../../utils/formatTimestamp";
 import { formatTimestampToSidebar } from "../../../utils/formatTimestampToSidebar";
-type User = {
-  id: string;
-  username: string;
-};
-type Recipient = {
-  username: string;
-  lastMessageSent: Message;
-  lastMessageSentAt: string;
-  id: string;
-  avatar: string;
-};
-type Message = {
-  id: string;
-  content: string;
-  createdAt: string;
-};
 
-type UsersData = User[];
-
-export const SidebarItem = ({ userChatId }) => {
+export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const socket = useSocket();
   const [location, setLocation] = useLocation();
-  const { auth } = useAuth();
   const { meUser } = useUser();
   const [authorTypingId, setAuthorTypingId] = useState(null);
-  const axiosAuthorized = useAxiosAuthorized();
-  const queryClient = useQueryClient();
   const [ppl, setPpl] = useState<Array<Recipient>>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [updatedSortedRecipients, setUpdatedSortedRecipients] = useState<
-    Array<Recipient>
-  >([]);
 
   const { notifications, setNotifications } = useChatMsg();
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -334,7 +310,7 @@ export const SidebarItem = ({ userChatId }) => {
                     : recipient?.lastMessageSent?.content.length > 20
                     ? recipient?.lastMessageSent?.content.slice(0, 25) + "..."
                     : recipient?.lastMessageSent?.content || null}
-                  <span style={{fontSize: '11px', paddingLeft: '5px'}}>
+                  <span style={{ fontSize: "11px", paddingLeft: "5px" }}>
                     {formatTimestampToSidebar(
                       Date.parse(recipient?.lastMessageSentAt)
                     )}

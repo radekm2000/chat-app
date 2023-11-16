@@ -35,6 +35,11 @@ export const ConversationChat = ({
   const divRef = useRef(null);
   const socket = useSocket();
   const { chatMessages, setChatMessages } = useChatMsg();
+  console.log(chatMessages);
+  //author ; id, username, email, password
+  //content ; string
+  //createdAt
+  //id
   useEffect(() => {
     socket.on("getMessage", (msg) => {
       console.log("otrzymany event getMessage");

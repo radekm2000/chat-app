@@ -25,7 +25,6 @@ export class MyGateway {
 
   onModuleInit() {
     this.server.on('connection', (socket: Socket) => {
-      // socket.use(SocketAuthMiddleware() as any);
       console.log(`user with id ${socket.id} connected`);
       if (
         !this.onlineUsers.find((user) => user.userId === socket.user.userId)
@@ -37,7 +36,7 @@ export class MyGateway {
       this.server.emit('getOnlineUsers', this.onlineUsers);
       socket.on('disconnect', () => {
         console.log(
-          `user z id ${socket.user.userId} with id ${socket.id} disconnected`,
+          `user z id ${socket.user.userId} with  sokcket id ${socket.id} disconnected`,
         );
         this.onlineUsers = this.onlineUsers.filter(
           (user) => user.userId !== socket.user.userId,

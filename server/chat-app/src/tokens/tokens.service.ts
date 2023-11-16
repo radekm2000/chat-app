@@ -14,7 +14,7 @@ export class TokensService {
     return await this.tokenRepository.find({});
   }
 
-  async getTokenByHashedToken(userId: number) {
+  async getTokenByUserId(userId: number) {
     const resetPasswordToken = await this.tokenRepository.findOne({
       where: {
         user: {

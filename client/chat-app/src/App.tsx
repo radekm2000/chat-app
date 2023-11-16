@@ -15,10 +15,9 @@ import { useUser } from "./hooks/useUser";
 import { useChatMsg } from "./hooks/useChatMsg";
 import { ChatProvider } from "./contexts/ChatContext";
 import { UserMailVerification } from "./components/Pages/UserMailVerification";
+import { ChangePassword } from "./components/Pages/ChangePassword";
 
 function AppWithProviders({ children }: PropsWithChildren) {
-  const { user, setUser } = useUser();
-  const { chatMessages, setChatMessages } = useChatMsg();
   return (
     <WebsocketContext.Provider value={socket}>
       {children}
@@ -45,6 +44,11 @@ function App() {
             <Route path="/user-mail-verification">
               <UserMailVerification />
             </Route>
+
+            <Route
+              path="/resetPassword/:token/:userId"
+              component={ChangePassword}
+            ></Route>
             <Toaster
               position="top-center"
               toastOptions={{

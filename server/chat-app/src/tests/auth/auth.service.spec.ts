@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from 'src/auth/services/auth.service';
 import { UsersService } from 'src/users/services/users.service';
-import { Response, Request } from 'express';
+import e, { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/utils/entities/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -264,5 +264,162 @@ describe(`Auth controller verifyEmail`, () => {
     expect(result.message).toEqual(
       `If matching account was found an email was sent to ${verifyUserEmailDto.email}`,
     );
+  });
+});
+
+describe('Auth service changePasswordMethod', () => {
+  it('should throw error if passwordToken is not found in Database', async () => {
+    const tokenServiceMock = {
+      getTokenByUserId: jest.fn(null),
+    } as any;
+    const usersServiceMock = {} as any;
+    const jwtServiceMock = {} as any;
+    const tokenRepositoryMock = {} as any;
+
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
+
+    const dtoMock = {
+      password: '12345679',
+      confirmPassword: '12345679',
+      userId: 1,
+      token: 'tokenxp',
+    };
+
+    try {
+      await authService.changePassword(dtoMock);
+    } catch (error) {
+      expect(error).toBeInstanceOf(HttpException);
+      expect(error.message).toEqual('Invalid or expired reset password token');
+      expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
+    }
+  });
+
+  it('should throw an error if token compared to hashed token is not valid', async () => {
+    const passwordTokenInDbMock = {
+      token: '1234567',
+      userId: 1,
+    };
+
+    const tokenServiceMock = {
+      getTokenByUserId: jest.fn().mockResolvedValue(passwordTokenInDbMock),
+    } as any;
+    const usersServiceMock = {} as any;
+    const jwtServiceMock = {} as any;
+    const tokenRepositoryMock = {} as any;
+
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
+
+    jest.spyOn(bcrypt, 'compare').mockImplementation(() => false);
+
+    const dtoMock = {
+      password: '12345679',
+      confirmPassword: '12345679',
+      userId: 1,
+      token: 'tokenxp',
+    };
+
+    try {
+      await authService.changePassword(dtoMock);
+    } catch (error) {
+      expect(error).toBeInstanceOf(HttpException);
+      expect(error.message).toEqual('Invalid or expired reset password token');
+      expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
+    }
+  });
+
+  it('should throw an error if user is not found in database', async () => {
+    const passwordTokenInDbMock = {
+      token: 'tokenxp',
+      userId: 1,
+    };
+
+    const tokenServiceMock = {
+      getTokenByUserId: jest.fn().mockResolvedValue(passwordTokenInDbMock),
+    } as any;
+    const usersServiceMock = {
+      findUser: jest.fn().mockResolvedValue(null),
+    } as any;
+    const jwtServiceMock = {} as any;
+    const tokenRepositoryMock = {} as any;
+
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
+
+    jest.spyOn(bcrypt, 'compare').mockImplementation(() => true);
+
+    const dtoMock = {
+      password: '12345679',
+      confirmPassword: '12345679',
+      userId: 1,
+      token: 'tokenxp',
+    };
+    const hashedPasswordMock = 'hashedpassword';
+    jest.spyOn(bcrypt, 'hash').mockImplementation(() => hashedPasswordMock);
+
+    try {
+      await authService.changePassword(dtoMock);
+    } catch (error) {
+      expect(error).toBeInstanceOf(HttpException);
+      expect(error.message).toEqual('User not found');
+      expect(error.getStatus()).toBe(HttpStatus.NOT_FOUND);
+    }
+  });
+
+  it('should return message if password is changed succesfully', async () => {
+    const passwordTokenInDbMock = {
+      token: 'tokenxp',
+      userId: 1,
+    };
+    const dtoMock = {
+      password: '12345679',
+      confirmPassword: '12345679',
+      userId: 1,
+      token: 'tokenxp',
+    };
+    const userMock = {
+      id: 1,
+      password: dtoMock.password,
+    };
+
+    const tokenServiceMock = {
+      getTokenByUserId: jest.fn().mockResolvedValue(passwordTokenInDbMock),
+    } as any;
+    const usersServiceMock = {
+      findUser: jest.fn().mockResolvedValue(userMock),
+      saveUser: jest.fn(),
+    } as any;
+    const jwtServiceMock = {} as any;
+    const tokenRepositoryMock = {} as any;
+
+    const authService = new AuthService(
+      tokenServiceMock,
+      usersServiceMock,
+      jwtServiceMock,
+      tokenRepositoryMock,
+    );
+
+    jest.spyOn(bcrypt, 'compare').mockImplementation(() => true);
+
+    const hashedPasswordMock = 'hashedpassword';
+    jest.spyOn(bcrypt, 'hash').mockImplementation(() => hashedPasswordMock);
+
+    const result = await authService.changePassword(dtoMock);
+
+    expect(result).toHaveProperty('message');
+    expect(result.message).toEqual('Password changed successfully');
   });
 });

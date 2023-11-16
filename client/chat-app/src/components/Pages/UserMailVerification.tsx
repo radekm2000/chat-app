@@ -4,6 +4,7 @@ import { useState } from "react";
 import { sendEmailAndFindUserToResetPassword } from "../../api/axios";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import { SendEmailToResetPasswordResponse } from "../../types/types";
 
 export const UserMailVerification = () => {
   const [emailValue, setEmailValue] = useState("");
@@ -11,12 +12,12 @@ export const UserMailVerification = () => {
   const mutation = useMutation({
     mutationKey: ["users/sendResetPassword"],
     mutationFn: sendEmailAndFindUserToResetPassword,
-    onSuccess: (data) => {
-      toast.success(data?.message);
+    onSuccess: (data: SendEmailToResetPasswordResponse) => {
+      toast.success(data.message);
     },
     onError(error: AxiosError) {
       if (error instanceof AxiosError) {
-        const mapErrorsToMessage = (errors) => {
+        const mapErrorsToMessage = (errors: string[]) => {
           const mappedErrors = errors.map((error) => {
             switch (error) {
               case "email must be an email":
