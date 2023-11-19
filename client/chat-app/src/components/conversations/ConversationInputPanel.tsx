@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Input } from "@mui/material";
 import { UserType } from "./ConversationNavbar";
 import { useEffect, useState } from "react";
@@ -31,59 +32,20 @@ export const ConversationInputPanel = ({
   const axiosAuthorized = useAxiosAuthorized();
   const [typing, setTyping] = useState(false);
   const { meUser } = useUser();
-  const { chatMessages, setChatMessages } = useChatMsg();
-  // const { data: userData, isLoading } = useQuery({
-  //   queryKey: ["users/:username", meUser],
-  //   queryFn: findUserByNickname(meUser),
-  // });
-  // if (isLoading) {
-  //   return "isLoading...";
-  // }
-  // console.log("znaleziony user");
-  // console.log(userData);
-  let timeout = undefined;
+  const { setChatMessages } = useChatMsg();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let timeout: any = undefined;
   useEffect(() => {}, [timeout]);
 
   const timeoutFunction = () => {
     setTyping(false);
     socket.emit("noLongerTypingMessage");
   };
-  // else {
-  //   if (typing === false) {
-  //     setTyping(true);
-  //     socket.emit("typingMessage");
-  //     setTimeout(timeoutFunction, 5000);
-  //   } else {
-  //     clearTimeout(timeout);
-  //     timeout = setTimeout(timeoutFunction, 5000);
-  //   }
-  // }
 
-  // const onKeyDownNotEnter = () => {
-  //   if (typing === false) {
-  //     setTyping(true);
-  //     socket.emit("typingMessage", "is typing...");
-  //     setTimeout(timeoutFunction, 5000);
-  //   } else {
-  //     clearTimeout(timeout);
-  //     timeout = setTimeout(timeoutFunction, 5000);
-  //   }
-  // };
   console.log("conversation id: ");
   console.log(conversation?.id);
-  // useEffect(() => {
-  //   socket.on("getMessage", (msg) => {
-  //     console.log("otrzymany event getMessage");
-  //     if (conversation.id !== msg.conversation?.id) return;
-  //     console.log("otrzymana wiadomosc z socketa");
-  //     console.log(msg);
-  //     setChatMessages((prev) => [...prev, msg]);
-  //   });
 
-  //   return () => {
-  //     socket.off("getMessage");
-  //   };
-  // });
   const mutation = useMutation({
     mutationFn: async () => {
       console.log("wyslane conversation id: ", conversation.id);
@@ -111,7 +73,6 @@ export const ConversationInputPanel = ({
       console.log(data);
       socket.emit("sendMessage", {
         msg: data?.message,
-        // recipientId: data?.message?.recipient?.id,
         recipientId: getRecipientFromConversation(
           data?.updatedConversation,
           meUser
@@ -122,7 +83,6 @@ export const ConversationInputPanel = ({
       console.log("error");
     },
   });
-  // const { username } = user;
   const [message, setMessage] = useState("");
   console.log("wiadomosci z websocket");
   const handleKeyDown = (
@@ -138,7 +98,7 @@ export const ConversationInputPanel = ({
         }
       }
     } else {
-      if (e.key !== 'Backspace' || typing === false) {
+      if (e.key !== "Backspace" || typing === false) {
         setTyping(true);
         socket.emit("typingMessage", {
           authorId,

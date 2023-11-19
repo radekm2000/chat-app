@@ -80,6 +80,15 @@ export class ConversationsService implements IConversationService {
       .createQueryBuilder('conversation')
       .leftJoinAndSelect('conversation.creator', 'creator')
       .leftJoinAndSelect('conversation.recipient', 'recipient')
+      .select([
+        'creator.id',
+        'creator.username',
+        'recipient.id',
+        'recipient.username',
+        'conversation.id',
+        'conversation.lastMessageSentAt',
+        'conversation.createdAt',
+      ])
       .where(
         '(creator.id = :creatorId AND recipient.id = :recipientId) OR (creator.id = :recipientId AND recipient.id = :creatorId)',
         { creatorId, recipientId },

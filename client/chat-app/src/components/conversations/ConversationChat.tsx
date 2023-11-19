@@ -1,22 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { UserType } from "./ConversationChannelPage";
 import { formatTimestamp } from "../../utils/formatTimestamp";
-import { ConversationProps } from "./ConversationInputPanel";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 import { useUser } from "../../hooks/useUser";
 import { useSocket } from "../../hooks/useSocket";
 import { useChatMsg } from "../../hooks/useChatMsg";
-import { getRecipientFromConversation } from "../../utils/getRecipientFromConversation";
+import { Conversation, UserType } from "../../types/types";
 export type ConversationChatProps = {
   user: Partial<UserType>;
   isUserDataLoading: boolean;
   isConversationDataLoading: boolean;
-  conversation: any;
+  conversation: Conversation;
   userImage: string;
 };
 
@@ -29,17 +27,12 @@ export const ConversationChat = ({
 }: ConversationChatProps) => {
   //me user is radek (username)
   const { meUser } = useUser();
-  const timestamp = Date.now();
-  const queryClient = useQueryClient();
   const [meUserImage, setMeUserImage] = useState("");
-  const divRef = useRef(null);
+  const divRef = useRef<null | HTMLDivElement>(null);
   const socket = useSocket();
   const { chatMessages, setChatMessages } = useChatMsg();
   console.log(chatMessages);
-  //author ; id, username, email, password
-  //content ; string
-  //createdAt
-  //id
+
   useEffect(() => {
     socket.on("getMessage", (msg) => {
       console.log("otrzymany event getMessage");
@@ -54,7 +47,7 @@ export const ConversationChat = ({
     };
   });
 
-  const { data: meUserImageData, isLoading: isMeUserImageLoading } = useQuery({
+  const { data: meUserImageData } = useQuery({
     queryKey: ["user/avatar"],
     queryFn: async () => {
       const response = await axiosAuthorized.get("avatars/avatar");
@@ -71,11 +64,7 @@ export const ConversationChat = ({
     divRef?.current?.scrollIntoView({ behavior: "instant" });
   });
 
-  // useEffect(() => {
-  //   ref.current?.scrollIntoView({behavior:"sharp"})
-  // }, [message?.content])
   const axiosAuthorized = useAxiosAuthorized();
-  const formattedTime = formatTimestamp(timestamp);
   console.log(conversation);
   const { data, isLoading } = useQuery({
     queryKey: ["conversation/messages", conversation?.id],
@@ -88,121 +77,19 @@ export const ConversationChat = ({
     },
   });
   if (isLoading) {
-    return console.log("isLoading");
+    return <div>isLoading...</div>;
   }
   console.log(`pobrane wiadomosci z konwersacji o id: ${conversation?.id}`);
   console.log(data);
   console.log(meUser);
   console.log("chat messages");
   console.log(chatMessages);
-  //each message has props: author = {id, username, }, content, createdAt, id
-  // const { username, messages } = user;
-  // can check who the message belongs to
-
-  //data?.map((message) => (
-  // key = message.id  message?.author?.username === meUser ? meUser : user?.username
-  //))
-  //   return (
-  //     <>
-  //       {chatMessages?.map((message, index) => (
-  //         <Box
-  //           key={message.id}
-  //           sx={{
-  //             padding: "13px",
-  //             gap: "10px",
-  //             display: "flex",
-  //             alignItems: "center",
-  //           }}
-  //         >
-  //           {index === 0 ||
-  //           chatMessages[index - 1]?.author?.id !==
-  //             chatMessages[index]?.author?.id ? (
-  //             <>
-  //               {userImage ? (
-  //                 <Box
-  //                   component="img"
-  //                   key={`${index}-avatar`}
-  //                   sx={{
-  //                     width: "48px",
-  //                     height: "48px",
-  //                     backgroundColor: "white",
-  //                     borderRadius: "50%",
-  //                     display: "flex",
-  //                   }}
-  //                   src={userImage}
-  //                 ></Box>
-  //               ) : (
-  //                 <AccountCircleRoundedIcon
-  //                   sx={{
-  //                     width: "48px",
-  //                     height: "48px",
-  //                     borderRadius: "50%",
-  //                     color: "white",
-  //                   }}
-  //                 />
-  //               )}
-  //               <Box key={`${index}-username`}>
-  //                 <Typography
-  //                   component="span"
-  //                   fontFamily={"Arial"}
-  //                   sx={{
-  //                     fontSize: "23px",
-  //                     fontWeight: "500",
-  //                     color: "white",
-  //                     display: "flex",
-  //                   }}
-  //                 >
-  //                   <>
-  //                     {message?.author?.username === meUser
-  //                       ? meUser
-  //                       : user?.username}
-  //                     <Typography
-  //                       component="span"
-  //                       sx={{
-  //                         fontSize: "12px",
-  //                         color: "#A3A3A3",
-  //                         alignSelf: "center",
-  //                         marginLeft: "10px",
-  //                       }}
-  //                     >
-  //                       {formatTimestamp(Date.parse(message.createdAt))}
-  //                     </Typography>
-  //                   </>
-  //                 </Typography>
-  //                 <Typography
-  //                   key={`${index}-MsgContent`}
-  //                   sx={{ fontSize: "18px", color: "#A3A3A3" }}
-  //                 >
-  //                   {message.content}
-  //                   <div ref={divRef}></div>
-  //                 </Typography>
-  //               </Box>
-  //             </>
-  //           ) : (
-  //             <Typography
-  //               key={`${index}-plainMsgContent`}
-  //               sx={{
-  //                 fontSize: "18px",
-  //                 color: "#A3A3A3",
-  //                 marginLeft: "55px",
-  //                 marginTop: "-25px",
-  //               }}
-  //             >
-  //               {message.content}
-  //               <div ref={divRef}></div>
-  //             </Typography>
-  //           )}
-  //         </Box>
-  //       ))}
-  //     </>
-  //   );
-  // };
   return (
     <>
       {chatMessages?.map((message, index) => {
-        const isMyMessage = message?.author?.username === meUser; // Zakładając, że masz zmienną meUser reprezentującą twojego użytkownika
+        const isMyMessage = message?.author?.username === meUser;
 
-        const imageToShow = isMyMessage ? meUserImage : userImage; // Wybieramy odpowiednią zmienną userImage
+        const imageToShow = isMyMessage ? meUserImage : userImage;
 
         return (
           <Box
@@ -218,7 +105,7 @@ export const ConversationChat = ({
             chatMessages[index - 1]?.author?.id !==
               chatMessages[index]?.author?.id ? (
               <>
-                {imageToShow ? ( // Użyj odpowiedniego zdjęcia profilowego
+                {imageToShow ? (
                   <Box
                     component="img"
                     key={`${index}-avatar`}
@@ -275,7 +162,6 @@ export const ConversationChat = ({
                     sx={{ fontSize: "18px", color: "#A3A3A3" }}
                   >
                     {message.content}
-                    {/* <div ref={divRef}></div> */}
                     <Typography ref={divRef}></Typography>
                   </Typography>
                 </Box>
@@ -292,7 +178,6 @@ export const ConversationChat = ({
                 }}
               >
                 {message.content}
-                {/* <div ref={divRef}></div> */}
                 <Typography ref={divRef}></Typography>
               </Typography>
             )}
@@ -302,19 +187,3 @@ export const ConversationChat = ({
     </>
   );
 };
-
-//dodanie profilowego do osoby co pisze nowa wiadomosc
-// // {messages?.map((message, index) => (
-//     <>
-// {index === 0 || messages[index - 1]?.author?.id !== messages[index]?.author?.id ? (
-//   <Box
-//     key={index + "_avatar"}
-//     sx={{
-//       width: "48px",
-//       height: "48px",
-//       backgroundColor: "white",
-//       borderRadius: "50%",
-//       display: "flex",
-//     }}
-//   ></Box>
-// ) : null}

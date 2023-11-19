@@ -41,13 +41,9 @@ export const Login = () => {
         setSuccess(false)
         toast.error('Invalid credentials', {position: 'top-center'})
       }
-      // setAuth!({ accessToken: data });
-      // localStorage.setItem('token', data)
-      // setSuccess(true);
-      // console.log(socket)
-      // socket.timeout(2000).connect()
-      // console.log(`socket connected: ${socket.connected} `)
+
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onError: (error: any) => {
     },
   });

@@ -3,16 +3,12 @@ import "./style.css";
 
 import { Register } from "./components/Pages/RegisterPage";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Websocket } from "./components/Websocket";
 import { Toaster } from "react-hot-toast";
 import { Route } from "wouter";
-import { Succesfull } from "./components/succesfull";
 import { ConversationPage } from "./components/Pages/ConversationPage";
 import { WebsocketContext, socket } from "./contexts/WebsocketContext";
 import { PropsWithChildren } from "react";
-import { UserContext, UserProvider } from "./contexts/UserContext";
-import { useUser } from "./hooks/useUser";
-import { useChatMsg } from "./hooks/useChatMsg";
+import { UserProvider } from "./contexts/UserContext";
 import { ChatProvider } from "./contexts/ChatContext";
 import { UserMailVerification } from "./components/Pages/UserMailVerification";
 import { ChangePassword } from "./components/Pages/ChangePassword";

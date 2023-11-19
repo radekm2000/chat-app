@@ -6,15 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 import { useUser } from "../../hooks/useUser";
 import { useSocket } from "../../hooks/useSocket";
-import { useChatMsg } from "../../hooks/useChatMsg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getAvatarById } from "../../api/axios";
 
-export type UserType = {
-  id: number;
-  username: string;
-  messages: [];
-};
+
 export const ConversationChannelPage = ({
   userChatId,
 }: {
@@ -26,7 +21,6 @@ export const ConversationChannelPage = ({
   const socket = useSocket();
   const { meUser } = useUser();
   const [avatarImage, setAvatarImage] = useState("");
-  const { notifications, setNotifications } = useChatMsg();
 
   socket.on("getNotification", () => {});
 
@@ -46,19 +40,17 @@ export const ConversationChannelPage = ({
     if (userId) {
       getAvatarById(userId)
         .then((avatarData) => {
-          setAvatarImage(avatarData)
+          setAvatarImage(avatarData);
         })
         .catch((error) => {
-          console.error("Błąd podczas pobierania danych o avatarze:", error);
+          console.error("There was an error with loading avatar data", error);
         });
     }
   }
 
-  console.log('avatar image xddd -------------------------')
-  console.log(avatarImage)
-  //userData: id, username, messages
-  //conversationData: createdAt, creator, recipient, lastMessageSent,
-  //lastMessageSentAt, id, messages
+  console.log("avatar image xddd -------------------------");
+  console.log(avatarImage);
+
   const { data: conversationData, isLoading: isConversationDataLoading } =
     useQuery({
       queryKey: ["conversations/findConversation", idToNum],
@@ -74,20 +66,6 @@ export const ConversationChannelPage = ({
   console.log("user data");
   console.log(userData);
 
-  // const user: UserType = data;
-  // const user = users.find((user) => user.id === parseInt(id));
-  // if (!user) {
-  //   return (
-  //     <Typography
-  //       fontFamily={"Readex Pro"}
-  //       fontSize={"23px"}
-  //       color={"#fff"}
-  //       variant="h5"
-  //     >
-  //       Error 404 something went wrong, can't find such user
-  //     </Typography>
-  //   );
-  // }
   return (
     <Box
       sx={{
@@ -120,7 +98,6 @@ export const ConversationChannelPage = ({
           isUserDataLoading={isUserDataLoading}
           isConversationDataLoading={isConversationDataLoading}
           userImage={avatarImage}
-
         />
       </Box>
       <ConversationInputPanel
@@ -128,7 +105,6 @@ export const ConversationChannelPage = ({
         isUserDataLoading={isUserDataLoading}
         conversation={conversationData}
         isConversationDataLoading={isConversationDataLoading}
-
       />
     </Box>
   );

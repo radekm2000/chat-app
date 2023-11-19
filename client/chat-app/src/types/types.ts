@@ -72,11 +72,29 @@ export type Message = {
 
 export type MessageAuthor = {
   id: number;
-  email: string;
+  username: string;
 };
 export type ChatMessage = {
   id: number;
   content: string;
   createdAt: string;
   author: MessageAuthor;
+};
+
+export type ConversationUser = {
+  id: number;
+  username: string;
+};
+
+export type Conversation = {
+  id: number;
+  createdAt: string;
+  lastMessageSentAt: string;
+  author: ConversationUser;
+  recipient: ConversationUser;
+};
+export type UserType = {
+  id: number;
+  username: string;
+  messages: [];
 };
