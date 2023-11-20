@@ -2,13 +2,11 @@ import { Box, Typography } from "@mui/material";
 import { ConversationNavbar } from "./ConversationNavbar";
 import { ConversationInputPanel } from "./ConversationInputPanel";
 import { ConversationChat } from "./ConversationChat";
-import { useQuery } from "@tanstack/react-query";
-import { useAxiosAuthorized } from "../../hooks/useAxiosAuthorized";
 import { useUser } from "../../hooks/useUser";
-import { useSocket } from "../../hooks/useSocket";
 import { useState } from "react";
 import { getAvatarById } from "../../api/axios";
-import { Conversation } from "../../types/types";
+import { useRecipientUser } from "../../hooks/useRecipientUser";
+import { useUserConversationQuery } from "../../hooks/useUserConversationQuery";
 
 export const ConversationChannelPage = ({
   userChatId,
@@ -16,24 +14,13 @@ export const ConversationChannelPage = ({
   userChatId: string;
 }) => {
   const idToNum = parseInt(userChatId);
-  const axiosAuthorized = useAxiosAuthorized();
   console.log(idToNum);
-  const socket = useSocket();
   const { meUser } = useUser();
   const [avatarImage, setAvatarImage] = useState("");
 
-  socket.on("getNotification", () => {});
-
   console.log(meUser);
-  const { data: userData, isLoading: isUserDataLoading } = useQuery({
-    queryKey: ["users/find", idToNum],
-    queryFn: async () => {
-      const response = await axiosAuthorized.post("users/find", {
-        id: idToNum,
-      });
-      return response.data;
-    },
-  });
+  const { data: userData, isLoading: isUserDataLoading } =
+    useRecipientUser(userChatId);
 
   if (!isUserDataLoading) {
     const userId = userData?.id;
@@ -52,16 +39,11 @@ export const ConversationChannelPage = ({
   console.log(avatarImage);
 
   const { data: conversationData, isLoading: isConversationDataLoading } =
-    useQuery({
-      queryKey: ["conversations/findConversation", idToNum],
-      queryFn: async () => {
-        const response = await axiosAuthorized.post(
-          "conversations/conversation",
-          { recipientId: idToNum }
-        );
-        return response.data;
-      },
-    });
+    useUserConversationQuery(idToNum);
+
+  if (!conversationData) {
+    return;
+  }
   console.log(conversationData);
   console.log("user data");
   console.log(userData);

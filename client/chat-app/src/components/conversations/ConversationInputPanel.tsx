@@ -8,6 +8,7 @@ import { useSocket } from "../../hooks/useSocket";
 import { useUser } from "../../hooks/useUser";
 import { getRecipientFromConversation } from "../../utils/getRecipientFromConversation";
 import { useChatMsg } from "../../hooks/useChatMsg";
+import { Conversation } from "../../types/types";
 export type ConversationProps = {
   createdAt: Date;
   id: number;
@@ -19,7 +20,7 @@ export type ConversationInputPanelProps = {
   user: Partial<UserType>;
   isUserDataLoading: boolean;
   isConversationDataLoading: boolean;
-  conversation: ConversationProps;
+  conversation: Conversation
 };
 export const ConversationInputPanel = ({
   user,

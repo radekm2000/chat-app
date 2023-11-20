@@ -2,13 +2,13 @@ import { Box } from "@mui/material";
 import { ConversationSidebar } from "../conversations/ConversationSidebar";
 import { ConversationPanel } from "../conversations/ConversationPanel";
 import { useRoute } from "wouter";
-import { ConversationChannelPage } from "../conversations/ConversationChannelPage";
 import { NotificationsPanel } from "../../notifications/NotificationsPanel";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect } from "react";
 import { useSocket } from "../../hooks/useSocket";
 import { useQuery } from "@tanstack/react-query";
 import { getUserConversations } from "../../api/axios";
+import { ConversationChannelPage } from "../conversations/ConversationChannelPage";
 const SIDEBAR_WIDTH = "400px";
 export const ConversationPage = () => {
   const accessToken = localStorage.getItem("token");
@@ -83,7 +83,11 @@ export const ConversationPage = () => {
         <ConversationSidebar userChatId={id} />
       </Box>
       <Box sx={{ flexGrow: 1, backgroundColor: "#1E1E1E" }}>
-        {id ? <ConversationChannelPage userChatId={id} /> : <ConversationPanel />}
+        {id ? (
+          <ConversationChannelPage userChatId={id} />
+        ) : (
+          <ConversationPanel />
+        )}
       </Box>
       <Box
         sx={{

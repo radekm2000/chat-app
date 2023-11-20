@@ -1,4 +1,3 @@
-import { UserType } from "../components/conversations/ConversationNavbar";
 import { UserConversation } from "../hooks/useUserConversations";
 
 export const getRecipientFromConversation = (

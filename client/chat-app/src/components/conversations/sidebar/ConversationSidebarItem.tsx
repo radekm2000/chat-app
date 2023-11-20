@@ -45,7 +45,7 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
           notification = el;
         }
       });
-      return notification;
+      return notification as unknown as Notification;
     });
     setNotifications(mNotifications);
   };
@@ -159,7 +159,7 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
   });
 
   console.log("this user notifications: ", thisUserNotifications);
-  let sortedRecipients = [...recipients].sort((a, b) => {
+  const sortedRecipients = [...recipients].sort((a, b) => {
     const dateA = new Date(b.lastMessageSentAt).getTime();
     const dateB = new Date(a.lastMessageSentAt).getTime();
     const differenceInMilliseconds = dateA - dateB;
@@ -172,7 +172,7 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
     const addAvatarsToRecipients = async (recipients) => {
       return Promise.all(
         recipients.map(async (recipient) => {
-          const avatar = await getAvatarById(recipient?.id);
+          const avatar = await getAvatarById(parseInt(recipient?.id));
 
           return {
             ...recipient,
@@ -199,18 +199,6 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
       });
   }, [recipients]);
 
-  const addAvatarsToRecipients = async (recipients) => {
-    return Promise.all(
-      recipients.map(async (recipient) => {
-        const avatar = await getAvatarById(recipient?.id);
-
-        return {
-          ...recipient,
-          avatar,
-        };
-      })
-    );
-  };
   console.log(ppl);
 
   return (
@@ -218,7 +206,7 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
       {ppl &&
         ppl?.map((recipient) => {
           const recipientNotifications = thisUserNotifications?.filter(
-            (notification) => notification.senderId === recipient.id
+            (notification) => notification.senderId === parseInt(recipient.id)
           );
           return (
             <Box
@@ -269,7 +257,7 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
                   />
                 )}
                 {onlineUsers.some(
-                  (onlineUser) => onlineUser?.userId === recipient?.id
+                  (onlineUser) => onlineUser?.userId === parseInt(recipient?.id)
                 ) ? (
                   <Box
                     sx={{
