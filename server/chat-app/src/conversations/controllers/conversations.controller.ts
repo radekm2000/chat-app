@@ -11,7 +11,11 @@ export class ConversationsController {
 
   @Get()
   async getUserConversation(@AuthUser() user: User) {
-    return this.conversationsService.getConversations(user.id);
+    const conversations = await this.conversationsService.getConversations(
+      user.id,
+    );
+    console.log(conversations);
+    return conversations;
   }
 
   @Post('/conversation')

@@ -8,7 +8,7 @@ import { useUser } from "../../hooks/useUser";
 import { useSocket } from "../../hooks/useSocket";
 import { useState } from "react";
 import { getAvatarById } from "../../api/axios";
-
+import { Conversation } from "../../types/types";
 
 export const ConversationChannelPage = ({
   userChatId,
@@ -48,7 +48,7 @@ export const ConversationChannelPage = ({
     }
   }
 
-  console.log("avatar image xddd -------------------------");
+  console.log("avatar image  -------------------------");
   console.log(avatarImage);
 
   const { data: conversationData, isLoading: isConversationDataLoading } =

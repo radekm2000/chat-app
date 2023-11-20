@@ -2,7 +2,6 @@ import { ConversationsService } from 'src/conversations/services/conversations.s
 import { MessagesService } from 'src/messages/services/messages.service';
 import { UsersService } from 'src/users/services/users.service';
 import { Conversation } from 'src/utils/entities/conversation.entity';
-import { Message } from 'src/utils/entities/message.entity';
 import { User } from 'src/utils/entities/user.entity';
 import {
   CreateMessageParams,
@@ -96,7 +95,6 @@ describe('Message Service CreateMessage method', () => {
       conversationId: 2,
     };
 
-    const conversationMock = { id: 2 } as Conversation;
     const createdMessage = {
       content: 'hello world',
       author: authorMock,

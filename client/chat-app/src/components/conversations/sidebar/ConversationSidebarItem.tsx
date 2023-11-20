@@ -17,6 +17,7 @@ import { useChatMsg } from "../../../hooks/useChatMsg";
 import { unreadNotificationsFunc } from "../../../utils/unreadNotifications";
 import { formatTimestamp } from "../../../utils/formatTimestamp";
 import { formatTimestampToSidebar } from "../../../utils/formatTimestampToSidebar";
+import { useUserConversations } from "../../../hooks/useUserConversations";
 
 export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
@@ -79,7 +80,7 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
 
   useEffect(() => {
     socket.on("typingMessage", ({ authorId, conversationId }) => {
-      data.map((conversation) => {
+      data?.map((conversation) => {
         if (conversation?.id === conversationId) {
           setAuthorTypingId(authorId);
           setIsTyping(true);
@@ -111,15 +112,17 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
   const handleUserChatClick = async (userId: string) => {
     setLocation(`/conversations/${userId}`);
   };
-  const { data, isSuccess } = useQuery({
-    queryKey: ["conversations"],
-    queryFn: getUserConversations,
-  });
+  //  const { data, isSuccess } = useQuery({
+  // queryKey: ["conversations"],
+  // queryFn: getUserConversations,
+  // });
+
+  const { data } = useUserConversations();
 
   socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
     setOnlineUsers(onlineUsers);
   });
-
+  console.log("user conversations");
   console.log(data);
   const recipients = useMemo(() => {
     return (
@@ -135,10 +138,22 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
       }) || []
     );
   }, [data, meUser]);
+  // const recipients = data?.map((conversation) => {
+  //   const recipient = getRecipientFromConversation(conversation, meUser);
+  //   const { lastMessageSent, lastMessageSentAt } = conversation;
+  //   return {
+  //     id: recipient.id,
+  //     username: recipient.username,
+  //     lastMessageSent,
+  //     lastMessageSentAt,
+  //   };
+  // });
+  console.log("recipients");
+  console.log(recipients);
 
   const unreadNotifications = unreadNotificationsFunc(notifications);
   const thisUserNotifications = unreadNotifications?.filter((notification) => {
-    return recipients.some(
+    return recipients?.some(
       (recipient) => recipient.id === notification.senderId
     );
   });

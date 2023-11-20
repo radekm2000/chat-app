@@ -10,7 +10,6 @@ import {
 import { UsersService } from 'src/users/services/users.service';
 import { ConversationsService } from 'src/conversations/services/conversations.service';
 import { Conversation } from 'src/utils/entities/conversation.entity';
-import { TokensService } from 'src/tokens/tokens.service';
 
 @Injectable()
 export class MessagesService implements IMessageService {

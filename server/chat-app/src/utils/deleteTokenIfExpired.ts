@@ -1,5 +1,5 @@
 import { config } from 'ormconfig';
-import { DataSource, LessThan, MoreThan } from 'typeorm';
+import { DataSource, LessThan } from 'typeorm';
 import { ResetPasswordToken } from './entities/resetPasswordToken.entity';
 
 export const deleteTokenIfExpired = async () => {
@@ -13,6 +13,6 @@ export const deleteTokenIfExpired = async () => {
   });
 
   if (expiredTokens) {
-    const deletedToken = await tokenRepository.remove(expiredTokens);
+    await tokenRepository.remove(expiredTokens);
   }
 };

@@ -1,4 +1,4 @@
-import { OnModuleInit, UseGuards } from '@nestjs/common';
+import {  UseGuards } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,

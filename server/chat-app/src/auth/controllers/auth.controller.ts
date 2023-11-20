@@ -9,7 +9,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 
 import { UsersService } from 'src/users/services/users.service';
 import { CreateUserDto } from 'src/utils/dtos/CreateUserDto.dto';
@@ -18,10 +17,6 @@ import { AuthService } from '../services/auth.service';
 import { Response } from 'express';
 import { Public } from '../constants';
 import { VerifyUserEmailDto } from 'src/utils/dtos/VerifyUserEmailDto.dto';
-import { ResetPasswordToken } from 'src/utils/entities/resetPasswordToken.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { giveUuid } from 'src/utils/uuid';
 import { ZodValidationPipe } from 'src/tests/pipes/ZodValidationPipe';
 import {
   ChangePasswordDto,

@@ -98,3 +98,9 @@ export type UserType = {
   username: string;
   messages: [];
 };
+
+export type LastMessageSent = {
+  id: number;
+  content: string;
+  createdAt: string;
+}

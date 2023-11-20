@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/services/users.service';
 import { CustomRequest, LoginUserParams } from 'src/utils/types/types';
 import * as bcrypt from 'bcrypt';
@@ -66,10 +66,10 @@ export class AuthService {
     });
 
     const accessToken = await this.jwtSerivce.signAsync(
-      { username: payload.username },
+      { username: payload.username, id: payload.id },
       { secret: jwtConstants.secret, expiresIn: '15m' },
     );
-    return accessToken;
+    return { accessToken, username: payload.username };
   }
 
   async changePassword(dto: ChangePasswordDto) {

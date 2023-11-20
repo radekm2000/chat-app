@@ -2,11 +2,12 @@ import { useEffect } from "react";
 import { useAuth } from "./useAuth";
 import { authApi } from "../api/axios";
 import { useRefreshToken } from "./useRefreshToken";
+import { useUser } from "./useUser";
 
 export const useAxiosAuthorized = () => {
-  const { auth } = useAuth()
+  const { auth } = useAuth();
   const refresh = useRefreshToken();
-
+  const { setUser } = useUser();
   useEffect(() => {
     const requestInterceptor = authApi.interceptors.request.use(
       (config) => {
@@ -24,8 +25,9 @@ export const useAxiosAuthorized = () => {
         const prevRequest = error?.config;
         if (error?.response?.status === 401 && !prevRequest?.sent) {
           prevRequest.sent = true;
-          const newAccessToken = await refresh();
-          localStorage.setItem('token', newAccessToken)
+          const { accessToken: newAccessToken, username } = await refresh();
+          setUser(username);
+          localStorage.setItem("token", newAccessToken);
           prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return authApi(prevRequest);
         }
@@ -39,5 +41,5 @@ export const useAxiosAuthorized = () => {
     };
   }, [auth]);
 
-  return authApi
+  return authApi;
 };

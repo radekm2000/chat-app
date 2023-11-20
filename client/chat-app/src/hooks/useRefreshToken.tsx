@@ -11,6 +11,7 @@ export const useRefreshToken = () => {
       setAuth!((prev) => {
         return {...prev, accessToken:  response.data}
       })
+      console.log('nowy respons co przyszedl po uderzeniu w refresh endpoint')
       console.log(response.data)
       console.log(`nowy token po wydaniu po refreshu ${auth?.accessToken}`)
       return response.data

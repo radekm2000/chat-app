@@ -5,6 +5,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import * as cron from 'node-cron';
 import { deleteTokenIfExpired } from './utils/deleteTokenIfExpired';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
 const accessKey = process.env.ACCESS_KEY;

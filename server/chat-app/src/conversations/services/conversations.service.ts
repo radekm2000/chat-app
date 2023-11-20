@@ -68,6 +68,16 @@ export class ConversationsService implements IConversationService {
         },
       ],
       relations: ['creator', 'recipient', 'messages', 'lastMessageSent'],
+      select: {
+        creator: {
+          username: true,
+          id: true,
+        },
+        recipient: {
+          username: true,
+          id: true,
+        },
+      },
     });
     return conversations;
   }

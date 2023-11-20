@@ -7,7 +7,6 @@ import { config } from 'ormconfig';
 import { MessagesModule } from './messages/messages.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { AvatarsModule } from './avatars/avatars.module';
-import { TokensModule } from './tokens/tokens.module';
 
 @Module({
   imports: [
