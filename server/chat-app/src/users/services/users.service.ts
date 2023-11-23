@@ -4,10 +4,6 @@ import { User } from 'src/utils/entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { CreateUserDetails } from 'src/utils/types/types';
 import * as nodemailer from 'nodemailer';
-import { ChangePasswordDto } from 'src/utils/dtos/zodSchemas';
-import { TokensService } from 'src/tokens/tokens.service';
-import * as bcrypt from 'bcrypt';
-import { MessagesService } from 'src/messages/services/messages.service';
 
 @Injectable()
 export class UsersService {
@@ -88,7 +84,6 @@ export class UsersService {
     if (!users) {
       return 'No user found';
     }
-    console.log(users);
     return users;
   }
 
@@ -111,7 +106,7 @@ export class UsersService {
         html: htmlContent,
       };
 
-      transporter.sendMail(mail_configs, (error, info) => {
+      transporter.sendMail(mail_configs, (error) => {
         if (error) {
           console.log(error);
           return reject({ message: 'an error occured' });

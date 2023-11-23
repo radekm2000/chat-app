@@ -196,8 +196,10 @@ describe('Auth Service handleRefreshToken METHOD ', () => {
     };
 
     const result = await authService.handleRefreshToken(reqMock as any);
-
-    expect(result).toEqual('accesstoken');
+    expect(result).toHaveProperty('accessToken');
+    expect(result).toHaveProperty('username');
+    expect(result.accessToken).toEqual('accesstoken');
+    expect(result.username).toEqual('user123');
   });
 });
 

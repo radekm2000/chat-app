@@ -4,16 +4,16 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Query,
   UploadedFile,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import 'dotenv/config';
 
 import { v4 as uuid } from 'uuid';
-import * as nodemailer from 'nodemailer';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { UsersService } from '../services/users.service';
@@ -27,12 +27,6 @@ import { s3 } from 'src/main';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Avatar } from 'src/utils/entities/avatar.entity';
 import { Repository } from 'typeorm';
-import { Public } from 'src/auth/constants';
-import { ZodValidationPipe } from 'src/tests/pipes/ZodValidationPipe';
-import {
-  ChangePasswordDto,
-  ChangePasswordDtoSchema,
-} from 'src/utils/dtos/zodSchemas';
 const bucketName = process.env.BUCKET_NAME;
 
 @Controller('users')
@@ -45,6 +39,11 @@ export class UsersController {
   @Get()
   async getUsers() {
     return this.usersService.getAllUsers();
+  }
+
+  @Get('/search')
+  async searchUser(@Query('query') query: string) {
+    return await this.usersService.searchUserByName(query);
   }
 
   @Get('avatars')
@@ -64,12 +63,6 @@ export class UsersController {
     console.log(avatars);
   }
 
-  @Get('search')
-  async searchUser(@Query('query') query: string) {
-    console.log(query);
-    return await this.usersService.searchUserByName(query);
-  }
-
   @Post('find')
   async findUser(@Body() findUserParams: FindUserParams) {
     return this.usersService.findUser(findUserParams);
@@ -77,7 +70,6 @@ export class UsersController {
 
   @Post('findByNickname')
   async findUserByNickname(@Body() findUserParams: FindUserParams) {
-    console.log(findUserParams.username);
     return await this.usersService.findUserIdByNickname(findUserParams);
   }
 
@@ -115,5 +107,10 @@ export class UsersController {
 
     const command = new PutObjectCommand(params);
     await s3.send(command);
+  }
+  @Get(':id')
+  async getUserById(@Param('id', ParseIntPipe) userId: number) {
+    console.log('przeslany id:', userId);
+    return this.usersService.findUser({ id: userId });
   }
 }

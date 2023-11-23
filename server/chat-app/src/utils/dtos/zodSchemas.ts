@@ -12,3 +12,10 @@ export const ChangePasswordDtoSchema = z
   });
 
 export type ChangePasswordDto = z.infer<typeof ChangePasswordDtoSchema>;
+
+export const CreateFriendRequestSchema = z.object({
+  username: z.string(),
+  userId: z.number(),
+});
+
+export type CreateFriendRequestDto = z.infer<typeof CreateFriendRequestSchema>;

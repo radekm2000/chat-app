@@ -7,6 +7,8 @@ import { config } from 'ormconfig';
 import { MessagesModule } from './messages/messages.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { AvatarsModule } from './avatars/avatars.module';
+import { FriendsModule } from './friends/friends.module';
+import { FriendsRequestModule } from './friend-requests/friends-request.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { AvatarsModule } from './avatars/avatars.module';
     MessagesModule,
     ConversationsModule,
     AvatarsModule,
+    FriendsModule,
+    FriendsRequestModule,
   ],
   controllers: [],
   providers: [],

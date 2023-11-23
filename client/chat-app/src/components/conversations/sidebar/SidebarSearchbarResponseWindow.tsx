@@ -1,6 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import { useLocation } from "wouter";
-import { useAuth } from "../../../hooks/useAuth";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
@@ -12,19 +11,37 @@ import { useSocket } from "../../../hooks/useSocket";
 import { useEffect, useState } from "react";
 import { addAvatarsToRecipients } from "../../../utils/addAvatarToRecipients";
 import Image from "mui-image";
+import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
+import { useAddUserToFriends } from "../../../hooks/useAddUserToFriends";
+import { AxiosError } from "axios";
 
 export const SidebarSearchbarResponseWindow = ({
   data,
   isLoading,
 }: {
   isLoading: boolean;
+  data: any;
 }) => {
+  type UserSearchbarResponseWindow = {
+    username: string;
+    id: number;
+    avatar: string | null;
+  };
+
+  type FriendRequest = {
+    username: string;
+    userId: undefined | number;
+  };
   const [, setLocation] = useLocation();
   const axiosAuthorized = useAxiosAuthorized();
   const { meUser } = useUser();
   const queryClient = useQueryClient();
   const socket = useSocket();
-  const [users, setUsers] = useState([]);
+  const [friendRequest, setFriendRequest] = useState<FriendRequest>({
+    username: "",
+    userId: undefined,
+  });
+  const [users, setUsers] = useState<UserSearchbarResponseWindow[]>([]);
   const mutation = useMutation({
     mutationFn: createConversationApi,
     mutationKey: ["conversations/create"],
@@ -47,18 +64,25 @@ export const SidebarSearchbarResponseWindow = ({
       }
     },
   });
-  // const createConversation = async (username: string) => {
-  //   try {
-  //     const response = await axiosAuthorized.post("conversations", {
-  //       username,
-  //       message: "First message",
-  //     });
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
+  const sendFriendRequestMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axiosAuthorized.post("friend-requests", {
+        username: friendRequest.username,
+        userId: friendRequest.userId,
+      });
+      return response.data;
+    },
+    mutationKey: ["users/addToFriend"],
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error?.response?.data?.message);
+      }
+    },
+    onSuccess: (data: { message: string }) => {
+      toast.success(data.message);
+    },
+  });
   const findRecipient = async (userId: string) => {
     const userIdToNum = parseInt(userId);
     const response = await axiosAuthorized.post("users/find", {
@@ -66,6 +90,17 @@ export const SidebarSearchbarResponseWindow = ({
     });
     const recipient = response.data;
     return recipient;
+  };
+
+  const handleAddUserToFriends = async (username: string, userId: number) => {
+    setFriendRequest({ username, userId });
+    const { mutate } = sendFriendRequestMutation;
+    if (username === meUser) {
+      toast.error(`Can't add yourself to friends`);
+      return;
+    }
+    mutate({ username, userId });
+    console.log(userId, username);
   };
 
   const handleUserWindowClick = async (userId: string) => {
@@ -122,10 +157,8 @@ export const SidebarSearchbarResponseWindow = ({
       {users &&
         users.map((user) => (
           <Box
-            onClick={() => handleUserWindowClick(user?.id)}
             key={user?.id}
             sx={{
-              cursor: "pointer",
               display: "flex",
               alignItems: "center",
               gap: "10px",
@@ -163,14 +196,35 @@ export const SidebarSearchbarResponseWindow = ({
                 />
               )}
             </Box>
-            <Box key={user?.id}>
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between" }}
+              key={user?.id}
+            >
               <Typography
+                onClick={() => handleUserWindowClick(user?.id)}
+                sx={{ cursor: "pointer" }}
                 fontFamily={"Readex Pro"}
                 fontSize={"16px"}
                 color={"white"}
               >
                 {user?.username == meUser ? "Me" : user?.username}
               </Typography>
+            </Box>
+            <Box
+              onClick={() => handleAddUserToFriends(user?.username, user?.id)}
+              sx={{
+                marginLeft: "auto",
+                height: "32px",
+                width: "32px",
+                cursor: "pointer",
+              }}
+            >
+              <PersonAddRoundedIcon
+                sx={{
+                  color: "white",
+                  marginLeft: "auto",
+                }}
+              />
             </Box>
           </Box>
         ))}

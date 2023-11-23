@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, IconButton, Typography } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
+import { Box, Typography } from "@mui/material";
 import { Image } from "mui-image";
 
-import { getAvatarById, getUserConversations } from "../../../api/axios";
-import { useAuth } from "../../../hooks/useAuth";
-import { Redirect, useLocation } from "wouter";
+import { getAvatarById } from "../../../api/axios";
+import { useLocation } from "wouter";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { useSocket } from "../../../hooks/useSocket";
 import { useEffect, useMemo, useState } from "react";
@@ -15,7 +12,6 @@ import { getRecipientFromConversation } from "../../../utils/getRecipientFromCon
 import { Notification, OnlineUser, Recipient } from "../../../types/types";
 import { useChatMsg } from "../../../hooks/useChatMsg";
 import { unreadNotificationsFunc } from "../../../utils/unreadNotifications";
-import { formatTimestamp } from "../../../utils/formatTimestamp";
 import { formatTimestampToSidebar } from "../../../utils/formatTimestampToSidebar";
 import { useUserConversations } from "../../../hooks/useUserConversations";
 

@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AuthUser } from 'src/decorators/user.decorator';
 import { User } from 'src/utils/entities/user.entity';
 import { ConversationsService } from '../services/conversations.service';
 import { CreateConversationDto } from 'src/utils/dtos/CreateConversationDto.dto';
-import { FindConversationDto } from 'src/utils/dtos/FindConversationDto.dto';
+import { ParseIntPipe } from 'src/utils/pipes/parseIntPipe';
 
 @Controller('conversations')
 export class ConversationsController {
@@ -11,22 +11,15 @@ export class ConversationsController {
 
   @Get()
   async getUserConversation(@AuthUser() user: User) {
-    const conversations = await this.conversationsService.getConversations(
-      user.id,
-    );
-    console.log(conversations);
-    return conversations;
+    return await this.conversationsService.getConversations(user.id);
   }
 
-  @Post('/conversation')
+  @Get(':id')
   async getConversation(
+    @Param('id', ParseIntPipe) recipientId: number, 
     @AuthUser() user: User,
-    @Body() findConversationDto: FindConversationDto,
   ) {
-    return this.conversationsService.getConversation(
-      user.id,
-      findConversationDto.recipientId,
-    );
+    return this.conversationsService.getConversation(user.id, recipientId);
   }
 
   @Post()

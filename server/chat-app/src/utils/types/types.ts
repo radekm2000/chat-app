@@ -52,3 +52,5 @@ export type WebsocketUserType = {
   userId: number;
   socketId: string;
 };
+
+export type FriendRequestStatus = 'accepted' | 'pending' | 'rejected';

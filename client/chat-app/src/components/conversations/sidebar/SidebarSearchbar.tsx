@@ -1,36 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, TextField, Typography } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
-import { SearchBarResponse } from "../../../types/types";
 import { SidebarSearchbarResponseWindow } from "./SidebarSearchbarResponseWindow";
-import axios from "axios";
-import { useDebounce } from "../../../hooks/useDebounce";
-import { useUser } from "../../../hooks/useUser";
+import { useSearchbarUsersQuery } from "../../../hooks/useSearchbarUsersQuery";
 export const SidebarSearchBar = () => {
   const [searchBarValue, setSearchBarValue] = useState("");
-  const axiosAuthorized = useAxiosAuthorized();
-  const debouncedSearchTerm = useDebounce(searchBarValue, 500);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["users/search", debouncedSearchTerm],
-    queryFn: async () => {
-      if (debouncedSearchTerm) {
-        const response = await axiosAuthorized.get(
-          `users/search?query=${debouncedSearchTerm}`
-        );
-        return response.data;
-      }
-
-      return [];
-    },
-  });
+  const { data, isLoading } = useSearchbarUsersQuery(searchBarValue);
   return (
     <>
       <Box
         sx={{
-          position: 'sticky',
+          position: "sticky",
           width: "400px",
           display: "flex",
           padding: "24px 0px",
@@ -67,7 +48,7 @@ export const SidebarSearchBar = () => {
           Search user...
         </TextField>
       </Box>
-      <Box >
+      <Box>
         {data && (
           <SidebarSearchbarResponseWindow data={data} isLoading={isLoading} />
         )}

@@ -1,9 +1,4 @@
-import {
-  ArgumentsHost,
-  Catch,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, HttpStatus } from '@nestjs/common';
 import { ZodError } from 'zod';
 import { Response } from 'express';
 import { BaseExceptionFilter } from '@nestjs/core';
@@ -17,7 +12,7 @@ export class ZodExceptionFilter extends BaseExceptionFilter {
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+    return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       type: 'validation',
       message: exception.issues[0]?.message || 'Unknown error',
     });
