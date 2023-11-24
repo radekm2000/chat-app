@@ -1,9 +1,10 @@
 import * as cookieParser from 'cookie-parser';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { S3Client } from '@aws-sdk/client-s3';
 import * as cron from 'node-cron';
 import { deleteTokenIfExpired } from './utils/deleteTokenIfExpired';
+import { ZodExceptionFilter } from './utils/ZodExceptionFilter';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const bucketName = process.env.BUCKET_NAME;
@@ -28,6 +29,8 @@ async function bootstrap() {
   cron.schedule(' 2 * * * * *', () => {
     deleteTokenIfExpired();
   });
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new ZodExceptionFilter(httpAdapter));
   await app.listen(3000);
 }
 bootstrap();

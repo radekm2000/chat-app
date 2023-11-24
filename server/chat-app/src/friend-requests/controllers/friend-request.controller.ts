@@ -12,13 +12,13 @@ import { User } from 'src/utils/entities/user.entity';
 @Controller('friend-requests')
 export class FriendRequestsController {
   constructor(private readonly friendRequestsService: FriendRequestsService) {}
-  @UseFilters(new ZodExceptionFilter())
   @UsePipes(new ZodValidationPipe(CreateFriendRequestSchema))
   @Post()
   async createFriendRequest(
     @AuthUser() authUser: User,
     @Body() dto: CreateFriendRequestDto,
   ) {
+    console.log(dto);
     return await this.friendRequestsService.createFriendRequest({
       dto,
       authUser,
