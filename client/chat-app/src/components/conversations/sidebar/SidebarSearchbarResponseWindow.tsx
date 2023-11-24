@@ -5,7 +5,11 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
 import { useUser } from "../../../hooks/useUser";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
-import { createConversationApi } from "../../../api/axios";
+import {
+  authApi,
+  createConversationApi,
+  sendFriendRequest,
+} from "../../../api/axios";
 import toast from "react-hot-toast";
 import { useSocket } from "../../../hooks/useSocket";
 import { useEffect, useState } from "react";
@@ -14,6 +18,10 @@ import Image from "mui-image";
 import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
 import { useAddUserToFriends } from "../../../hooks/useAddUserToFriends";
 import { AxiosError } from "axios";
+import {
+  SendFriendRequest,
+  UserSearchbarResponseWindow,
+} from "../../../types/types";
 
 export const SidebarSearchbarResponseWindow = ({
   data,
@@ -22,25 +30,12 @@ export const SidebarSearchbarResponseWindow = ({
   isLoading: boolean;
   data: any;
 }) => {
-  type UserSearchbarResponseWindow = {
-    username: string;
-    id: number;
-    avatar: string | null;
-  };
-
-  type FriendRequest = {
-    username: string;
-    userId: undefined | number;
-  };
   const [, setLocation] = useLocation();
   const axiosAuthorized = useAxiosAuthorized();
   const { meUser } = useUser();
   const queryClient = useQueryClient();
   const socket = useSocket();
-  const [friendRequest, setFriendRequest] = useState<FriendRequest>({
-    username: "",
-    userId: undefined,
-  });
+
   const [users, setUsers] = useState<UserSearchbarResponseWindow[]>([]);
   const mutation = useMutation({
     mutationFn: createConversationApi,
@@ -66,13 +61,7 @@ export const SidebarSearchbarResponseWindow = ({
   });
 
   const sendFriendRequestMutation = useMutation({
-    mutationFn: async () => {
-      const response = await axiosAuthorized.post("friend-requests", {
-        username: friendRequest.username,
-        userId: friendRequest.userId,
-      });
-      return response.data;
-    },
+    mutationFn: sendFriendRequest,
     mutationKey: ["users/addToFriend"],
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -93,7 +82,6 @@ export const SidebarSearchbarResponseWindow = ({
   };
 
   const handleAddUserToFriends = async (username: string, userId: number) => {
-    setFriendRequest({ username, userId });
     const { mutate } = sendFriendRequestMutation;
     if (username === meUser) {
       toast.error(`Can't add yourself to friends`);

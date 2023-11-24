@@ -1,10 +1,11 @@
-import { Box, Input, InputLabel, Typography } from "@mui/material";
 import NotificationsNavbar from "./NotificationsNavbar";
+import { NotificationsSidebar } from "./NotificationsSidebar";
 
 export const NotificationsPanel = () => {
   return (
     <>
       <NotificationsNavbar />
+      <NotificationsSidebar />
     </>
   );
 };

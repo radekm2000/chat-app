@@ -103,4 +103,33 @@ export type LastMessageSent = {
   id: number;
   content: string;
   createdAt: string;
-}
+};
+
+export type SendFriendRequest = {
+  userId: number;
+  username: string;
+};
+
+export type UserSearchbarResponseWindow = {
+  username: string;
+  id: number;
+  avatar: string | null;
+};
+
+export type Person = {
+  id: number;
+  username: string;
+};
+
+export type FriendRequest = {
+  createdAt: string;
+  id: number;
+  receiver: Person;
+  sender: Person;
+};
+
+export type Friendship = {
+  id: number;
+  sender: Person;
+  receiver: Person;
+};

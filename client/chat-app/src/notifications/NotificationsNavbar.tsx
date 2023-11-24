@@ -1,6 +1,5 @@
 import { Box, Button, IconButton, Input, InputLabel } from "@mui/material";
 import { Image } from "mui-image";
-
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -139,6 +138,7 @@ export const NotificationsNavbar = () => {
               </InputLabel>
             </>
           )}
+
           {selectedFile && (
             <Button
               type="submit"

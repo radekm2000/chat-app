@@ -6,6 +6,7 @@ import {
   CreateConversationParams,
   LoginInput,
   RegisterInput,
+  SendFriendRequest,
 } from "../types/types";
 const BASE_URL = "http://localhost:3000/";
 
@@ -156,4 +157,22 @@ export const changePasswordCredentials = async ({
     console.log(error);
     throw error;
   }
+};
+
+export const sendFriendRequest = async ({
+  username,
+  userId,
+}: SendFriendRequest) => {
+  const response = await authApi.post("friend-requests", {
+    username,
+    userId,
+  });
+  return response.data;
+};
+
+export const acceptFriendRequest = async (friendRequestId: number) => {
+  const response = await authApi.patch(
+    `friend-requests/${friendRequestId}/accept`
+  );
+  return response.data;
 };
