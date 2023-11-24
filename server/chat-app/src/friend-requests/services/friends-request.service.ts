@@ -93,7 +93,7 @@ export class FriendRequestsService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    const isPending = this.isPending(friendRequest);
+    const isPending = await this.isPending(friendRequest);
     if (!isPending) {
       throw new HttpException(
         'Friend request has already been rejected or accepted',
