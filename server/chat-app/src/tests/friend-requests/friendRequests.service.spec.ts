@@ -327,3 +327,62 @@ describe('friendRequest service AcceptFriendRequest method', () => {
     // and expect to have it resolved as newFriendMock
   });
 });
+
+describe('rejectFriendRequest method only tests for things that are not implemented in acceptFriendRequest method', () => {
+  it('should return rejected message and return updatedFriendRequest with status rejected', async () => {
+    const friendRequest = {
+      id: 123,
+      receiver: {
+        id: 1,
+      },
+      sender: {
+        username: 'friendSenderMock',
+      },
+      status: 'pending',
+    } as FriendRequest;
+    const updatedFriendRequest = {
+      id: 123,
+      receiver: {
+        id: 1,
+      },
+      sender: {
+        username: 'friendSenderMock',
+      },
+      status: 'rejected',
+    } as FriendRequest;
+    const authUserMock = {
+      id: 1,
+    } as any;
+    const friendRequestRepository = {
+      save: jest.fn().mockResolvedValue(updatedFriendRequest),
+      findOne: jest.fn().mockResolvedValue(friendRequest),
+    } as any;
+
+    const friendRepository = {
+      save: jest.fn(),
+    } as any;
+
+    const friendsService = {} as any;
+    const usersService = {} as any;
+
+    const friendRequestService = new FriendRequestsService(
+      friendRequestRepository,
+      friendRepository,
+      friendsService,
+      usersService,
+    );
+    jest
+      .spyOn(friendRequestService, 'isPending')
+      .mockImplementation(async () => true);
+    const response = await friendRequestService.rejectFriendRequest(
+      friendRequest.id,
+      authUserMock,
+    );
+    expect(response).toHaveProperty('message');
+    expect(response).toHaveProperty('updatedFriendRequest');
+    expect(response.message).toEqual(
+      `You declined ${friendRequest.sender.username} invitation`,
+    );
+    expect(response.updatedFriendRequest).toEqual(updatedFriendRequest);
+  });
+});

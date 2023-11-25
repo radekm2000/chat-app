@@ -40,8 +40,14 @@ export class FriendRequestsController {
     });
   }
   @Patch(':id/reject')
-  async rejectFriendRequest() {
-    return await this.friendRequestsService.rejectFriendRequest();
+  async rejectFriendRequest(
+    @AuthUser() authUser: User,
+    @Param('id', ParseIntPipe) friendRequestId: number,
+  ) {
+    return await this.friendRequestsService.rejectFriendRequest(
+      friendRequestId,
+      authUser,
+    );
   }
 
   @Patch(':id/accept')

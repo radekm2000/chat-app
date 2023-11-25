@@ -176,3 +176,10 @@ export const acceptFriendRequest = async (friendRequestId: number) => {
   );
   return response.data;
 };
+
+export const rejectFriendRequest = async (friendRequestId: number) => {
+  const response = await authApi.patch(
+    `friend-requests/${friendRequestId}/reject`
+  );
+  return response.data;
+};

@@ -72,10 +72,12 @@ export class FriendRequestsService {
         {
           sender: { id: authUserId },
           receiver: { id: userId },
+          status: 'pending',
         },
         {
           sender: { id: userId },
           receiver: { id: authUserId },
+          status: 'pending',
         },
       ],
     });
@@ -120,8 +122,42 @@ export class FriendRequestsService {
     return { friend: newFriend };
   }
 
-  async rejectFriendRequest() {
-    return;
+  async rejectFriendRequest(friendRequestId: number, authUser: User) {
+    const friendRequest = await this.friendRequestRepository.findOne({
+      where: { id: friendRequestId },
+      relations: ['receiver', 'sender'],
+    });
+
+    if (!friendRequest) {
+      throw new HttpException(
+        'Friend request does no longer exist.',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+    const isPending = await this.isPending(friendRequest);
+    if (!isPending) {
+      throw new HttpException(
+        'Friend request has already been rejected or accepted',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (friendRequest.receiver?.id !== authUser?.id) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    friendRequest.status = 'rejected';
+
+    const updatedFriendRequest =
+      await this.friendRequestRepository.save(friendRequest);
+
+    return {
+      message: `You declined ${friendRequest.sender.username} invitation`,
+      updatedFriendRequest: updatedFriendRequest,
+    };
   }
 
   async findById(id: number): Promise<FriendRequest> {

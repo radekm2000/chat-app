@@ -7,7 +7,7 @@ import { useFriendRequestsQuery } from "../hooks/useFriendRequestsQuery";
 import { addAvatarsToRecipients } from "../utils/addAvatarToRecipients";
 import { FriendRequest, Friendship } from "../types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { acceptFriendRequest } from "../api/axios";
+import { acceptFriendRequest, rejectFriendRequest } from "../api/axios";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -64,16 +64,46 @@ export const NotificationsSidebar = () => {
       );
     },
   });
+
+  const rejectFriendRequestMutation = useMutation({
+    mutationFn: rejectFriendRequest,
+    mutationKey: ["rejectFriendRequest"],
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+      }
+    },
+    onSuccess: (data: {
+      message: string;
+      updatedFriendRequest: FriendRequest;
+    }) => {
+      console.log(data);
+      toast.error(data.message, { position: "top-right" });
+      queryClient.setQueryData(
+        ["friendRequests"],
+        (friendRequests?: FriendRequest[]) => {
+          return friendRequests?.filter(
+            (friendRequest) =>
+              friendRequest.sender.username !==
+              data.updatedFriendRequest.sender.username
+          );
+        }
+      );
+    },
+  });
+
   if (isLoading) {
     return "isLoading...";
   }
-
   const handleAcceptFriendRequestClick = (friendRequest: FriendRequest) => {
     const { mutate } = acceptFriendRequestMutation;
     mutate(friendRequest.id);
   };
 
-  const handleRejectFriendRequestClick = () => {};
+  const handleRejectFriendRequestClick = (friendRequest: FriendRequest) => {
+    const { mutate } = rejectFriendRequestMutation;
+    mutate(friendRequest.id);
+  };
   return (
     <Box>
       <Box sx={{ paddingLeft: "260px", display: "flex", position: "relative" }}>
@@ -151,7 +181,9 @@ export const NotificationsSidebar = () => {
                     <CheckIcon />
                   </IconButton>
                   <IconButton
-                    onClick={() => handleRejectFriendRequestClick()}
+                    onClick={() =>
+                      handleRejectFriendRequestClick(friendRequest)
+                    }
                     color="error"
                   >
                     <ClearIcon />
