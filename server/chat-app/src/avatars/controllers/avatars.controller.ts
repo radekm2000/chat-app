@@ -41,6 +41,6 @@ export class AvatarsController {
       return null;
     }
 
-    return this.avatarsService.getAvatar(avatarId);
+    return await this.avatarsService.getAvatar(avatarId);
   }
 }
