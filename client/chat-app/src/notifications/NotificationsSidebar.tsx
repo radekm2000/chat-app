@@ -31,12 +31,12 @@ export const NotificationsSidebar = () => {
     if (!isLoading) {
       if (friendRequests && friendRequests.length !== 0) {
         Promise.all(
-          friendRequests.map((friendRequest) =>
+          friendRequests.map((friendRequest) => {
             getAvatarById(friendRequest.sender.id).then((avatar) => ({
               avatar: avatar as string,
               userId: friendRequest.sender.id,
-            }))
-          )
+            }));
+          })
         ).then((avatars) => {
           setAvatars(avatars);
         });

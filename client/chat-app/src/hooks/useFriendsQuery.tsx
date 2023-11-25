@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAxiosAuthorized } from "./useAxiosAuthorized";
-import { Friend } from "../types/types";
+import { Friendship } from "../types/types";
 
 export const useFriendsQuery = () => {
   const axiosAuthorized = useAxiosAuthorized();
@@ -8,7 +8,7 @@ export const useFriendsQuery = () => {
     queryKey: ["friends"],
     queryFn: async () => {
       const { data } = await axiosAuthorized.get("friends");
-      return data as Friend[];
+      return data as Friendship[];
     },
   });
 };

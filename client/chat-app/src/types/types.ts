@@ -138,8 +138,3 @@ export type UserAvatars = {
   avatar: string;
   userId: number;
 };
-
-export type Friend = {
-  username: string;
-  id: number;
-};
