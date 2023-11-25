@@ -25,7 +25,7 @@ export const ConversationChat = ({
   conversation,
   userImage,
 }: ConversationChatProps) => {
-  //me user is radek (username)
+  //me user is (username)
   const { meUser } = useUser();
   const [meUserImage, setMeUserImage] = useState("");
   const divRef = useRef<null | HTMLDivElement>(null);

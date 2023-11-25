@@ -125,11 +125,21 @@ export type FriendRequest = {
   createdAt: string;
   id: number;
   receiver: Person;
-  sender: Person;
+  sender: Person & { avatar?: string };
 };
 
 export type Friendship = {
   id: number;
   sender: Person;
   receiver: Person;
+};
+
+export type UserAvatars = {
+  avatar: string;
+  userId: number;
+};
+
+export type Friend = {
+  username: string;
+  id: number;
 };

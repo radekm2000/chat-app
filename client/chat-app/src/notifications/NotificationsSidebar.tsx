@@ -1,44 +1,49 @@
 import PeopleIcon from "@mui/icons-material/People";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+
 import { useFriendRequestsQuery } from "../hooks/useFriendRequestsQuery";
 import { addAvatarsToRecipients } from "../utils/addAvatarToRecipients";
-import { FriendRequest, Friendship } from "../types/types";
+import { FriendRequest, Friendship, UserAvatars } from "../types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { acceptFriendRequest, rejectFriendRequest } from "../api/axios";
+import {
+  acceptFriendRequest,
+  getAvatarById,
+  rejectFriendRequest,
+} from "../api/axios";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
 export const NotificationsSidebar = () => {
   const { data: friendRequests, isLoading } = useFriendRequestsQuery();
   const [isFriendsListOpen, setIsFriendsListOpen] = useState(false);
-  console.log(friendRequests);
   const queryClient = useQueryClient();
+  const [avatars, setAvatars] = useState<Array<UserAvatars>>([]);
 
+  console.log(friendRequests);
   const handleFriendListIconClick = () => {
     setIsFriendsListOpen(!isFriendsListOpen);
   };
-
-  //to do - assign avatars to friend requests senders
-  //   useEffect(() => {
-  //     if (friendRequests && friendRequests.length === 0) return;
-  //     friendRequests?.forEach(async (friendRequest) => {
-  //       const senders = [friendRequest.sender];
-  //       addAvatarsToRecipients(senders).then((sendersWithAvatars) => {
-  //         const updatedSenders = senders.map((sender) => {
-  //           const matchingAvatarSender = sendersWithAvatars.find(
-  //             (s) => s.id === sender.id
-  //           );
-  //           if (matchingAvatarSender) {
-  //             return { ...sender, avatar: matchingAvatarSender.avatar };
-  //           }
-  //           return sender;
-  //         });
-  //       });
-  //     });
-  //   }, [friendRequests]);
+  useEffect(() => {
+    if (!isLoading) {
+      if (friendRequests && friendRequests.length !== 0) {
+        Promise.all(
+          friendRequests.map((friendRequest) =>
+            getAvatarById(friendRequest.sender.id).then((avatar) => ({
+              avatar: avatar as string,
+              userId: friendRequest.sender.id,
+            }))
+          )
+        ).then((avatars) => {
+          setAvatars(avatars);
+        });
+      }
+    }
+  }, [friendRequests]);
+  console.log(avatars);
 
   const acceptFriendRequestMutation = useMutation({
     mutationFn: acceptFriendRequest,
@@ -152,45 +157,59 @@ export const NotificationsSidebar = () => {
               borderRadius: "2%",
             }}
           >
-            {friendRequests?.map((friendRequest, index) => (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  borderBottom: "1px solid rgb(50,50,50)",
-                  paddingLeft: "5px",
-                }}
-                key={index}
-              >
-                <Typography
-                  key={index}
+            {friendRequests?.map((friendRequest, index) => {
+              const currentUserAvatar = avatars.find(
+                (avatar) => avatar.userId === friendRequest.sender.id
+              );
+
+              return (
+                <Box
                   sx={{
-                    fontSize: "23px",
-                    fontFamily: "Readex Pro",
-                    color: "white",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderBottom: "1px solid rgb(50,50,50)",
+                    paddingLeft: "5px",
                   }}
-                >{`${friendRequest.sender.username}`}</Typography>
-                <Box>
-                  <IconButton
-                    onClick={() =>
-                      handleAcceptFriendRequestClick(friendRequest)
-                    }
-                    color="success"
+                  key={index}
+                >
+                  <Box>
+                    {currentUserAvatar ? (
+                      <Avatar src={currentUserAvatar.avatar} />
+                    ) : (
+                      <AccountCircleRoundedIcon />
+                    )}
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: "23px",
+                      fontFamily: "Readex Pro",
+                      color: "white",
+                    }}
                   >
-                    <CheckIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() =>
-                      handleRejectFriendRequestClick(friendRequest)
-                    }
-                    color="error"
-                  >
-                    <ClearIcon />
-                  </IconButton>
+                    {`${friendRequest.sender.username}`}
+                  </Typography>
+                  <Box>
+                    <IconButton
+                      onClick={() =>
+                        handleAcceptFriendRequestClick(friendRequest)
+                      }
+                      color="success"
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() =>
+                        handleRejectFriendRequestClick(friendRequest)
+                      }
+                      color="error"
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
+              );
+            })}
           </Box>
         ) : null}
       </Box>

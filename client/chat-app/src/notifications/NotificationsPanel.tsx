@@ -1,3 +1,4 @@
+import { NotificationsFriendList } from "./NotificationsFriendList";
 import NotificationsNavbar from "./NotificationsNavbar";
 import { NotificationsSidebar } from "./NotificationsSidebar";
 
@@ -6,6 +7,7 @@ export const NotificationsPanel = () => {
     <>
       <NotificationsNavbar />
       <NotificationsSidebar />
+      <NotificationsFriendList />
     </>
   );
 };
