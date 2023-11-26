@@ -31,7 +31,7 @@ export const ConversationPage = () => {
   });
 
   socket.on("connect_error", (err) => {
-    if (err?.message === "jwt malformed") console.log("hehe");
+    if (err?.message === "jwt malformed");
     setTimeout(() => {
       const accessToken = localStorage.getItem("token");
       socket.io.opts.extraHeaders = {

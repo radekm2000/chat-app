@@ -28,21 +28,30 @@ export const NotificationsSidebar = () => {
     setIsFriendsListOpen(!isFriendsListOpen);
   };
   useEffect(() => {
-    if (!isLoading) {
-      if (friendRequests && friendRequests.length !== 0) {
-        Promise.all(
-          friendRequests.map((friendRequest) => {
-            getAvatarById(friendRequest.sender.id).then((avatar) => ({
+    if (!isLoading && friendRequests && friendRequests.length !== 0) {
+      Promise.all(
+        friendRequests.map(async (friendRequest) => {
+          try {
+            const avatar = await getAvatarById(friendRequest?.sender?.id);
+            return {
               avatar: avatar as string,
               userId: friendRequest.sender.id,
-            }));
-          })
-        ).then((avatars) => {
-          setAvatars(avatars);
+            };
+          } catch (error) {
+            return null;
+          }
+        })
+      )
+        .then((avatars) => {
+          const filteredAvatars = avatars.filter((avatar) => avatar !== null);
+          console.log(filteredAvatars);
+          setAvatars(filteredAvatars);
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      }
     }
-  }, [friendRequests]);
+  }, [friendRequests, isLoading]);
   console.log(avatars);
 
   const acceptFriendRequestMutation = useMutation({
@@ -150,16 +159,17 @@ export const NotificationsSidebar = () => {
             sx={{
               position: "absolute",
               backgroundColor: "#3e4444",
-              height: "300px",
+              height: "307px",
               width: "250px",
               top: "8px",
               right: "45px",
               borderRadius: "2%",
+              zIndex: 1
             }}
           >
             {friendRequests?.map((friendRequest, index) => {
               const currentUserAvatar = avatars.find(
-                (avatar) => avatar.userId === friendRequest.sender.id
+                (avatar) => avatar?.userId === friendRequest?.sender?.id
               );
 
               return (
@@ -169,7 +179,7 @@ export const NotificationsSidebar = () => {
                     justifyContent: "space-between",
                     alignItems: "center",
                     borderBottom: "1px solid rgb(50,50,50)",
-                    paddingLeft: "5px",
+                    padding: '5px 5px'
                   }}
                   key={index}
                 >
@@ -177,7 +187,7 @@ export const NotificationsSidebar = () => {
                     {currentUserAvatar ? (
                       <Avatar src={currentUserAvatar.avatar} />
                     ) : (
-                      <AccountCircleRoundedIcon />
+                      <AccountCircleRoundedIcon sx={{ color: "white" }} />
                     )}
                   </Box>
                   <Typography
