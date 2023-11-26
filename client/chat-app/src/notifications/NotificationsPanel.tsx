@@ -8,7 +8,7 @@ export const NotificationsPanel = () => {
     <>
       <NotificationsNavbar />
       <NotificationsSidebar />
-        <NotificationsFriendList />
+      <NotificationsFriendList />
     </>
   );
 };

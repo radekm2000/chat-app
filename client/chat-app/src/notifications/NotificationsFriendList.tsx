@@ -6,11 +6,14 @@ import { getAvatarById } from "../api/axios";
 import { useUser } from "../hooks/useUser";
 import { getFriendFromFriendship } from "../utils/getFriendFromFriendship";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import { useLocation } from "wouter";
 
 export const NotificationsFriendList = () => {
   const { data: friendsData, isLoading } = useFriendsQuery();
   const [avatars, setAvatars] = useState<Array<UserAvatars>>([]);
   const { meUser } = useUser();
+  const [, setLocation] = useLocation();
+
   useEffect(() => {
     if (!isLoading && friendsData && friendsData.length !== 0) {
       Promise.all(
@@ -35,6 +38,9 @@ export const NotificationsFriendList = () => {
     }
   }, [friendsData]);
 
+  const handleFriendIconClick = (friendId: number) => {
+    setLocation(`/conversations/${friendId}`);
+  };
   console.log(friendsData);
   console.log("avatary friendsow");
   console.log(avatars);
@@ -59,10 +65,13 @@ export const NotificationsFriendList = () => {
                 display: "flex",
                 alignItems: "center",
                 padding: "5px 5px",
-                maxHeight: '100vh'
+                maxHeight: "100vh",
               }}
             >
-              <Box>
+              <Box
+                sx={{ cursor: "pointer" }}
+                onClick={() => handleFriendIconClick(friend.id)}
+              >
                 {matchingFriendAvatar ? (
                   <Avatar
                     src={matchingFriendAvatar.avatar}
