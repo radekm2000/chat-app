@@ -1,4 +1,4 @@
-import { createContext, ReactNode } from "react";
+import { createContext } from "react";
 import { io, Socket } from "socket.io-client";
 const accessToken = localStorage.getItem("token");
 // eslint-disable-next-line react-refresh/only-export-components
@@ -17,11 +17,9 @@ socket.on("error", async (error) => {
     if (socket.io.opts && socket.io.opts.extraHeaders) {
       socket.io.opts.extraHeaders.Authorization = `Bearer ${newToken}`;
     }
-    console.log('reconnecting with new token')
     socket.connect();
   }
 });
-
 
 export const WebsocketContext = createContext<Socket>(socket);
 

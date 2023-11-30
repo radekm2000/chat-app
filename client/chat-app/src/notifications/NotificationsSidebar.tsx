@@ -23,7 +23,6 @@ export const NotificationsSidebar = () => {
   const queryClient = useQueryClient();
   const [avatars, setAvatars] = useState<Array<UserAvatars>>([]);
 
-  console.log(friendRequests);
   const handleFriendListIconClick = () => {
     setIsFriendsListOpen(!isFriendsListOpen);
   };
@@ -44,7 +43,6 @@ export const NotificationsSidebar = () => {
       )
         .then((avatars) => {
           const filteredAvatars = avatars.filter((avatar) => avatar !== null);
-          console.log(filteredAvatars);
           setAvatars(filteredAvatars);
         })
         .catch((error) => {
@@ -52,7 +50,6 @@ export const NotificationsSidebar = () => {
         });
     }
   }, [friendRequests, isLoading]);
-  console.log(avatars);
 
   const acceptFriendRequestMutation = useMutation({
     mutationFn: acceptFriendRequest,
@@ -164,7 +161,7 @@ export const NotificationsSidebar = () => {
               top: "8px",
               right: "45px",
               borderRadius: "2%",
-              zIndex: 1
+              zIndex: 1,
             }}
           >
             {friendRequests?.map((friendRequest, index) => {
@@ -179,7 +176,7 @@ export const NotificationsSidebar = () => {
                     justifyContent: "space-between",
                     alignItems: "center",
                     borderBottom: "1px solid rgb(50,50,50)",
-                    padding: '5px 5px'
+                    padding: "5px 5px",
                   }}
                   key={index}
                 >

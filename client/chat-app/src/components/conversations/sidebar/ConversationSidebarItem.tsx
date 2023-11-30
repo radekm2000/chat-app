@@ -26,7 +26,6 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
 
   const { notifications, setNotifications } = useChatMsg();
   const [isChatOpen, setIsChatOpen] = useState(false);
-  console.log("notifications: ", notifications);
   const markThisUserNotificationsAsRead = (
     thisUserNotifications: Notification[],
     notifications: Notification[]
@@ -48,15 +47,9 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
 
   useEffect(() => {
     socket.on("getNotification", (res) => {
-      console.log(res);
-      console.log("isChatOpen");
-
       const isChatOpen = userChatId
         ? parseInt(userChatId) === res.senderId
         : false;
-      console.log(isChatOpen);
-      console.log("sender id", res?.senderId);
-      console.log("userChatId: ", userChatId);
       if (isChatOpen) {
         setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
         setIsChatOpen(true);
@@ -69,10 +62,7 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
     };
   });
 
-  useEffect(() => {
-    console.log("is typing : ");
-    console.log(isTyping);
-  }, [isTyping]);
+  useEffect(() => {}, [isTyping]);
 
   useEffect(() => {
     socket.on("typingMessage", ({ authorId, conversationId }) => {
@@ -85,7 +75,6 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
     });
 
     socket.on("noLongerTypingMessage", () => {
-      console.log("user is no longer typing mesage");
       setIsTyping(false);
     });
 
@@ -98,8 +87,6 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
     socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
       setOnlineUsers(onlineUsers);
     });
-    console.log(`online uzytkownicy`);
-    console.log(onlineUsers);
 
     return () => {
       socket.off("getOnlineUsers");
@@ -108,18 +95,12 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
   const handleUserChatClick = async (userId: string) => {
     setLocation(`/conversations/${userId}`);
   };
-  //  const { data, isSuccess } = useQuery({
-  // queryKey: ["conversations"],
-  // queryFn: getUserConversations,
-  // });
 
   const { data } = useUserConversations();
 
   socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
     setOnlineUsers(onlineUsers);
   });
-  console.log("user conversations");
-  console.log(data);
   const recipients = useMemo(() => {
     return (
       data?.map((conversation) => {
@@ -134,18 +115,6 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
       }) || []
     );
   }, [data, meUser]);
-  // const recipients = data?.map((conversation) => {
-  //   const recipient = getRecipientFromConversation(conversation, meUser);
-  //   const { lastMessageSent, lastMessageSentAt } = conversation;
-  //   return {
-  //     id: recipient.id,
-  //     username: recipient.username,
-  //     lastMessageSent,
-  //     lastMessageSentAt,
-  //   };
-  // });
-  console.log("recipients");
-  console.log(recipients);
 
   const unreadNotifications = unreadNotificationsFunc(notifications);
   const thisUserNotifications = unreadNotifications?.filter((notification) => {
@@ -154,7 +123,6 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
     );
   });
 
-  console.log("this user notifications: ", thisUserNotifications);
   const sortedRecipients = [...recipients].sort((a, b) => {
     const dateA = new Date(b.lastMessageSentAt).getTime();
     const dateB = new Date(a.lastMessageSentAt).getTime();
@@ -194,8 +162,6 @@ export const SidebarItem = ({ userChatId }: { userChatId: string }) => {
         console.error(error);
       });
   }, [recipients]);
-
-  console.log(ppl);
 
   return (
     <>

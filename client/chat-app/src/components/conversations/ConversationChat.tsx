@@ -25,20 +25,15 @@ export const ConversationChat = ({
   conversation,
   userImage,
 }: ConversationChatProps) => {
-  //me user is (username)
   const { meUser } = useUser();
   const [meUserImage, setMeUserImage] = useState("");
   const divRef = useRef<null | HTMLDivElement>(null);
   const socket = useSocket();
   const { chatMessages, setChatMessages } = useChatMsg();
-  console.log(chatMessages);
 
   useEffect(() => {
     socket.on("getMessage", (msg) => {
-      console.log("otrzymany event getMessage");
       if (conversation.id !== msg.conversation?.id) return;
-      console.log("otrzymana wiadomosc z socketa");
-      console.log(msg);
       setChatMessages((prev) => [...prev, msg]);
     });
 
@@ -65,7 +60,6 @@ export const ConversationChat = ({
   });
 
   const axiosAuthorized = useAxiosAuthorized();
-  console.log(conversation);
   const { data, isLoading } = useQuery({
     queryKey: ["conversation/messages", conversation?.id],
     queryFn: async () => {
@@ -79,11 +73,6 @@ export const ConversationChat = ({
   if (isLoading) {
     return <div>isLoading...</div>;
   }
-  console.log(`pobrane wiadomosci z konwersacji o id: ${conversation?.id}`);
-  console.log(data);
-  console.log(meUser);
-  console.log("chat messages");
-  console.log(chatMessages);
   return (
     <>
       {chatMessages?.map((message, index) => {
@@ -178,7 +167,7 @@ export const ConversationChat = ({
                 }}
               >
                 {message.content}
-                <Typography ref={divRef}></Typography>
+                <Typography component="span" ref={divRef}></Typography>
               </Typography>
             )}
           </Box>

@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import { ConversationNavbar } from "./ConversationNavbar";
 import { ConversationInputPanel } from "./ConversationInputPanel";
 import { ConversationChat } from "./ConversationChat";
-import { useUser } from "../../hooks/useUser";
 import { useState } from "react";
 import { getAvatarById } from "../../api/axios";
 import { useRecipientUser } from "../../hooks/useRecipientUser";
@@ -14,11 +13,8 @@ export const ConversationChannelPage = ({
   userChatId: string;
 }) => {
   const idToNum = parseInt(userChatId);
-  console.log(idToNum);
-  const { meUser } = useUser();
   const [avatarImage, setAvatarImage] = useState("");
 
-  console.log(meUser);
   const { data: userData, isLoading: isUserDataLoading } =
     useRecipientUser(userChatId);
 
@@ -35,18 +31,12 @@ export const ConversationChannelPage = ({
     }
   }
 
-  console.log("avatar image  -------------------------");
-  console.log(avatarImage);
-
   const { data: conversationData, isLoading: isConversationDataLoading } =
     useUserConversationQuery(idToNum);
 
   if (!conversationData) {
     return;
   }
-  console.log(conversationData);
-  console.log("user data");
-  console.log(userData);
 
   return (
     <Box

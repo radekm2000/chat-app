@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import { Notification } from "../types/types";
 import { unreadNotificationsFunc } from "../utils/unreadNotifications";
 import { useChatMsg } from "../hooks/useChatMsg";
 

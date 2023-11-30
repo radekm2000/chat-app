@@ -1,27 +1,18 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useLocation } from "wouter";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 import { useAxiosAuthorized } from "../../../hooks/useAxiosAuthorized";
 import { useUser } from "../../../hooks/useUser";
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
-import {
-  authApi,
-  createConversationApi,
-  sendFriendRequest,
-} from "../../../api/axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createConversationApi, sendFriendRequest } from "../../../api/axios";
 import toast from "react-hot-toast";
-import { useSocket } from "../../../hooks/useSocket";
 import { useEffect, useState } from "react";
 import { addAvatarsToRecipients } from "../../../utils/addAvatarToRecipients";
 import Image from "mui-image";
 import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
-import { useAddUserToFriends } from "../../../hooks/useAddUserToFriends";
 import { AxiosError } from "axios";
-import {
-  SendFriendRequest,
-  UserSearchbarResponseWindow,
-} from "../../../types/types";
+import { UserSearchbarResponseWindow } from "../../../types/types";
 
 export const SidebarSearchbarResponseWindow = ({
   data,
@@ -34,7 +25,6 @@ export const SidebarSearchbarResponseWindow = ({
   const axiosAuthorized = useAxiosAuthorized();
   const { meUser } = useUser();
   const queryClient = useQueryClient();
-  const socket = useSocket();
 
   const [users, setUsers] = useState<UserSearchbarResponseWindow[]>([]);
   const mutation = useMutation({
@@ -72,10 +62,9 @@ export const SidebarSearchbarResponseWindow = ({
       toast.success(data.message);
     },
   });
-  const findRecipient = async (userId: string) => {
-    const userIdToNum = parseInt(userId);
+  const findRecipient = async (userId: number) => {
     const response = await axiosAuthorized.post("users/find", {
-      id: userIdToNum,
+      id: userId,
     });
     const recipient = response.data;
     return recipient;
@@ -88,10 +77,9 @@ export const SidebarSearchbarResponseWindow = ({
       return;
     }
     mutate({ username, userId });
-    console.log(userId, username);
   };
 
-  const handleUserWindowClick = async (userId: string) => {
+  const handleUserWindowClick = async (userId: number) => {
     const recipient = await findRecipient(userId);
     if (!recipient) {
       throw new Error(
@@ -99,14 +87,9 @@ export const SidebarSearchbarResponseWindow = ({
       );
     }
     const username = recipient.username;
-    // setLocation(`/conversations/${userId}`);
     const { mutate } = mutation;
-    // createConversation(username);
     mutate({ username });
   };
-
-  console.log("dane z searchbara ------s ");
-  console.log(data);
 
   useEffect(() => {
     if (data.length === 0) {
@@ -131,8 +114,6 @@ export const SidebarSearchbarResponseWindow = ({
         console.error(error);
       });
   }, [data]);
-  console.log("users with avatars");
-  console.log(users);
   return (
     <Box
       sx={{

@@ -10,7 +10,6 @@ export const NotificationsNavbar = () => {
   const [isAvatarIconOpen, setIsAvatarIconOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [hasAvatar, setHasAvatar] = useState(false);
-  console.log(isAvatarIconOpen);
   const axiosAuthorized = useAxiosAuthorized();
 
   const handleFileInputChange = (e) => {
@@ -34,11 +33,9 @@ export const NotificationsNavbar = () => {
 
   useEffect(() => {
     if (userImage) setHasAvatar(true);
-    console.log(userImage);
   }, [hasAvatar, userImage]);
 
   const uploadSelectedFile = (e) => {
-    console.log("clicked");
     const formData = new FormData();
     if (selectedFile) {
       formData.append("avatar", selectedFile);

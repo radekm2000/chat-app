@@ -20,7 +20,7 @@ import { useSocket } from "../../hooks/useSocket";
 import { useUser } from "../../hooks/useUser";
 export const Login = () => {
   const { setAuth } = useAuth();
-  const {meUser, setUser} = useUser()
+  const { meUser, setUser } = useUser();
   const [username, setUsername] = useState("");
   const [success, setSuccess] = useState(false);
   const [password, setPassword] = useState("");
@@ -30,36 +30,30 @@ export const Login = () => {
     onSuccess: (data) => {
       toast.success("User signed in sucesfully", { position: "top-right" });
       setAuth!({ accessToken: data });
-      localStorage.setItem('token', data)
+      localStorage.setItem("token", data);
       setSuccess(true);
-      console.log(socket)
-      socket.timeout(2000).connect()
-      console.log(`socket connected: ${socket.connected} `)
+      socket.timeout(2000).connect();
     },
     onSettled(data, error) {
-      if(error) {
-        setSuccess(false)
-        toast.error('Invalid credentials', {position: 'top-center'})
+      if (error) {
+        setSuccess(false);
+        toast.error("Invalid credentials", { position: "top-center" });
       }
-
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onError: (error: any) => {
-    },
+    onError: (error: any) => {},
   });
-  useEffect(() => {
-  }, [meUser])
+  useEffect(() => {}, [meUser]);
 
-  if(success) {
-    return <Redirect to="/conversations"/>
+  if (success) {
+    return <Redirect to="/conversations" />;
   }
-
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const { mutate, isLoading, isError } = mutation;
     mutate({ username, password });
-    setUser(username)
+    setUser(username);
     if (isLoading) {
       return <h1>is Loading...</h1>;
     }
@@ -69,7 +63,6 @@ export const Login = () => {
   };
   return (
     <form onSubmit={handleSubmit}>
-      {/* {success && <Redirect to="/conversations/" />} */}
       <Container maxWidth="xs">
         <Box
           sx={{

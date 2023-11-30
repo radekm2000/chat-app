@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import { Button, Input, InputLabel, Link } from "@mui/material";
+import { Button, Link } from "@mui/material";
 import { Avatar, Box, Container, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useMutation } from "@tanstack/react-query";
@@ -14,14 +14,11 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 export const Register = () => {
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
-  console.log(username);
   const [password, setPassword] = useState("");
   const [validPwd, setValidPwd] = useState(false);
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
 
-  console.log("is mail valid");
-  console.log(validEmail);
   const [emailErrorMsg, setEmailErrorMsg] = useState("");
   const [usernameErrorMsg, SetUsernameErrorMsg] = useState("");
   const [pwdErrorMsg, SetPwdErrorMsg] = useState("");

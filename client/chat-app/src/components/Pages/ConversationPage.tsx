@@ -51,16 +51,9 @@ export const ConversationPage = () => {
       socket.disconnect();
     };
   }, [accessToken, socket]);
-  const { auth } = useAuth();
-  console.log(auth);
-  useEffect(() => {
-    if (auth?.accessToken) {
-      console.log(auth);
-    }
-  }, [auth]);
+
   const [, params] = useRoute("/conversations/:id");
   const id = params ? params.id : null;
-  console.log(id);
   return (
     <Box
       sx={{

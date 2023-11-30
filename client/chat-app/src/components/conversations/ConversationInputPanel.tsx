@@ -20,7 +20,7 @@ export type ConversationInputPanelProps = {
   user: Partial<UserType>;
   isUserDataLoading: boolean;
   isConversationDataLoading: boolean;
-  conversation: Conversation
+  conversation: Conversation;
 };
 export const ConversationInputPanel = ({
   user,
@@ -44,12 +44,8 @@ export const ConversationInputPanel = ({
     socket.emit("noLongerTypingMessage");
   };
 
-  console.log("conversation id: ");
-  console.log(conversation?.id);
-
   const mutation = useMutation({
     mutationFn: async () => {
-      console.log("wyslane conversation id: ", conversation.id);
       const response = await axiosAuthorized.post("messages", {
         content: message,
         conversationId: conversation.id,
@@ -68,10 +64,7 @@ export const ConversationInputPanel = ({
       ]);
       setMessage(data.message);
       setMessage("");
-      console.log("wiadomosc wyslana");
-      console.log("odebrane dane:");
       setChatMessages((prev) => [...prev, data.message]);
-      console.log(data);
       socket.emit("sendMessage", {
         msg: data?.message,
         recipientId: getRecipientFromConversation(
@@ -80,17 +73,17 @@ export const ConversationInputPanel = ({
         ).id,
       });
     },
-    onError: () => {
-      console.log("error");
+    onError: (error) => {
+      console.error(error);
     },
   });
   const [message, setMessage] = useState("");
-  console.log("wiadomosci z websocket");
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      setTyping(false);
       if (message.trim() !== "") {
         const { mutate, error, isError } = mutation;
         mutate();
@@ -99,7 +92,7 @@ export const ConversationInputPanel = ({
         }
       }
     } else {
-      if (e.key !== "Backspace" || typing === false) {
+      if (e.key !== "Backspace" && typing === false) {
         setTyping(true);
         socket.emit("typingMessage", {
           authorId,
@@ -112,8 +105,6 @@ export const ConversationInputPanel = ({
       }
     }
   };
-  console.log("podany nick");
-  console.log(meUser);
   const { data: authorId, isLoading } = useQuery({
     queryKey: ["users/:username", meUser],
     queryFn: async () => {
@@ -126,8 +117,6 @@ export const ConversationInputPanel = ({
   if (isLoading) {
     return "isLoading...";
   }
-  console.log("znaleziony user");
-  console.log(authorId);
   return (
     <Input
       onChange={(e) => setMessage(e.target.value)}
