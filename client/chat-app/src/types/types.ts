@@ -138,3 +138,9 @@ export type UserAvatars = {
   avatar: string;
   userId: number;
 };
+
+export type friendRecord = {
+  id: number;
+  receiver: Person;
+  sender: Person;
+};

@@ -64,6 +64,7 @@ export const NotificationsSidebar = () => {
         `You are now  friends with ${data.friend.sender.username}`,
         { position: "top-right" }
       );
+      queryClient.invalidateQueries(["friends"]);
       queryClient.setQueryData(
         ["friendRequests"],
         (friendRequests?: FriendRequest[]) => {
@@ -189,7 +190,7 @@ export const NotificationsSidebar = () => {
                   </Box>
                   <Typography
                     sx={{
-                      fontSize: "23px",
+                      fontSize: "16px",
                       fontFamily: "Readex Pro",
                       color: "white",
                     }}

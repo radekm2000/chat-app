@@ -183,3 +183,8 @@ export const rejectFriendRequest = async (friendRequestId: number) => {
   );
   return response.data;
 };
+
+export const deleteFriendRecord = async (friendRecordId: number) => {
+  const response = await authApi.delete(`friends/${friendRecordId}`);
+  return response.data;
+};

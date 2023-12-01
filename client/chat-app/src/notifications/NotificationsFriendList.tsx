@@ -1,23 +1,34 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { useFriendsQuery } from "../hooks/useFriendsQuery";
 import { useEffect, useState } from "react";
-import { OnlineUser, UserAvatars } from "../types/types";
-import { getAvatarById } from "../api/axios";
+import {
+  Friendship,
+  OnlineUser,
+  UserAvatars,
+  friendRecord,
+} from "../types/types";
+import { deleteFriendRecord, getAvatarById } from "../api/axios";
 import { useUser } from "../hooks/useUser";
 import { getFriendFromFriendship } from "../utils/getFriendFromFriendship";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { useLocation } from "wouter";
 import { useSocket } from "../hooks/useSocket";
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 export const NotificationsFriendList = () => {
   const { data: friendsData, isLoading } = useFriendsQuery();
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const socket = useSocket();
-
+  const queryClient = useQueryClient();
   const [avatars, setAvatars] = useState<Array<UserAvatars>>([]);
   const { meUser } = useUser();
   const [, setLocation] = useLocation();
 
+  friendsData?.map((friendData) => {
+    console.log(friendData.id);
+  });
   useEffect(() => {
     if (!isLoading && friendsData && friendsData.length !== 0) {
       Promise.all(
@@ -42,6 +53,32 @@ export const NotificationsFriendList = () => {
     }
   }, [friendsData]);
 
+  const deleteFriendRecordMutation = useMutation({
+    mutationFn: deleteFriendRecord,
+    mutationKey: ["friends/delete"],
+    onSuccess: (data: { friendRecord: friendRecord }) => {
+      queryClient.setQueryData(["friends"], (friendsData?: Friendship[]) => {
+        return friendsData?.filter((friendData) => {
+          return friendData.id !== data.friendRecord.id;
+        });
+      });
+      queryClient.invalidateQueries(["friends"]);
+      toast.success("Friend has been deleted!");
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+      }
+    },
+  });
+
+  const handleDeleteFriendRecordClick = (friendRecordId: number) => {
+    const { mutate } = deleteFriendRecordMutation;
+    console.log(friendRecordId);
+    mutate(friendRecordId);
+    console.log("friend record id ");
+  };
+
   useEffect(() => {
     socket.on("getOnlineUsers", (onlineUsers: OnlineUser[]) => {
       setOnlineUsers(onlineUsers);
@@ -51,6 +88,10 @@ export const NotificationsFriendList = () => {
       socket.off("getOnlineUsers");
     };
   }, [onlineUsers, socket]);
+
+  if (isLoading) {
+    return "isLoading...";
+  }
 
   const handleFriendIconClick = (friendId: number) => {
     setLocation(`/conversations/${friendId}`);
@@ -79,6 +120,7 @@ export const NotificationsFriendList = () => {
               key={friend.id}
               sx={{
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
                 padding: "5px 5px",
                 maxHeight: "100vh",
@@ -111,7 +153,15 @@ export const NotificationsFriendList = () => {
                   ></Box>
                 )}
               </Box>
-              <Box sx={{ marginLeft: "10px" }} key={index}>
+              <Box
+                sx={{
+                  marginLeft: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  marginRight: "auto",
+                }}
+                key={index}
+              >
                 <Typography
                   sx={{
                     fontFamily: "Readex Pro",
@@ -122,6 +172,10 @@ export const NotificationsFriendList = () => {
                   {friend.username}
                 </Typography>
               </Box>
+              <DeleteIcon
+                sx={{ color: "grey", cursor: "pointer" }}
+                onClick={() => handleDeleteFriendRecordClick(friendData.id)}
+              />
             </Box>
           );
         }
