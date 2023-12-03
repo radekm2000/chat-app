@@ -53,7 +53,7 @@ To run this application locally, follow the instructions below.
     Set these environment variables for authentication tokens
 3. **Email Configuration**:
    - `MY_EMAIL`
-   - `MY_EMAIL_PASSWORD`
+   - `MY_EMAIL_PASSWORD` it is a third party app password 
 
    Set these environment variables to enable sending email notifications to change account's password
 
