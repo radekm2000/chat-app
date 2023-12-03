@@ -12,6 +12,7 @@ import { UserProvider } from "./contexts/UserContext";
 import { ChatProvider } from "./contexts/ChatContext";
 import { UserMailVerification } from "./components/Pages/UserMailVerification";
 import { ChangePassword } from "./components/Pages/ChangePassword";
+import { NotFound } from "./components/Pages/NotFound";
 
 function AppWithProviders({ children }: PropsWithChildren) {
   return (
@@ -34,7 +35,7 @@ function App() {
             <Route path="/register">
               <Register />
             </Route>
-            <Route path="/login">
+            <Route path="">
               <Login />
             </Route>
             <Route path="/user-mail-verification">

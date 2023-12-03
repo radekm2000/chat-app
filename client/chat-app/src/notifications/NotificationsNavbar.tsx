@@ -35,7 +35,7 @@ export const NotificationsNavbar = () => {
     if (userImage) setHasAvatar(true);
   }, [hasAvatar, userImage]);
 
-  const uploadSelectedFile = (e) => {
+  const uploadSelectedFile = () => {
     const formData = new FormData();
     if (selectedFile) {
       formData.append("avatar", selectedFile);

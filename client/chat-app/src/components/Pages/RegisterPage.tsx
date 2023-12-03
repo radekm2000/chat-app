@@ -100,7 +100,7 @@ export const Register = () => {
           <TextField
             autoComplete="true"
             error={Boolean(email) && !validEmail}
-            id="outlined-error"
+            id="outlined-error1"
             helperText={!validEmail && email ? emailErrorMsg : null}
             onChange={(e) => setEmail(e.target.value)}
             value={email}
@@ -150,7 +150,7 @@ export const Register = () => {
           </Button>
           <Link
             variant="body2"
-            href="/login"
+            href="/"
             style={{ paddingLeft: "150px", paddingTop: "20px" }}
           >
             Already have an account? Sign in
