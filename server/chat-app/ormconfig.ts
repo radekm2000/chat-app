@@ -42,4 +42,34 @@ if (process.env.IS_PRODUCTION === 'true') {
   };
 }
 
+// export const config: PostgresConnectionOptions = {
+//   type: 'postgres',
+//   database: process.env.POSTGRES_DB,
+//   host: 'localhost',
+//   port: 5432,
+//   username: process.env.POSTGRES_USER,
+//   password: process.env.POSTGRES_PASSWORD,
+//   entities: [
+//     User,
+//     Conversation,
+//     Message,
+//     Avatar,
+//     ResetPasswordToken,
+//     FriendRequest,
+//     Friend,
+//   ],
+//   synchronize: true,
+// };
+
+// export const config: PostgresConnectionOptions = {
+//   type: 'postgres',
+//   database: 'railway',
+//   host: 'monorail.proxy.rlwy.net',
+//   port: 51208,
+//   username: 'postgres',
+//   password: 'daE36a*BgA36G4CEe2BaDCBFFCdDaB*B',
+//   entities: ['dist/**/*.entity.js'],
+//   migrations: ['dist/db/migrations/*.js'],
+// };
+
 export const dataSource = new DataSource(config);
