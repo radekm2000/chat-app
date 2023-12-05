@@ -22,13 +22,8 @@ export const s3 = new S3Client({
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'https://656f40979eb9700b1f6bea3d--radekm-chat-app.netlify.app/',
-      'https://radekm-chat-app.netlify.app/',
-    ],
+    origin: ['http://localhost:5173', 'https://radekm-chat-app.netlify.app'],
     credentials: true,
-    methods: ['GET,HEAD,PUT,PATCH,POST,DELETE'],
   });
   app.use(cookieParser());
   cron.schedule(' 2 * * * * *', () => {

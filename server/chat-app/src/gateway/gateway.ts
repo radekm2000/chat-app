@@ -1,4 +1,4 @@
-import {  UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -12,7 +12,7 @@ import { WebsocketUserType } from 'src/utils/types/types';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:5173'],
+    origin: ['http://localhost:5173', 'https://radekm-chat-app.netlify.app'],
     credentials: true,
   },
 })
