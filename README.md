@@ -1,15 +1,10 @@
+# Check the app live at [here](https://radekm-chat-app.netlify.app/)
+
 # Chat Application
 
 This is a chat application built using React for the frontend and NestJS for the backend and PostgresSQL for the database, utilizing websockets for real-time communication.
 
 ![preview photo](server/chat-app/src/uploads/temp/Screenshot_1.png)
-
-## Project Structure
-
-The project directory is structured as follows:
-
-- `client/chat-app`: Contains frontend code.
-- `server/chat-app`: Contains backend code.
 
 ## Getting Started
 
