@@ -25,8 +25,10 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'https://656f40979eb9700b1f6bea3d--radekm-chat-app.netlify.app/',
+      'https://radekm-chat-app.netlify.app/',
     ],
     credentials: true,
+    methods: ['GET,HEAD,PUT,PATCH,POST,DELETE'],
   });
   app.use(cookieParser());
   cron.schedule(' 2 * * * * *', () => {
