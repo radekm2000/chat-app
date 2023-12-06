@@ -6,7 +6,6 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 import { useFriendRequestsQuery } from "../hooks/useFriendRequestsQuery";
-import { addAvatarsToRecipients } from "../utils/addAvatarToRecipients";
 import { FriendRequest, Friendship, UserAvatars } from "../types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -64,7 +63,6 @@ export const NotificationsSidebar = () => {
         `You are now  friends with ${data.friend.sender.username}`,
         { position: "top-right" }
       );
-      queryClient.invalidateQueries(["friends"]);
       queryClient.setQueryData(
         ["friendRequests"],
         (friendRequests?: FriendRequest[]) => {
@@ -74,6 +72,7 @@ export const NotificationsSidebar = () => {
           );
         }
       );
+      queryClient.invalidateQueries(["friends"]);
     },
   });
 

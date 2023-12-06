@@ -26,9 +26,6 @@ export const NotificationsFriendList = () => {
   const { meUser } = useUser();
   const [, setLocation] = useLocation();
 
-  friendsData?.map((friendData) => {
-    console.log(friendData.id);
-  });
   useEffect(() => {
     if (!isLoading && friendsData && friendsData.length !== 0) {
       Promise.all(
@@ -134,7 +131,11 @@ export const NotificationsFriendList = () => {
                 {matchingFriendAvatar ? (
                   <Avatar
                     src={matchingFriendAvatar.avatar}
-                    sx={{ width: "48px", height: "48px", position: "relative" }}
+                    sx={{
+                      width: "48px",
+                      height: "48px",
+                      position: "relative",
+                    }}
                   />
                 ) : (
                   <AccountCircleRoundedIcon />
