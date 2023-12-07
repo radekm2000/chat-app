@@ -67,8 +67,6 @@ export class UsersService {
       },
     });
     if (user) {
-      console.log('podayn nickname', findUserParams.username);
-      console.log('id usera', user.id);
       return user.id;
     }
     return null;

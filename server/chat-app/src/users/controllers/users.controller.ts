@@ -59,8 +59,6 @@ export class UsersController {
       const url = await getSignedUrl(s3, command, { expiresIn: 36000 });
       avatar.imageUrl = url;
     }
-
-    console.log(avatars);
   }
 
   @Post('find')
@@ -110,7 +108,6 @@ export class UsersController {
   }
   @Get(':id')
   async getUserById(@Param('id', ParseIntPipe) userId: number) {
-    console.log('przeslany id:', userId);
     return this.usersService.findUser({ id: userId });
   }
 }
