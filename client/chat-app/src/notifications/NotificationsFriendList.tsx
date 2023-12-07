@@ -71,9 +71,7 @@ export const NotificationsFriendList = () => {
 
   const handleDeleteFriendRecordClick = (friendRecordId: number) => {
     const { mutate } = deleteFriendRecordMutation;
-    console.log(friendRecordId);
     mutate(friendRecordId);
-    console.log("friend record id ");
   };
 
   useEffect(() => {

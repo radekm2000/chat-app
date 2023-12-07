@@ -15,8 +15,6 @@ export const NotificationsNavbar = () => {
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log(file);
-      console.log(selectedFile);
       setSelectedFile(file);
     }
     e.target.value = null;
@@ -79,6 +77,7 @@ export const NotificationsNavbar = () => {
               src={userImage}
               width={64}
               height={64}
+              duration={0}
               alt="userAvatar"
               style={{ borderRadius: "50%" }}
             />
