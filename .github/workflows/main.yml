@@ -1,0 +1,20 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+env:
+  APP_PATH: server/chat-app
+
+jobs:
+  run_all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+      - name: Installing dependencies
+        run: cd $APP_PATH && npm i
+      - name: Run test
+        run: cd $APP_PATH && npm test
