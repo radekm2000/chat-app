@@ -3,11 +3,8 @@ import { ConversationSidebar } from "../conversations/ConversationSidebar";
 import { ConversationPanel } from "../conversations/ConversationPanel";
 import { useRoute } from "wouter";
 import { NotificationsPanel } from "../../notifications/NotificationsPanel";
-import { useAuth } from "../../hooks/useAuth";
 import { useEffect } from "react";
 import { useSocket } from "../../hooks/useSocket";
-import { useQuery } from "@tanstack/react-query";
-import { getUserConversations } from "../../api/axios";
 import { ConversationChannelPage } from "../conversations/ConversationChannelPage";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 const SIDEBAR_WIDTH = "400px";
@@ -15,11 +12,6 @@ export const ConversationPage = () => {
   const accessToken = localStorage.getItem("token");
   const socket = useSocket();
   const below1200 = useMediaQuery(1200);
-
-  const { data: conversations } = useQuery({
-    queryKey: ["conversations"],
-    queryFn: getUserConversations,
-  });
 
   useEffect(() => {
     const handleUnload = () => {
@@ -69,7 +61,6 @@ export const ConversationPage = () => {
             margin: "-8px",
           }}
         >
-          {" "}
           <Box
             sx={{
               width: SIDEBAR_WIDTH,
@@ -79,17 +70,7 @@ export const ConversationPage = () => {
               "&::-webkit-scrollbar": { display: "none" },
             }}
           >
-            <Box
-              sx={{
-                width: SIDEBAR_WIDTH,
-                borderRight: "1px solid rgb(40, 40,40)",
-                height: "100vh",
-                overflow: "scroll",
-                "&::-webkit-scrollbar": { display: "none" },
-              }}
-            >
-              <ConversationSidebar userChatId={id} />
-            </Box>
+            <ConversationSidebar userChatId={id} />
           </Box>
           <Box sx={{ flexGrow: 1, backgroundColor: "#1E1E1E" }}>
             {id ? (
