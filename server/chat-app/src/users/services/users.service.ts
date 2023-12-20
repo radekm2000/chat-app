@@ -106,7 +106,6 @@ export class UsersService {
 
       transporter.sendMail(mail_configs, (error) => {
         if (error) {
-          console.log(error);
           return reject({ message: 'an error occured' });
         }
         return resolve({
