@@ -17,7 +17,7 @@ if (process.env.IS_PRODUCTION === 'true') {
     host: 'monorail.proxy.rlwy.net',
     port: 51208,
     username: 'postgres',
-    password: process.env.RAILWAY_PASSWORD,
+    password: 'daE36a*BgA36G4CEe2BaDCBFFCdDaB*B',
     entities: ['dist/**/*.entity.js'],
     migrations: ['dist/db/migrations/*.js'],
   };
